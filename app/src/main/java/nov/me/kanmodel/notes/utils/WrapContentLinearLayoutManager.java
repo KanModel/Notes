@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.utils;
 
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +15,7 @@ public class WrapContentLinearLayoutManager extends LinearLayoutManager {
         super(context);
     }
 
-    WrapContentLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
+    public WrapContentLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
         super(context, orientation, reverseLayout);
     }
 

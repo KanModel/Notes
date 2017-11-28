@@ -1,8 +1,6 @@
 package nov.me.kanmodel.notes;
 
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AlertDialog;
@@ -14,12 +12,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
 
 /**
  * 主要Activity
@@ -43,12 +41,13 @@ public class MainActivity extends AppCompatActivity {
         /*sql数据库*/
         dbHelper = new DatabaseHelper(this, "Note.db", null, 9);
         initNodes();
+
+        /*RecyclerView初始化*/
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         noteAdapter = new NoteAdapter(noteList);
-        recyclerView.setAdapter(noteAdapter);
-//        recyclerView.addItemDecoration();
-        //todo RecyclerView分割线添加
+        recyclerView.setAdapter(noteAdapter);//设置Note集合
+        recyclerView.addItemDecoration(new NoteDecoration(this, NoteDecoration.VERTICAL_LIST));//设置分割线
 
         /*组件初始化*/
         actionBar = getActionBar();
