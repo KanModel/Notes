@@ -27,9 +27,9 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
 
-    private DatabaseHelper dbHelper;
+    private static DatabaseHelper dbHelper;
     private List<Note> noteList = new ArrayList<>();
-    private NoteAdapter noteAdapter;
+    private static NoteAdapter noteAdapter;
 
     private String text;
 
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         startEditActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String data = text;
+                String data = pref.getString("text", "Nothing");
                 Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
                 intent.putExtra("content", data);
 //                startActivity(intent);
@@ -103,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         switch (item.getItemId()) {
             case R.id.add_note:
-                Toast.makeText(this, "Add", Toast.LENGTH_SHORT).show();
+                noteAdapter.addData(Aid.addNote(dbHelper, "", "新建便签"), 0);//todo 添加到第一个没有动画
+                Toast.makeText(this, "新建便签", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.remove_note:
                 //todo 删除功能
@@ -125,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.update_database:
-                noteAdapter.addData(Aid.addNote(dbHelper), 0);//todo 添加到第一个没有动画
+                noteAdapter.addData(Aid.addNote(dbHelper, "", "新建标签"), 0);//todo 添加到第一个没有动画
                 Toast.makeText(this, "update_database", Toast.LENGTH_SHORT).show();
                 break;
             default:
@@ -149,5 +150,13 @@ public class MainActivity extends AppCompatActivity {
             default:
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public static DatabaseHelper getDbHelper() {
+        return dbHelper;
+    }
+
+    public static NoteAdapter getNoteAdapter() {
+        return noteAdapter;
     }
 }

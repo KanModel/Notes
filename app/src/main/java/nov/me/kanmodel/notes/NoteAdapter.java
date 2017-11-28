@@ -2,6 +2,7 @@ package nov.me.kanmodel.notes;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,9 @@ import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
-    private List<Note> notes;
+    private static final String TAG = "ViewHolder";
+
+    private static List<Note> notes;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -35,7 +38,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         }
     }
 
-    public NoteAdapter(List<Note> notes){
+    public NoteAdapter(List<Note> notes) {
         this.notes = notes;
     }
 
@@ -49,16 +52,41 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             public void onClick(View view) {
                 int position = holder.getAdapterPosition();
                 Note note = notes.get(position);
-                Toast.makeText(view.getContext(), "Content:" + note.getContent() + "\nTitle:" +
-                        note.getTitle() + "\nTime:" + note.getLogTime(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(view.getContext(), "Content:" + note.getContent() + "\nTitle:" +
+//                        note.getTitle() + "\nTime:" + note.getLogTime(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
+                        note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
                 Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
+                intent.putExtra("pos", position);
                 intent.putExtra("title", note.getTitle());
                 intent.putExtra("content", note.getContent());
                 intent.putExtra("time", Aid.stampToDate(note.getTime()));
+                intent.putExtra("timeLong", note.getTime());
 //                startActivity(intent);
                 view.getContext().startActivity(intent);
             }
         });
+//        holder.timeTV.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Toast.makeText(view.getContext(), "timeTV", Toast.LENGTH_SHORT).show();
+//                Log.d(TAG, "onClick: time");
+//            }
+//        });
+//        holder.contentET.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Toast.makeText(view.getContext(), "contentET", Toast.LENGTH_SHORT).show();
+//                Log.d(TAG, "onClick: content");
+//            }
+//        });
+//        holder.titleET.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Toast.makeText(view.getContext(), "titleET", Toast.LENGTH_SHORT).show();
+//                Log.d(TAG, "onClick: titleET");
+//            }
+//        });
         return holder;
     }
 
@@ -76,15 +104,23 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         return notes.size();
     }
 
-    public void addData(Note note, int position){
+    public void addData(Note note, int position) {
         notes.add(position, note);
         notifyItemInserted(position);
         notifyItemRangeChanged(position, notes.size());
     }
 
-    public void removeData(int position){
+    public void removeData(int position) {
         notes.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, notes.size());
+    }
+
+    public void refreshData(int position){
+        notifyItemRangeChanged(position, notes.size());
+    }
+
+    public static List<Note> getNotes() {
+        return notes;
     }
 }

@@ -30,6 +30,7 @@
         android:background="@null"
         android:ems="10"
         android:gravity="top"
+        android:hint="请输入便签内容"
         android:inputType="textMultiLine"
         android:scrollbars="vertical"
         android:text="Name" />
