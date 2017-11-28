@@ -1,8 +1,6 @@
 package nov.me.kanmodel.notes;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,15 +41,7 @@ public class EditActivity extends AppCompatActivity {
         Log.d(TAG, "onBackPressed: [title: " + title + " | content: " + content + "]");
         Intent intent = new Intent();
         int pos = parentIntent.getIntExtra("pos", 0);
-        SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("title", title);
-        values.put("content", content);
-        db.update("Note", values, "time = ?", new String[]{String.valueOf(time)});
-        intent.putExtra("data_return", contentET.getText().toString());
-        NoteAdapter.getNotes().get(pos).setTitle(title);
-        NoteAdapter.getNotes().get(pos).setContent(content);
-        MainActivity.getNoteAdapter().refreshData(pos);
+        Aid.noteSQLUpdate(title, content, time, pos);
         setResult(RESULT_OK, intent);
         finish();
         super.onBackPressed();
@@ -70,14 +60,7 @@ public class EditActivity extends AppCompatActivity {
                 int pos = parentIntent.getIntExtra("pos", 0);
                 String title = titleET.getText().toString();
                 String content = contentET.getText().toString();
-                SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("title", title);
-                values.put("content", content);
-                db.update("Note", values, "time = ?", new String[]{String.valueOf(time)});
-                NoteAdapter.getNotes().get(pos).setTitle(title);
-                NoteAdapter.getNotes().get(pos).setContent(content);
-                MainActivity.getNoteAdapter().refreshData(pos);
+                Aid.noteSQLUpdate(title, content, time, pos);
                 finish();
                 return true;
             default:

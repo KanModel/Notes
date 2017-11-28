@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by kgdwhsk on 2017/11/26.
  */
-
+//todo 删除功能
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     private static final String TAG = "ViewHolder";
@@ -46,7 +46,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_note, parent, false);
         final ViewHolder holder = new ViewHolder(view);
-        //todo 编辑功能
         holder.noteView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,20 +103,32 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         return notes.size();
     }
 
-    public void addData(Note note, int position) {
+    void addData(Note note, int position) {
         notes.add(position, note);
         notifyItemInserted(position);
         notifyItemRangeChanged(position, notes.size());
     }
 
-    public void removeData(int position) {
+    void addData(Note note) {
+        addData(note, 0);
+    }
+
+    void removeData(int position) {
         notes.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, notes.size());
     }
 
-    public void refreshData(int position){
+    void refreshData(int position) {
         notifyItemRangeChanged(position, notes.size());
+    }
+
+    void refreshAllData() {
+        refreshAllData(notes.size());
+    }
+
+    void refreshAllData(int size) {
+        notifyItemRangeChanged(0, size);
     }
 
     public static List<Note> getNotes() {

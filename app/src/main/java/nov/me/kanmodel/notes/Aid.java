@@ -3,23 +3,20 @@ package nov.me.kanmodel.notes;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static android.content.ContentValues.TAG;
-
 /**
- * Created by kgdwhsk on 2017/11/26.
+ * Created by KanModel on 2017/11/26.
  */
 
 public class Aid {
 
     private static final String TAG = "AidClass";
-    public static String stampToDate(String s){
+
+    static String stampToDate(String s) {
         String res;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         long lt = new Long(s);
@@ -28,19 +25,19 @@ public class Aid {
         return res;
     }
 
-    public static String stampToDate(long time){
+    static String stampToDate(long time) {
         return stampToDate(String.valueOf(time));
     }
 
-    public static Note addNote(DatabaseHelper dbHelper){
-        return addNote(dbHelper, "content", "title");
+    public static Note addSQLNote(DatabaseHelper dbHelper) {
+        return addSQLNote(dbHelper, "content", "title");
     }
 
-    public static void addNote(DatabaseHelper dbHelper, Note note){
-        addNote(dbHelper, note.getContent(), note.getTitle());
+    public static void addSQLNote(DatabaseHelper dbHelper, Note note) {
+        addSQLNote(dbHelper, note.getContent(), note.getTitle());
     }
 
-    public static Note addNote(DatabaseHelper dbHelper, String content, String title){
+    static Note addSQLNote(DatabaseHelper dbHelper, String content, String title) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Note note;
         ContentValues values = new ContentValues();
@@ -63,5 +60,34 @@ public class Aid {
             note = null;
         }
         return note;
+    }
+
+    /**
+     * @param title 标题
+     * @param content 内容
+     * @param time 时间戳
+     * @param pos 在RecyclerView中的位置
+     */
+    static void noteSQLUpdate(String title, String content, Long time, int pos) {
+        SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("title", title);
+        values.put("content", content);
+        db.update("Note", values, "time = ?", new String[]{String.valueOf(time)});
+        NoteAdapter.getNotes().get(pos).setTitle(title);
+        NoteAdapter.getNotes().get(pos).setContent(content);
+        MainActivity.getNoteAdapter().refreshData(pos);
+    }
+
+    static void noteSQLDelete(long time) {
+        SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("isDeleted", 1);
+        db.update("Note", values, "time = ?", new String[]{String.valueOf(time)});
+    }
+
+    static void noteSQLDeleteForced() {
+        SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
+        db.delete("Note", "time > ?", new String[]{"0"});
     }
 }
