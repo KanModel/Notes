@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 /**
+ * 用于解决RecyclerView底层BUG用于处理异常
  * Created by KanModel on 2017/11/28.
  */
 
@@ -14,7 +15,7 @@ public class WrapContentLinearLayoutManager extends LinearLayoutManager {
         super(context);
     }
 
-    public WrapContentLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
+    WrapContentLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
         super(context, orientation, reverseLayout);
     }
 

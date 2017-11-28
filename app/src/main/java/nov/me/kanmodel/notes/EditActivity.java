@@ -8,6 +8,10 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 
+/**
+ * 编辑便签的Activity
+ */
+
 public class EditActivity extends AppCompatActivity {
     private static final String TAG = "EditActivity";
 

@@ -1,7 +1,8 @@
 package nov.me.kanmodel.notes;
 
 /**
- * Created by kgdwhsk on 2017/11/26.
+ * 存储每个便签内容的数据类
+ * Created by KanModel on 2017/11/26.
  */
 
 public class Note {
@@ -10,11 +11,13 @@ public class Note {
     private String logTime;
     private long time;
 
-    public Note(String title, String content, String logTime){
-        this(title, content, logTime, 0);
-    }
-
-    public Note(String title, String content, String logTime, long time){
+    /**
+     * @param title 便签标题
+     * @param content 便签内容
+     * @param logTime  便签时间
+     * @param time 时间戳
+     */
+    Note(String title, String content, String logTime, long time){
         this.title = title;
         this.content = content;
         this.logTime = logTime;
@@ -25,11 +28,11 @@ public class Note {
         return title;
     }
 
-    public String getContent() {
+    String getContent() {
         return content;
     }
 
-    public String getLogTime() {
+    String getLogTime() {
         return logTime;
     }
 
@@ -37,7 +40,7 @@ public class Note {
         return time;
     }
 
-    public void setContent(String content) {
+    void setContent(String content) {
         this.content = content;
     }
 
