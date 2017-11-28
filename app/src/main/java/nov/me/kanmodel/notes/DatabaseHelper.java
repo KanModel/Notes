@@ -33,7 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "'title' text, " +
                 "'isDeleted' int default 0, " +
                 "'logtime' timestamp default CURRENT_TIMESTAMP, " +
-                "'time' double)");//todo 时间戳使用字符串
+                "'time' integer)");
         Toast.makeText(mContext, "创建数据库成功", Toast.LENGTH_SHORT).show();
     }
 

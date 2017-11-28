@@ -52,7 +52,7 @@ public class Aid {
             int id = cursor1.getInt(cursor1.getColumnIndex("id"));
             int isDeleted = cursor1.getInt(cursor1.getColumnIndex("isDeleted"));
             String logtime = cursor1.getString(cursor1.getColumnIndex("logtime"));
-            double time = cursor1.getDouble(cursor1.getColumnIndex("time"));
+            long time = cursor1.getLong(cursor1.getColumnIndex("time"));
 //                    noteList.add(new Note(title, content, logtime, time));
             note = new Note(title, content, logtime, time);
         } else {

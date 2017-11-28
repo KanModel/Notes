@@ -1,12 +1,9 @@
 package nov.me.kanmodel.notes;
 
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,11 +14,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: " + text);
 
         /*sql数据库*/
-        dbHelper = new DatabaseHelper(this, "Note.db", null, 8);
+        dbHelper = new DatabaseHelper(this, "Note.db", null, 9);
         initNodes();
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -86,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 String title = cursor.getString(cursor.getColumnIndex("title"));
                 int isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
                 String logtime = cursor.getString(cursor.getColumnIndex("logtime"));
-                double time = cursor.getDouble(cursor.getColumnIndex("time"));
+                long time = cursor.getLong(cursor.getColumnIndex("time"));
                 Log.d(TAG, "onOptionsItemSelected: id:" + id + "\ntitle:" + title + "\ncontent:"
                         + content + "\nlogtime:" + logtime + "\ntime:" + time + "\nisDeleted:" + isDeleted);
 //                noteList.add(new Note(title, content, logtime, time));
@@ -113,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                 //todo 删除功能
                 Toast.makeText(this, "Remove", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.create_database:
+            case R.id.list_database:
                 Cursor cursor0 = db.query("Note", null, null, null, null, null, null);
                 if (cursor0.moveToFirst()) {
                     do {
@@ -122,32 +117,13 @@ public class MainActivity extends AppCompatActivity {
                         String title = cursor0.getString(cursor0.getColumnIndex("title"));
                         int isDeleted = cursor0.getInt(cursor0.getColumnIndex("isDeleted"));
                         String logtime = cursor0.getString(cursor0.getColumnIndex("logtime"));
-                        double time = cursor0.getDouble(cursor0.getColumnIndex("time"));
+                        long time = cursor0.getLong(cursor0.getColumnIndex("time"));
                         Log.d(TAG, "onOptionsItemSelected: id:" + id + "\ntitle:" + title + "\ncontent:"
                                 + content + "\nlogtime:" + logtime + "\ntime:" + time + "\nisDeleted:" + isDeleted);
                     } while (cursor0.moveToNext());
                 }
                 break;
             case R.id.update_database:
-//                Note note = Aid.addNote(dbHelper);
-//                noteList.add(note);
-//                noteList.clear();
-//                initNodes();
-/*                Cursor cursor1 = db.rawQuery("select * from Note", null);
-                if (cursor1.moveToLast()) {
-                    int id = cursor1.getInt(cursor1.getColumnIndex("id"));
-                    String content = cursor1.getString(cursor1.getColumnIndex("content"));
-                    String title = cursor1.getString(cursor1.getColumnIndex("title"));
-                    int isDeleted = cursor1.getInt(cursor1.getColumnIndex("isDeleted"));
-                    String logtime = cursor1.getString(cursor1.getColumnIndex("logtime"));
-                    double time = cursor1.getDouble(cursor1.getColumnIndex("time"));
-//                    noteList.add(new Note(title, content, logtime, time));
-                    Note note = new Note(title, content, logtime, time);
-                    noteAdapter.addData(note, 0);
-                    Log.d(TAG, "onOptionsItemSelected: id:" + id + "\ntitle:" + title + "\ncontent:"
-                            + content + "\nlogtime:" + logtime + "\ntime:" + time + "\nisDeleted:" + isDeleted);
-                    Toast.makeText(this, "add New", Toast.LENGTH_SHORT).show();
-                }*/
                 noteAdapter.addData(Aid.addNote(dbHelper), 0);//todo 添加到第一个没有动画
                 Toast.makeText(this, "update_database", Toast.LENGTH_SHORT).show();
                 break;

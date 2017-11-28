@@ -8,13 +8,13 @@ public class Note {
     private String title;
     private String content;
     private String logTime;
-    private double time;
+    private long time;
 
     public Note(String title, String content, String logTime){
         this(title, content, logTime, 0);
     }
 
-    public Note(String title, String content, String logTime, double time){
+    public Note(String title, String content, String logTime, long time){
         this.title = title;
         this.content = content;
         this.logTime = logTime;
@@ -33,7 +33,7 @@ public class Note {
         return logTime;
     }
 
-    public double getTime() {
+    public long getTime() {
         return time;
     }
 }

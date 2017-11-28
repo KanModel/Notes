@@ -12,7 +12,7 @@
         android:title="删除"
         app:showAsAction="ifRoom|withText" />
     <item
-        android:id="@+id/create_database"
+        android:id="@+id/list_database"
         android:title="数据库遍历" />
     <item
         android:id="@+id/update_database"

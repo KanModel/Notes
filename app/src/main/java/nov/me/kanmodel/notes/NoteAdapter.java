@@ -61,7 +61,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         Note note = notes.get(position);
         holder.titleET.setText(note.getTitle());
         holder.contentET.setText(note.getContent());
-        holder.timeTV.setText(note.getLogTime());
+//        holder.timeTV.setText(note.getLogTime());
+        holder.timeTV.setText(Aid.stampToDate(String.valueOf(note.getTime())));
     }
 
     @Override
