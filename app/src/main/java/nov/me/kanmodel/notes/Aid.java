@@ -28,6 +28,10 @@ public class Aid {
         return res;
     }
 
+    public static String stampToDate(long time){
+        return stampToDate(String.valueOf(time));
+    }
+
     public static Note addNote(DatabaseHelper dbHelper){
         return addNote(dbHelper, "content", "title");
     }

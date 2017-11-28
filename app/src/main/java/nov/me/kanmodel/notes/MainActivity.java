@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         /*使用SharedPreference存储数据*/
 //        SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
         pref = getSharedPreferences("data", MODE_PRIVATE);
@@ -54,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         noteAdapter = new NoteAdapter(noteList);
         recyclerView.setAdapter(noteAdapter);
+//        recyclerView.addItemDecoration();
+        //todo 分割线
 
         /*组件初始化*/
         actionBar = getActionBar();
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String data = text;
                 Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
-                intent.putExtra("extra_data", data);
+                intent.putExtra("content", data);
 //                startActivity(intent);
                 startActivityForResult(intent, 1);
             }

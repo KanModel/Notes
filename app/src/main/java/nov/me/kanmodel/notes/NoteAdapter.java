@@ -1,5 +1,6 @@
 package nov.me.kanmodel.notes;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     private List<Note> notes;
 
-    //todo 分割线
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         View noteView;
@@ -51,6 +51,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                 Note note = notes.get(position);
                 Toast.makeText(view.getContext(), "Content:" + note.getContent() + "\nTitle:" +
                         note.getTitle() + "\nTime:" + note.getLogTime(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
+                intent.putExtra("title", note.getTitle());
+                intent.putExtra("content", note.getContent());
+                intent.putExtra("time", Aid.stampToDate(note.getTime()));
+//                startActivity(intent);
+                view.getContext().startActivity(intent);
             }
         });
         return holder;
