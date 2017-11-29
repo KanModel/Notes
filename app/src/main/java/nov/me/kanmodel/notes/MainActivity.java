@@ -108,11 +108,23 @@ public class MainActivity extends AppCompatActivity {
 //                recyclerView.scrollToPosition(0);//移动到顶端
                 break;
             case R.id.main_menu_add:
-                ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);//todo
+                final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);//todo
                 progressDialog.setTitle("保存您的更改");
                 progressDialog.setMessage("正在保存...");
-                progressDialog.setCancelable(true);
+                progressDialog.setCancelable(false);
                 progressDialog.show();
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);//让他显示10秒后，取消ProgressDialog
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        progressDialog.dismiss();
+                    }
+                });
+                t.start();
                 noteAdapter.addData(Aid.addSQLNote(dbHelper, "", "新建便签"));
                 recyclerView.scrollToPosition(0);//移动到顶端
                 break;
