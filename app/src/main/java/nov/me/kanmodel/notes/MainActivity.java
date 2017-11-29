@@ -12,13 +12,16 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
@@ -31,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nov.me.kanmodel.notes.utils.RecyclerViewClickListener;
 import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
 
 /**
@@ -103,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         /*RecyclerView初始化*/
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+//        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setSwipeMenuCreator(swipeMenuCreator);
         recyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
@@ -110,6 +115,27 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(noteAdapter);//设置Note集合
 //        recyclerView.addItemDecoration(new NoteDecoration(this, NoteDecoration.VERTICAL_LIST));//设置分割线
         recyclerView.addItemDecoration(new DefaultItemDecoration(Color.BLUE, 5, 5));
+        recyclerView.addOnItemTouchListener(new RecyclerViewClickListener(this, new RecyclerViewClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Note note = noteList.get(position);
+                Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
+                        note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
+                Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
+                intent.putExtra("pos", position);
+                intent.putExtra("title", note.getTitle());
+                intent.putExtra("content", note.getContent());
+                intent.putExtra("time", Aid.stampToDate(note.getTime()));
+                intent.putExtra("timeLong", note.getTime());
+                view.getContext().startActivity(intent);
+                Toast.makeText(MainActivity.this,"Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+                Toast.makeText(MainActivity.this,"Long Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
+            }
+        }));
 
         /*组件初始化*/
         actionBar = getActionBar();
