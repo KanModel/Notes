@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.List;
 
 import nov.me.kanmodel.notes.utils.RecyclerViewClickListener;
+import nov.me.kanmodel.notes.utils.RecyclerViewClickListener2;
 import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
 
 /**
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private SwipeMenuCreator swipeMenuCreator = new SwipeMenuCreator() {
         @Override
         public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
-            int width = 200;
+            int width = 400;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
 
             SwipeMenuItem addItem = new SwipeMenuItem(MainActivity.this)
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(noteAdapter);//设置Note集合
 //        recyclerView.addItemDecoration(new NoteDecoration(this, NoteDecoration.VERTICAL_LIST));//设置分割线
         recyclerView.addItemDecoration(new DefaultItemDecoration(Color.BLUE, 5, 5));
-        recyclerView.addOnItemTouchListener(new RecyclerViewClickListener(this, new RecyclerViewClickListener.OnItemClickListener() {
+       /* recyclerView.addOnItemTouchListener(new RecyclerViewClickListener(this, new RecyclerViewClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Note note = noteList.get(position);
@@ -135,7 +136,41 @@ public class MainActivity extends AppCompatActivity {
             public void onItemLongClick(View view, int position) {
                 Toast.makeText(MainActivity.this,"Long Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
             }
-        }));
+        }));*/
+       /*recyclerView.addOnItemTouchListener(new RecyclerViewClickListener2(this, recyclerView, new RecyclerViewClickListener2.OnItemClickListener() {
+           @Override
+           public void onItemClick(View view, int position) {
+               Note note = noteList.get(position);
+               Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
+                       note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
+               Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
+               intent.putExtra("pos", position);
+               intent.putExtra("title", note.getTitle());
+               intent.putExtra("content", note.getContent());
+               intent.putExtra("time", Aid.stampToDate(note.getTime()));
+               intent.putExtra("timeLong", note.getTime());
+               view.getContext().startActivity(intent);
+               Toast.makeText(MainActivity.this,"Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
+           }
+
+           @Override
+           public void onItemLongClick(View view, int position) {
+               Toast.makeText(MainActivity.this,"Long Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
+           }
+       }));*/
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                Toast.makeText(MainActivity.this, "onScrollChanged", Toast.LENGTH_SHORT).show();
+//                super.onScrollStateChanged(recyclerView, newState);
+//            }
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+////                Toast.makeText(MainActivity.this, "onScrolled", Toast.LENGTH_SHORT).show();
+//                super.onScrolled(recyclerView, dx, dy);
+//            }
+//        });
 
         /*组件初始化*/
         actionBar = getActionBar();

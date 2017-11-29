@@ -61,17 +61,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         holder.noteView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                int position = holder.getAdapterPosition();
-//                Note note = notes.get(position);
-//                Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
-//                        note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
-//                Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
-//                intent.putExtra("pos", position);
-//                intent.putExtra("title", note.getTitle());
-//                intent.putExtra("content", note.getContent());
-//                intent.putExtra("time", Aid.stampToDate(note.getTime()));
-//                intent.putExtra("timeLong", note.getTime());
-//                view.getContext().startActivity(intent);
+                int position = holder.getAdapterPosition();
+                Note note = notes.get(position);
+                Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
+                        note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
+                Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
+                intent.putExtra("pos", position);
+                intent.putExtra("title", note.getTitle());
+                intent.putExtra("content", note.getContent());
+                intent.putExtra("time", Aid.stampToDate(note.getTime()));
+                intent.putExtra("timeLong", note.getTime());
+                view.getContext().startActivity(intent);
             }
         });//todo 存在点击事件需要多次才会生效
     }

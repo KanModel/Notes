@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 
 /**
+ * 点击事件
  * Created by KanModel on 2017/11/29.
  */
 
