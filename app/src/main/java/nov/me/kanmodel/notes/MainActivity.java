@@ -5,16 +5,27 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
+import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,7 +39,51 @@ import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    public static RecyclerView recyclerView;
+    //    public static RecyclerView recyclerView;
+    public static SwipeMenuRecyclerView recyclerView;
+    /**
+     * 菜单创建器。在Item要创建菜单的时候调用。
+     */
+    private SwipeMenuCreator swipeMenuCreator = new SwipeMenuCreator() {
+        @Override
+        public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
+            int width = 200;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+
+            SwipeMenuItem addItem = new SwipeMenuItem(MainActivity.this)
+//                    .setBackgroundDrawable(R.drawable.selector_green)// 点击的背景。
+                    .setImage(R.drawable.ic_launcher_foreground) // 图标。
+                    .setWidth(width) // 宽度。
+                    .setHeight(height); // 高度。
+            swipeLeftMenu.addMenuItem(addItem); // 添加一个按钮到左侧菜单。
+
+            SwipeMenuItem deleteItem = new SwipeMenuItem(MainActivity.this)
+                    .setText("删除") // 文字。
+                    .setTextColor(Color.WHITE) // 文字颜色。
+                    .setTextSize(16) // 文字大小。
+                    .setWidth(width)
+                    .setHeight(height);
+            swipeRightMenu.addMenuItem(deleteItem);// 添加一个按钮到右侧侧菜单。.
+
+            // 上面的菜单哪边不要菜单就不要添加。
+        }
+    };
+
+    SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
+        @Override
+        public void onItemClick(SwipeMenuBridge menuBridge) {
+            // 任何操作必须先关闭菜单，否则可能出现Item菜单打开状态错乱。
+            menuBridge.closeMenu();
+
+            int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
+            int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
+            int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
+            Toast.makeText(MainActivity.this, "删除POS" + adapterPosition, Toast.LENGTH_SHORT).show();
+            long time = NoteAdapter.getNotes().get(adapterPosition).getTime();
+            Aid.deleteSQLNote(time);
+            noteAdapter.removeData(adapterPosition);
+        }
+    };
 
     private static DatabaseHelper dbHelper;
     private List<Note> noteList = new ArrayList<>();
@@ -48,9 +103,13 @@ public class MainActivity extends AppCompatActivity {
         /*RecyclerView初始化*/
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setSwipeMenuCreator(swipeMenuCreator);
+        recyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
         noteAdapter = new NoteAdapter(noteList);
         recyclerView.setAdapter(noteAdapter);//设置Note集合
-        recyclerView.addItemDecoration(new NoteDecoration(this, NoteDecoration.VERTICAL_LIST));//设置分割线
+//        recyclerView.addItemDecoration(new NoteDecoration(this, NoteDecoration.VERTICAL_LIST));//设置分割线
+        recyclerView.addItemDecoration(new DefaultItemDecoration(Color.BLUE, 5, 5));
 
         /*组件初始化*/
         actionBar = getActionBar();
@@ -143,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int size = NoteAdapter.getNotes().size();
-                        Aid.noteSQLDeleteForced();
+                        Aid.deleteSQLNoteForced();
                         noteList.clear();
                         initNodes();
                         noteAdapter.refreshAllData(size);
@@ -177,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
                 if (cursor1.moveToFirst()) {
                     do {
                         long time = cursor1.getLong(cursor1.getColumnIndex("time"));
-                        Aid.noteSQLDelete(time);
+                        Aid.deleteSQLNote(time);
                     } while (cursor1.moveToNext());
                 }
                 cursor1.close();

@@ -93,7 +93,7 @@ public class Aid {
      * @param time 时间戳
      * @param pos 在RecyclerView中的位置
      */
-    static void noteSQLUpdate(String title, String content, Long time, int pos) {
+    static void updateSQLNote(String title, String content, Long time, int pos) {
         SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("title", title);
@@ -108,7 +108,7 @@ public class Aid {
      * 根据时间戳搜索数据库中的内容设置isDeleted为1代表删除
      * @param time 时间戳
      */
-    static void noteSQLDelete(long time) {
+    static void deleteSQLNote(long time) {
         SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("isDeleted", 1);
@@ -118,7 +118,7 @@ public class Aid {
     /**
      * 清空数据库
      */
-    static void noteSQLDeleteForced() {
+    static void deleteSQLNoteForced() {
         SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
         db.delete("Note", "time > ?", new String[]{"0"});
     }

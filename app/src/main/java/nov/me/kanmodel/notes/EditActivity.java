@@ -10,9 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 /**
  * 编辑便签的Activity
  */
@@ -63,7 +60,7 @@ public class EditActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "onBackPressed: [title: " + title + " | content: " + content + "]");
             int pos = parentIntent.getIntExtra("pos", 0);
-            Aid.noteSQLUpdate(title, content, time, pos);
+            Aid.updateSQLNote(title, content, time, pos);
             ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);//todo
             progressDialog.setTitle("保存您的更改");
             progressDialog.setMessage("正在保存...");
@@ -101,7 +98,7 @@ public class EditActivity extends AppCompatActivity {
                     }
                 } else {
                     int pos = parentIntent.getIntExtra("pos", 0);
-                    Aid.noteSQLUpdate(title, content, time, pos);
+                    Aid.updateSQLNote(title, content, time, pos);
                     ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);//todo
                     progressDialog.setTitle("保存您的更改");
                     progressDialog.setMessage("正在保存...");
