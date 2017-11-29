@@ -54,11 +54,21 @@ public class EditActivity extends AppCompatActivity {
             } else {
                 MainActivity.getNoteAdapter().addData(Aid.addSQLNote(MainActivity.getDbHelper(), content, title, time));
                 MainActivity.getRecyclerView().scrollToPosition(0);
+                ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);//todo
+                progressDialog.setTitle("保存您的更改");
+                progressDialog.setMessage("正在保存...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
             }
         } else {
             Log.d(TAG, "onBackPressed: [title: " + title + " | content: " + content + "]");
             int pos = parentIntent.getIntExtra("pos", 0);
             Aid.noteSQLUpdate(title, content, time, pos);
+            ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);//todo
+            progressDialog.setTitle("保存您的更改");
+            progressDialog.setMessage("正在保存...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
         }
         finish();
         super.onBackPressed();
@@ -83,10 +93,20 @@ public class EditActivity extends AppCompatActivity {
                     } else {
                         MainActivity.getNoteAdapter().addData(Aid.addSQLNote(MainActivity.getDbHelper(), content, title, time));
                         MainActivity.getRecyclerView().scrollToPosition(0);
+                        ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);//todo
+                        progressDialog.setTitle("保存您的更改");
+                        progressDialog.setMessage("正在保存...");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
                     }
                 } else {
                     int pos = parentIntent.getIntExtra("pos", 0);
                     Aid.noteSQLUpdate(title, content, time, pos);
+                    ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);//todo
+                    progressDialog.setTitle("保存您的更改");
+                    progressDialog.setMessage("正在保存...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
                 }
                 finish();
                 return true;
