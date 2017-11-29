@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="nov.me.kanmodel.notes">
 
     <application
@@ -21,7 +22,8 @@
         <activity
             android:name=".EditActivity"
             android:label="@string/edit_name"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            tools:targetApi="jelly_bean">
             <intent-filter>
                 <action android:name="nov.me.kanmodel.notes.EditActivity" />
                 <category android:name="android.intent.category.DEFAULT" />

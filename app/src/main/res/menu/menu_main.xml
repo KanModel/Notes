@@ -7,6 +7,9 @@
         android:title="@string/main_menu_add"
         app:showAsAction="ifRoom|withText" />
     <item
+        android:id="@+id/main_menu_add"
+        android:title="添加[开发用]"/>
+    <item
         android:id="@+id/remove_note"
         android:icon="@android:drawable/ic_menu_delete"
         android:title="@string/main_menu_delete"
@@ -14,9 +17,9 @@
         app:showAsAction="withText" />
     <item
         android:id="@+id/list_database"
-        android:title="数据库遍历" />
+        android:title="数据库遍历[输出至Logcat]" />
     <item
         android:id="@+id/note_clear"
-        android:title="数据库更新" />
+        android:title="清空列表" />
 
 </menu>

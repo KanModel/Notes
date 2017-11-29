@@ -1,5 +1,6 @@
 package nov.me.kanmodel.notes;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +8,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 编辑便签的Activity
@@ -19,6 +24,7 @@ public class EditActivity extends AppCompatActivity {
     public TextView timeTV;
     public EditText contentET;
     public long time;
+    boolean isNew;
     private Intent parentIntent;
 
     @Override
@@ -35,18 +41,25 @@ public class EditActivity extends AppCompatActivity {
         timeTV.setText(parentIntent.getStringExtra("time"));
         contentET.setText(parentIntent.getStringExtra("content"));
         time = parentIntent.getLongExtra("timeLong", 0);
+        isNew = parentIntent.getBooleanExtra("isNew", false);
     }
 
     @Override
     public void onBackPressed() {
         String title = titleET.getText().toString();
-//        Long time = Long.parseLong(timeTV.getText().toString());
         String content = contentET.getText().toString();
-        Log.d(TAG, "onBackPressed: [title: " + title + " | content: " + content + "]");
-        Intent intent = new Intent();
-        int pos = parentIntent.getIntExtra("pos", 0);
-        Aid.noteSQLUpdate(title, content, time, pos);
-        setResult(RESULT_OK, intent);
+        if (isNew) {
+            if (content.equals("")) {
+                Toast.makeText(this, "空便签不会被保存", Toast.LENGTH_SHORT).show();
+            } else {
+                MainActivity.getNoteAdapter().addData(Aid.addSQLNote(MainActivity.getDbHelper(), content, title, time));
+                MainActivity.getRecyclerView().scrollToPosition(0);
+            }
+        } else {
+            Log.d(TAG, "onBackPressed: [title: " + title + " | content: " + content + "]");
+            int pos = parentIntent.getIntExtra("pos", 0);
+            Aid.noteSQLUpdate(title, content, time, pos);
+        }
         finish();
         super.onBackPressed();
     }
@@ -59,12 +72,22 @@ public class EditActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            /*返回按钮*/
             case android.R.id.home:
                 Log.d(TAG, "onOptionsItemSelected: home");
-                int pos = parentIntent.getIntExtra("pos", 0);
                 String title = titleET.getText().toString();
                 String content = contentET.getText().toString();
-                Aid.noteSQLUpdate(title, content, time, pos);
+                if (isNew) {
+                    if (content.equals("")) {
+                        Toast.makeText(this, "空便签不会被保存", Toast.LENGTH_SHORT).show();
+                    } else {
+                        MainActivity.getNoteAdapter().addData(Aid.addSQLNote(MainActivity.getDbHelper(), content, title, time));
+                        MainActivity.getRecyclerView().scrollToPosition(0);
+                    }
+                } else {
+                    int pos = parentIntent.getIntExtra("pos", 0);
+                    Aid.noteSQLUpdate(title, content, time, pos);
+                }
                 finish();
                 return true;
             default:

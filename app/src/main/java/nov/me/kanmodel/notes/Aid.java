@@ -62,13 +62,16 @@ public class Aid {
      * @return 返回新添加的Note类
      */
     static Note addSQLNote(DatabaseHelper dbHelper, String content, String title) {
+        long timeStamp = new Date().getTime();
+        return addSQLNote(dbHelper, content, title, timeStamp);
+    }
+
+    static Note addSQLNote(DatabaseHelper dbHelper, String content, String title, long timeStamp) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Note note;
         ContentValues values = new ContentValues();
         values.put("content", content);
         values.put("title", title);
-        long timeStamp = new Date().getTime();
-        Log.d(TAG, "onOptionsItemSelected: " + timeStamp);
         values.put("time", timeStamp);
         db.insert("Note", null, values);
         //获取数据库最后一条信息

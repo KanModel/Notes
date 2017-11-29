@@ -1,6 +1,8 @@
 package nov.me.kanmodel.notes;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AlertDialog;
@@ -15,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
@@ -25,7 +28,7 @@ import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    public RecyclerView recyclerView;
+    public static RecyclerView recyclerView;
 
     private static DatabaseHelper dbHelper;
     private List<Note> noteList = new ArrayList<>();
@@ -92,9 +95,26 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.add_note:
                 /*添加新便签*/
+                Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
+//                intent.putExtra("pos", position);
+                intent.putExtra("title", "新建便签");
+                intent.putExtra("content", "");
+                long timeStamp = new Date().getTime();
+                intent.putExtra("time", Aid.stampToDate(timeStamp));
+                intent.putExtra("timeLong", timeStamp);
+                intent.putExtra("isNew", true);
+                startActivity(intent);
+//                noteAdapter.addData(Aid.addSQLNote(dbHelper, "", "新建便签"));
+//                recyclerView.scrollToPosition(0);//移动到顶端
+                break;
+            case R.id.main_menu_add:
+                ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);//todo
+                progressDialog.setTitle("保存您的更改");
+                progressDialog.setMessage("正在保存...");
+                progressDialog.setCancelable(true);
+                progressDialog.show();
                 noteAdapter.addData(Aid.addSQLNote(dbHelper, "", "新建便签"));
                 recyclerView.scrollToPosition(0);//移动到顶端
-                Toast.makeText(this, "新建便签", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.remove_note:
                 /*清空数据库*/
@@ -119,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
-                Toast.makeText(this, "Remove", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.list_database:
                 /*遍历数据库输出到Logcat*/
@@ -153,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
                 noteList.clear();
                 initNodes();
                 noteAdapter.refreshAllData(size);
-                Toast.makeText(this, "update_database", Toast.LENGTH_SHORT).show();
                 break;
             default:
         }
@@ -172,5 +190,9 @@ public class MainActivity extends AppCompatActivity {
      */
     public static NoteAdapter getNoteAdapter() {
         return noteAdapter;
+    }
+
+    public static RecyclerView getRecyclerView() {
+        return recyclerView;
     }
 }
