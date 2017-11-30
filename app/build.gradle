@@ -6,8 +6,8 @@ android {
         applicationId "nov.me.kanmodel.notes"
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 3
-        versionName "Alpha-1.02"
+        versionCode 4
+        versionName "Alpha-1.03"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

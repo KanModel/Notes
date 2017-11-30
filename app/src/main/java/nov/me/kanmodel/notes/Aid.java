@@ -74,6 +74,7 @@ public class Aid {
         values.put("title", title);
         values.put("time", timeStamp);
         db.insert("Note", null, values);
+        Log.d(TAG, "addSQLNote: timestamp:" + timeStamp);
         //获取数据库最后一条信息
         Cursor cursor1 = db.rawQuery("select * from Note", null);
         if (cursor1.moveToLast()) {

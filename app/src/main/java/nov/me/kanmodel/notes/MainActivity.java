@@ -28,9 +28,11 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
+import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +45,7 @@ import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
  */
 
 public class MainActivity extends AppCompatActivity {
+    boolean isSwiped = false;
     private static final String TAG = "MainActivity";
     //    public static RecyclerView recyclerView;
     public static SwipeMenuRecyclerView recyclerView;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
             SwipeMenuItem deleteItem = new SwipeMenuItem(MainActivity.this)
                     .setText("删除") // 文字。
+                    .setBackgroundColor(Color.RED)
                     .setTextColor(Color.WHITE) // 文字颜色。
                     .setTextSize(16) // 文字大小。
                     .setWidth(width)
@@ -71,6 +75,22 @@ public class MainActivity extends AppCompatActivity {
             swipeRightMenu.addMenuItem(deleteItem);// 添加一个按钮到右侧侧菜单。.
 
             // 上面的菜单哪边不要菜单就不要添加。
+        }
+    };
+
+    OnItemMoveListener mItemMoveListener = new OnItemMoveListener() {
+        @Override
+        public boolean onItemMove(RecyclerView.ViewHolder srcHolder, RecyclerView.ViewHolder targetHolder) {
+            return false;
+        }
+
+        @Override
+        public void onItemDismiss(RecyclerView.ViewHolder srcHolder) {
+            int adapterPosition = srcHolder.getAdapterPosition();
+            // Item被侧滑删除时，删除数据，并更新adapter。
+            long time = NoteAdapter.getNotes().get(adapterPosition).getTime();
+            Aid.deleteSQLNote(time);
+            noteAdapter.removeData(adapterPosition);
         }
     };
 
@@ -112,11 +132,13 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setSwipeMenuCreator(swipeMenuCreator);
         recyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
+        recyclerView.setOnItemMoveListener(mItemMoveListener);
+        recyclerView.setItemViewSwipeEnabled(true);
         noteAdapter = new NoteAdapter(noteList);
         recyclerView.setAdapter(noteAdapter);//设置Note集合
 //        recyclerView.addItemDecoration(new NoteDecoration(this, NoteDecoration.VERTICAL_LIST));//设置分割线
         recyclerView.addItemDecoration(new DefaultItemDecoration(Color.BLUE, 5, 5));
-       /* recyclerView.addOnItemTouchListener(new RecyclerViewClickListener(this, new RecyclerViewClickListener.OnItemClickListener() {
+        recyclerView.addOnItemTouchListener(new RecyclerViewClickListener(this, new RecyclerViewClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Note note = noteList.get(position);
@@ -129,14 +151,14 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("time", Aid.stampToDate(note.getTime()));
                 intent.putExtra("timeLong", note.getTime());
                 view.getContext().startActivity(intent);
-                Toast.makeText(MainActivity.this,"Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Click " + noteList.get(position).getContent(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onItemLongClick(View view, int position) {
-                Toast.makeText(MainActivity.this,"Long Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Long Click " + noteList.get(position), Toast.LENGTH_SHORT).show();
             }
-        }));*/
+        }));
        /*recyclerView.addOnItemTouchListener(new RecyclerViewClickListener2(this, recyclerView, new RecyclerViewClickListener2.OnItemClickListener() {
            @Override
            public void onItemClick(View view, int position) {
@@ -228,24 +250,29 @@ public class MainActivity extends AppCompatActivity {
 //                recyclerView.scrollToPosition(0);//移动到顶端
                 break;
             case R.id.main_menu_add:
-                final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);//todo
-                progressDialog.setTitle("保存您的更改");
-                progressDialog.setMessage("正在保存...");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-                Thread t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(1000);//让他显示10秒后，取消ProgressDialog
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        progressDialog.dismiss();
-                    }
-                });
-                t.start();
-                noteAdapter.addData(Aid.addSQLNote(dbHelper, "", "新建便签"));
+//                final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+//                progressDialog.setTitle("保存您的更改");
+//                progressDialog.setMessage("正在保存...");
+//                progressDialog.setCancelable(false);
+//                progressDialog.show();
+//                Thread t = new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            Thread.sleep(1000);//让他显示10秒后，取消ProgressDialog
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                        progressDialog.dismiss();
+//                    }
+//                });
+//                t.start();
+                noteAdapter.addData(Aid.addSQLNote(dbHelper, "近日，日本汽车巨头尼桑（国内称为日产）宣布将在北美地区的展厅演示增强现实（AR）体验，旨在向客户介绍旗下汽车的安全性以及驾驶辅助系统的相关技术。\n" +
+                        "这个AR体验被命名为“见所未见（See the Unseen）”，将在即将上映的电影《星球大战8：最后的绝地武士》之前，也就是12月初发布。该体验将包含来自《星球大战》宇宙中的多个角色，比如风暴突击队和克隆人军团等。", "汽车巨头尼桑推出全新《星球大战》AR体验"));
+                noteAdapter.addData(Aid.addSQLNote(dbHelper, "做父母的，辛辛苦苦一辈子，最大的心愿是子女幸福健康有出息。所以，只要是给子女未来铺路的事，尤其是教育方面的投入，绝大多数父母都愿意砸钱。", "\"女儿\"要到哈佛大学当交换生 父亲看完短信汇23万"));
+                noteAdapter.addData(Aid.addSQLNote(dbHelper, "这个网络流行的meme也有了成真的一天。据福克斯新闻报道，美国俄亥俄州辛辛那提，一名13岁的熊孩子看到家里有只虫子，于是掏出打火机想要放火灭虫。不想不慎将整栋公寓都引燃，造成8人流离失所，造成至少30万美元的经济损失。\n" +
+                        "周二晚上11点，辛辛那提市一公寓突然发生火花爆炸，在消防员赶到之前，火焰已经蔓延了6间屋子。\n" +
+                        "消防员紧急撤离了楼内住户，并开始灭火。火势很快扑灭，万幸没有人员伤亡，但房屋已被烧毁，三名成年人和五名儿童流离失所。", "13岁熊孩子为了灭虫把整栋楼都烧了 网友：值了"));
                 recyclerView.scrollToPosition(0);//移动到顶端
                 break;
             case R.id.remove_note:
