@@ -283,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("time", Aid.stampToDate(timeStamp));
                 intent.putExtra("timeLong", timeStamp);
                 intent.putExtra("isNew", true);
+                intent.putExtra("lastChangedTime", timeStamp);
                 startActivity(intent);
 //                noteAdapter.addData(Aid.addSQLNote(dbHelper, "", "新建便签"));
 //                recyclerView.scrollToPosition(0);//移动到顶端
