@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences posSharedPref;
     private static SharedPreferences.Editor posEditor;
 
-    static boolean isDebug;
+    static boolean isDebug = false;
 
     public android.app.ActionBar actionBar;
 
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /*sql数据库*/
-        dbHelper = new DatabaseHelper(this, "Note.db", null, 10);
+        dbHelper = new DatabaseHelper(this, "Note.db", null, 11);
         initNodes();
 
         /*RecyclerView初始化*/

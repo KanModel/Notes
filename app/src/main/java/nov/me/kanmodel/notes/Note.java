@@ -14,17 +14,21 @@ public class Note {
     private long lastChangedTime;
 
     /**
-     * @param title 便签标题
+     * @param title   便签标题
      * @param content 便签内容
-     * @param logTime  便签时间
-     * @param time 时间戳
+     * @param logTime 便签时间
+     * @param time    时间戳
      */
-    Note(String title, String content, String logTime, long time, long lastChangedTime){
+    Note(String title, String content, String logTime, long time, long lastChangedTime) {
         this.title = title;
         this.content = content;
         this.logTime = logTime;
         this.time = time;
         this.lastChangedTime = lastChangedTime;
+    }
+
+    Note(String title, String content, long time) {
+        this(title, content, "", time, 0);
     }
 
     public String getTitle() {

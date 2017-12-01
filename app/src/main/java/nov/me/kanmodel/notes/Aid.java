@@ -9,7 +9,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 存放各种操作方法的助手类
@@ -22,7 +24,7 @@ public class Aid {
 
     public static int pos;
 
-    static long getNowTime(){
+    static long getNowTime() {
         return new Date().getTime();
     }
 
@@ -57,7 +59,7 @@ public class Aid {
 
     /**
      * @param dbHelper 数据库操作类
-     * @param note Note类
+     * @param note     Note类
      */
     public static void addSQLNote(DatabaseHelper dbHelper, Note note) {
         addSQLNote(dbHelper, note.getContent(), note.getTitle());
@@ -65,8 +67,8 @@ public class Aid {
 
     /**
      * @param dbHelper 数据库操作类
-     * @param content 内容
-     * @param title 标题
+     * @param content  内容
+     * @param title    标题
      * @return 返回新添加的Note类
      */
     static Note addSQLNote(DatabaseHelper dbHelper, String content, String title) {
@@ -98,10 +100,10 @@ public class Aid {
     }
 
     /**
-     * @param title 标题
-     * @param content 内容
-     * @param time 时间戳
-     * @param pos 在RecyclerView中的位置
+     * @param title           标题
+     * @param content         内容
+     * @param time            时间戳
+     * @param pos             在RecyclerView中的位置
      * @param lastChangedTime 最后更改的时间戳
      */
     static void updateSQLNote(String title, String content, long time, int pos, long lastChangedTime) {
@@ -119,6 +121,7 @@ public class Aid {
 
     /**
      * 根据时间戳搜索数据库中的内容设置isDeleted为1代表删除
+     *
      * @param time 时间戳
      */
     static void deleteSQLNote(long time) {
@@ -170,4 +173,58 @@ public class Aid {
         }
         return verName;
     }
+
+    public static List<Note> initNotes(DatabaseHelper dbHelper) {
+        List<Note> noteList = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query("Note", null, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                /*获取数据库数据*/
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
+                String content = cursor.getString(cursor.getColumnIndex("content"));
+                String title = cursor.getString(cursor.getColumnIndex("title"));
+                int isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
+                String logtime = cursor.getString(cursor.getColumnIndex("logtime"));
+                long time = cursor.getLong(cursor.getColumnIndex("time"));
+                long lastChangedTime = cursor.getLong(cursor.getColumnIndex("lastChangedTime"));
+                if (isDeleted == 0) {
+                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return noteList;
+    }
+
+    public static Note querySQLNote(DatabaseHelper dbHelper, long time){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query("Note", null, "time like ?", new String[]{String.valueOf(time)}, null, null, null);
+        String title = cursor.getString(cursor.getColumnIndex("title"));
+        String content = cursor.getString(cursor.getColumnIndex("content"));
+        int isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
+        if (isDeleted == 1) {
+            return null;
+        }
+        Note note = new Note(title, content, time);
+        cursor.close();
+        return note;
+    }
+
+    public static void querySQLWidget(DatabaseHelper dbHelper, long time) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query("widget", null, "time like ?", new String[]{String.valueOf(time)}, null, null, null);
+
+        cursor.close();
+    }
+
+    public static void addSQLWidget(DatabaseHelper dbHelper, long time, int appWidgetId){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("time", time);
+        values.put("widgetID", appWidgetId);
+        db.insert("widget", null, values);
+//        db.update("Note", values, "time = ?", new String[]{String.valueOf(time)});
+    }
+
 }
