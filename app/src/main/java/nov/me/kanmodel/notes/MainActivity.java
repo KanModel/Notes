@@ -30,7 +30,6 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import nov.me.kanmodel.notes.utils.RecyclerViewClickListener;
@@ -128,7 +127,8 @@ public class MainActivity extends AppCompatActivity {
         /*判断是否是debug模式*/
         Log.d(TAG, "onCreate: isDebug " + isDebug);
         if (isDebug) {
-            Toast.makeText(this, "isDebug:" + isDebug, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "isDebug:" + isDebug + "\n当前版本名称:" + Aid.getVersionName(this) +
+                    "\n当前版本号" + Aid.getVersionCode(this), Toast.LENGTH_SHORT).show();
             setTitle(getResources().getString(R.string.app_name) + "[Debug模式]");
         }
 

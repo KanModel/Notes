@@ -32,7 +32,7 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        Log.d(TAG, "onCreate: start");
+        Log.d(TAG, "onCreate: start " + Aid.getVersionName(this));
         titleET = findViewById(R.id.editor_title);
         timeTV = findViewById(R.id.editor_time);
         contentET = findViewById(R.id.editor_content);
