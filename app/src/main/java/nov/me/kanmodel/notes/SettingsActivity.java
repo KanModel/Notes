@@ -196,7 +196,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (MainActivity.getIsDebug()) {
                         Toast.makeText(getActivity(), "关闭开发者模式", Toast.LENGTH_SHORT).show();
                         MainActivity.setIsDebug(false);
-
                     } else {
                         Toast.makeText(getActivity(), "开启开发者Debug模式", Toast.LENGTH_SHORT).show();
                         MainActivity.setIsDebug(true);

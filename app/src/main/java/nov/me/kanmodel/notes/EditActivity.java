@@ -17,12 +17,15 @@ import android.widget.Toast;
 public class EditActivity extends AppCompatActivity {
     private static final String TAG = "EditActivity";
 
-    public EditText titleET;
-    public TextView timeTV;
-    public EditText contentET;
-    public long time;
+    private EditText titleET;
+    private TextView timeTV;
+    private EditText contentET;
+    private long time;
+    private long lastChangedTime;
     boolean isNew;
     private Intent parentIntent;
+    private String title;
+    private String content;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +37,19 @@ public class EditActivity extends AppCompatActivity {
         timeTV = findViewById(R.id.editor_time);
         contentET = findViewById(R.id.editor_content);
         parentIntent = getIntent();
-        titleET.setText(parentIntent.getStringExtra("title"));
-        timeTV.setText(parentIntent.getStringExtra("time"));
-        contentET.setText(parentIntent.getStringExtra("content"));
+        title = parentIntent.getStringExtra("title");
+        content = parentIntent.getStringExtra("content");
+        titleET.setText(title);
+        contentET.setText(content);
+
         time = parentIntent.getLongExtra("timeLong", 0);
+        lastChangedTime = parentIntent.getLongExtra("lastChangedTime", 0);
+        if (time == lastChangedTime) {
+            timeTV.setText(parentIntent.getStringExtra("time"));
+        } else {
+            timeTV.setText(Aid.stampToDate(time) + " - 最后更改于" + Aid.stampToDate(lastChangedTime));
+        }
+
         isNew = parentIntent.getBooleanExtra("isNew", false);
     }
 
@@ -49,23 +61,16 @@ public class EditActivity extends AppCompatActivity {
             if (content.equals("")) {
                 Toast.makeText(this, "空便签不会被保存", Toast.LENGTH_SHORT).show();
             } else {
-                MainActivity.getNoteAdapter().addData(Aid.addSQLNote(MainActivity.getDbHelper(), content, title, time));
-                MainActivity.getRecyclerView().scrollToPosition(0);
-                ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);//todo
-                progressDialog.setTitle("保存您的更改");
-                progressDialog.setMessage("正在保存...");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
+                saveNewNote(title, content);
             }
         } else {
-            Log.d(TAG, "onBackPressed: [title: " + title + " | content: " + content + "]");
-            int pos = parentIntent.getIntExtra("pos", 0);
-            Aid.updateSQLNote(title, content, time, pos);
-            ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);//todo
-            progressDialog.setTitle("保存您的更改");
-            progressDialog.setMessage("正在保存...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
+            if (this.content.equals(content) && this.title.equals(title)) {
+                if (MainActivity.getIsDebug()){
+                    Toast.makeText(this, "未改变便签不保存", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                saveOriginalNote(title, content);
+            }
         }
         finish();
         super.onBackPressed();
@@ -88,22 +93,16 @@ public class EditActivity extends AppCompatActivity {
                     if (content.equals("")) {
                         Toast.makeText(this, "空便签不会被保存", Toast.LENGTH_SHORT).show();
                     } else {
-                        MainActivity.getNoteAdapter().addData(Aid.addSQLNote(MainActivity.getDbHelper(), content, title, time));
-                        MainActivity.getRecyclerView().scrollToPosition(0);
-                        ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);//todo
-                        progressDialog.setTitle("保存您的更改");
-                        progressDialog.setMessage("正在保存...");
-                        progressDialog.setCancelable(false);
-                        progressDialog.show();
+                        saveNewNote(title, content);
                     }
                 } else {
-                    int pos = parentIntent.getIntExtra("pos", 0);
-                    Aid.updateSQLNote(title, content, time, pos);
-                    ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);//todo
-                    progressDialog.setTitle("保存您的更改");
-                    progressDialog.setMessage("正在保存...");
-                    progressDialog.setCancelable(false);
-                    progressDialog.show();
+                    if (this.content.equals(content) && this.title.equals(title)) {
+                        if (MainActivity.getIsDebug()){
+                            Toast.makeText(this, "未改变便签不保存", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        saveOriginalNote(title, content);
+                    }
                 }
                 finish();
                 return true;
@@ -111,5 +110,27 @@ public class EditActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void saveNewNote(String title, String content) {
+        lastChangedTime = Aid.getNowTime();
+        MainActivity.getNoteAdapter().addData(Aid.addSQLNote(MainActivity.getDbHelper(), content, title, time, lastChangedTime));
+        MainActivity.getRecyclerView().scrollToPosition(0);
+        ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);
+        progressDialog.setTitle("保存您的更改");
+        progressDialog.setMessage("正在保存...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    private void saveOriginalNote(String title, String content) {
+        lastChangedTime = Aid.getNowTime();
+        int pos = parentIntent.getIntExtra("pos", 0);
+        Aid.updateSQLNote(title, content, time, pos, lastChangedTime);
+        ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);
+        progressDialog.setTitle("保存您的更改");
+        progressDialog.setMessage("正在保存...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
     }
 }

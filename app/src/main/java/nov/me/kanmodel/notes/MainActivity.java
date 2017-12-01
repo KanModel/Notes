@@ -123,15 +123,17 @@ public class MainActivity extends AppCompatActivity {
         /*SharedPreference存储设置数据*/
 //        settingSharedPref = getSharedPreferences("setting", MODE_PRIVATE);
         settingSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-//        isDebug = settingSharedPref.getBoolean("isDebug", false);
         isDebug = settingSharedPref.getBoolean("switch_preference_is_debug", false);
+
+        /*判断是否是debug模式*/
         Log.d(TAG, "onCreate: isDebug " + isDebug);
         if (isDebug) {
             Toast.makeText(this, "isDebug:" + isDebug, Toast.LENGTH_SHORT).show();
+            setTitle(getResources().getString(R.string.app_name) + "[Debug模式]");
         }
 
         /*sql数据库*/
-        dbHelper = new DatabaseHelper(this, "Note.db", null, 9);
+        dbHelper = new DatabaseHelper(this, "Note.db", null, 10);
         initNodes();
 
         /*RecyclerView初始化*/
@@ -159,8 +161,9 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("content", note.getContent());
                 intent.putExtra("time", Aid.stampToDate(note.getTime()));
                 intent.putExtra("timeLong", note.getTime());
+                intent.putExtra("lastChangedTime", note.getLastChangedTime());
                 view.getContext().startActivity(intent);
-                if (isDebug){
+                if (isDebug) {
                     Toast.makeText(MainActivity.this, "Click " + noteList.get(position).getContent(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -224,12 +227,13 @@ public class MainActivity extends AppCompatActivity {
                 int isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
                 String logtime = cursor.getString(cursor.getColumnIndex("logtime"));
                 long time = cursor.getLong(cursor.getColumnIndex("time"));
+                long lastChangedTime = cursor.getLong(cursor.getColumnIndex("lastChangedTime"));
                 if (isDebug) {
                     Log.d(TAG, "onOptionsItemSelected: id:" + id + "\ntitle:" + title + "\ncontent:"
                             + content + "\nlogtime:" + logtime + "\ntime:" + time + "\nisDeleted:" + isDeleted);
                 }
                 if (isDeleted == 0) {
-                    noteList.add(0, new Note(title, content, logtime, time));//数据库按ID顺序倒序排列
+                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
                 }
             } while (cursor.moveToNext());
         }
@@ -239,6 +243,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         invalidateOptionsMenu();
+        if (isDebug) {
+            setTitle(getResources().getString(R.string.app_name) + "[Debug模式]");
+        } else {
+            setTitle(getResources().getString(R.string.app_name));
+        }
         super.onResume();
     }
 
@@ -268,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
 //                intent.putExtra("pos", position);
                 intent.putExtra("title", "新建便签");
                 intent.putExtra("content", "");
-                long timeStamp = new Date().getTime();
+                long timeStamp = Aid.getNowTime();
                 intent.putExtra("time", Aid.stampToDate(timeStamp));
                 intent.putExtra("timeLong", timeStamp);
                 intent.putExtra("isNew", true);
@@ -294,6 +303,7 @@ public class MainActivity extends AppCompatActivity {
 //                    }
 //                });
 //                t.start();
+                /*测试用添加三个便签数据*/
                 noteAdapter.addData(Aid.addSQLNote(dbHelper, "近日，日本汽车巨头尼桑（国内称为日产）宣布将在北美地区的展厅演示增强现实（AR）体验，旨在向客户介绍旗下汽车的安全性以及驾驶辅助系统的相关技术。\n" +
                         "这个AR体验被命名为“见所未见（See the Unseen）”，将在即将上映的电影《星球大战8：最后的绝地武士》之前，也就是12月初发布。该体验将包含来自《星球大战》宇宙中的多个角色，比如风暴突击队和克隆人军团等。", "汽车巨头尼桑推出全新《星球大战》AR体验"));
                 noteAdapter.addData(Aid.addSQLNote(dbHelper, "做父母的，辛辛苦苦一辈子，最大的心愿是子女幸福健康有出息。所以，只要是给子女未来铺路的事，尤其是教育方面的投入，绝大多数父母都愿意砸钱。", "\"女儿\"要到哈佛大学当交换生 父亲看完短信汇23万"));
@@ -397,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.isDebug = isDebug;
     }
 
-    public static void switchDebug(boolean isDebug){
+    public static void switchDebug(boolean isDebug) {
 
     }
 }

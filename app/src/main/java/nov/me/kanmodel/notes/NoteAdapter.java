@@ -56,7 +56,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         holder.titleET.setText(note.getTitle());
         holder.contentET.setText(note.getContent());
 //        holder.timeTV.setText(note.getLogTime());
-        holder.timeTV.setText(Aid.stampToDate(String.valueOf(note.getTime())));
+        TextView timeTV = holder.timeTV;
+        long time = note.getTime(), lastChangedTime = note.getLastChangedTime();
+        if (time == lastChangedTime) {
+            timeTV.setText(Aid.stampToDate(time));
+        } else {
+            timeTV.setText(Aid.stampToDate(time) + " - 最后更改于" + Aid.stampToDate(lastChangedTime));
+        }
         holder.noteView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

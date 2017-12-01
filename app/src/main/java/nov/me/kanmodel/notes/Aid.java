@@ -18,6 +18,10 @@ public class Aid {
 
     private static final String TAG = "AidClass";
 
+    static long getNowTime(){
+        return new Date().getTime();
+    }
+
     /**
      * @param time 字符串类型的时间戳
      * @return 时间字符串
@@ -62,17 +66,17 @@ public class Aid {
      * @return 返回新添加的Note类
      */
     static Note addSQLNote(DatabaseHelper dbHelper, String content, String title) {
-        long timeStamp = new Date().getTime();
-        return addSQLNote(dbHelper, content, title, timeStamp);
+        return addSQLNote(dbHelper, content, title, Aid.getNowTime(), Aid.getNowTime());
     }
 
-    static Note addSQLNote(DatabaseHelper dbHelper, String content, String title, long timeStamp) {
+    static Note addSQLNote(DatabaseHelper dbHelper, String content, String title, long timeStamp, long lastChangedTimeStamp) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Note note;
         ContentValues values = new ContentValues();
         values.put("content", content);
         values.put("title", title);
         values.put("time", timeStamp);
+        values.put("lastChangedTime", lastChangedTimeStamp);
         db.insert("Note", null, values);
         Log.d(TAG, "addSQLNote: timestamp:" + timeStamp);
         //获取数据库最后一条信息
@@ -80,7 +84,8 @@ public class Aid {
         if (cursor1.moveToLast()) {
             String logtime = cursor1.getString(cursor1.getColumnIndex("logtime"));
             long time = cursor1.getLong(cursor1.getColumnIndex("time"));
-            note = new Note(title, content, logtime, time);
+            long lastChangedTime = cursor1.getLong(cursor1.getColumnIndex("lastChangedTime"));
+            note = new Note(title, content, logtime, time, lastChangedTime);
         } else {
             note = null;
         }
@@ -93,15 +98,18 @@ public class Aid {
      * @param content 内容
      * @param time 时间戳
      * @param pos 在RecyclerView中的位置
+     * @param lastChangedTime 最后更改的时间戳
      */
-    static void updateSQLNote(String title, String content, Long time, int pos) {
+    static void updateSQLNote(String title, String content, long time, int pos, long lastChangedTime) {
         SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("title", title);
         values.put("content", content);
+        values.put("lastChangedTime", lastChangedTime);
         db.update("Note", values, "time = ?", new String[]{String.valueOf(time)});
         NoteAdapter.getNotes().get(pos).setTitle(title);
         NoteAdapter.getNotes().get(pos).setContent(content);
+        NoteAdapter.getNotes().get(pos).setLastChangedTime(lastChangedTime);
         MainActivity.getNoteAdapter().refreshData(pos);
     }
 
