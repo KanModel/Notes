@@ -17,7 +17,6 @@ import java.util.List;
  * Created by KanModel on 2017/11/26.
  */
 
-//todo 删除功能
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     private static final String TAG = "ViewHolder";

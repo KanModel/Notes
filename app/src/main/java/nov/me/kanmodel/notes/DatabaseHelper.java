@@ -39,7 +39,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "'isDeleted' int default 0, " +
                 "'logtime' timestamp default CURRENT_TIMESTAMP, " +
                 "'time' integer)");
-        Toast.makeText(mContext, "创建数据库成功", Toast.LENGTH_SHORT).show();
+        if (MainActivity.getIsDebug()) {
+            Toast.makeText(mContext, "创建数据库成功", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

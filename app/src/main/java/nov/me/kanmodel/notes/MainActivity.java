@@ -1,18 +1,18 @@
 package nov.me.kanmodel.notes;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
@@ -29,15 +28,12 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
-import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import nov.me.kanmodel.notes.utils.RecyclerViewClickListener;
-import nov.me.kanmodel.notes.utils.RecyclerViewClickListener2;
 import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
 
 /**
@@ -45,7 +41,6 @@ import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
  */
 
 public class MainActivity extends AppCompatActivity {
-    boolean isSwiped = false;
     private static final String TAG = "MainActivity";
     //    public static RecyclerView recyclerView;
     public static SwipeMenuRecyclerView recyclerView;
@@ -113,6 +108,10 @@ public class MainActivity extends AppCompatActivity {
     private static DatabaseHelper dbHelper;
     private List<Note> noteList = new ArrayList<>();
     private static NoteAdapter noteAdapter;
+    private SharedPreferences settingSharedPref;
+    private static SharedPreferences.Editor settingEditor;
+
+    static boolean isDebug;
 
     public android.app.ActionBar actionBar;
 
@@ -121,6 +120,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /*SharedPreference存储设置数据*/
+//        settingSharedPref = getSharedPreferences("setting", MODE_PRIVATE);
+        settingSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+//        isDebug = settingSharedPref.getBoolean("isDebug", false);
+        isDebug = settingSharedPref.getBoolean("switch_preference_is_debug", false);
+        Log.d(TAG, "onCreate: isDebug " + isDebug);
+        if (isDebug) {
+            Toast.makeText(this, "isDebug:" + isDebug, Toast.LENGTH_SHORT).show();
+        }
+
         /*sql数据库*/
         dbHelper = new DatabaseHelper(this, "Note.db", null, 9);
         initNodes();
@@ -128,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         /*RecyclerView初始化*/
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-//        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+//        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));//瀑布流
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setSwipeMenuCreator(swipeMenuCreator);
         recyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
@@ -136,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemViewSwipeEnabled(true);
         noteAdapter = new NoteAdapter(noteList);
         recyclerView.setAdapter(noteAdapter);//设置Note集合
-//        recyclerView.addItemDecoration(new NoteDecoration(this, NoteDecoration.VERTICAL_LIST));//设置分割线
-        recyclerView.addItemDecoration(new DefaultItemDecoration(Color.BLUE, 5, 5));
+//        recyclerView.addItemDecoration(new NoteDecoration(this, NoteDecoration.VERTICAL_LIST));//todo 分割线与动画联动不美观
+//        recyclerView.addItemDecoration(new DefaultItemDecoration(Color.BLUE, 5, 5));
         recyclerView.addOnItemTouchListener(new RecyclerViewClickListener(this, new RecyclerViewClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -151,7 +160,9 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("time", Aid.stampToDate(note.getTime()));
                 intent.putExtra("timeLong", note.getTime());
                 view.getContext().startActivity(intent);
-                Toast.makeText(MainActivity.this, "Click " + noteList.get(position).getContent(), Toast.LENGTH_SHORT).show();
+                if (isDebug){
+                    Toast.makeText(MainActivity.this, "Click " + noteList.get(position).getContent(), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -159,27 +170,27 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Long Click " + noteList.get(position), Toast.LENGTH_SHORT).show();
             }
         }));
-       /*recyclerView.addOnItemTouchListener(new RecyclerViewClickListener2(this, recyclerView, new RecyclerViewClickListener2.OnItemClickListener() {
-           @Override
-           public void onItemClick(View view, int position) {
-               Note note = noteList.get(position);
-               Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
-                       note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
-               Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
-               intent.putExtra("pos", position);
-               intent.putExtra("title", note.getTitle());
-               intent.putExtra("content", note.getContent());
-               intent.putExtra("time", Aid.stampToDate(note.getTime()));
-               intent.putExtra("timeLong", note.getTime());
-               view.getContext().startActivity(intent);
-               Toast.makeText(MainActivity.this,"Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
-           }
-
-           @Override
-           public void onItemLongClick(View view, int position) {
-               Toast.makeText(MainActivity.this,"Long Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
-           }
-       }));*/
+//       recyclerView.addOnItemTouchListener(new RecyclerViewClickListener2(this, recyclerView, new RecyclerViewClickListener2.OnItemClickListener() {
+//           @Override
+//           public void onItemClick(View view, int position) {
+//               Note note = noteList.get(position);
+//               Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
+//                       note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
+//               Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
+//               intent.putExtra("pos", position);
+//               intent.putExtra("title", note.getTitle());
+//               intent.putExtra("content", note.getContent());
+//               intent.putExtra("time", Aid.stampToDate(note.getTime()));
+//               intent.putExtra("timeLong", note.getTime());
+//               view.getContext().startActivity(intent);
+//               Toast.makeText(MainActivity.this,"Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
+//           }
+//
+//           @Override
+//           public void onItemLongClick(View view, int position) {
+//               Toast.makeText(MainActivity.this,"Long Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
+//           }
+//       }));
 //        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
 //            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -213,8 +224,10 @@ public class MainActivity extends AppCompatActivity {
                 int isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
                 String logtime = cursor.getString(cursor.getColumnIndex("logtime"));
                 long time = cursor.getLong(cursor.getColumnIndex("time"));
-                Log.d(TAG, "onOptionsItemSelected: id:" + id + "\ntitle:" + title + "\ncontent:"
-                        + content + "\nlogtime:" + logtime + "\ntime:" + time + "\nisDeleted:" + isDeleted);
+                if (isDebug) {
+                    Log.d(TAG, "onOptionsItemSelected: id:" + id + "\ntitle:" + title + "\ncontent:"
+                            + content + "\nlogtime:" + logtime + "\ntime:" + time + "\nisDeleted:" + isDeleted);
+                }
                 if (isDeleted == 0) {
                     noteList.add(0, new Note(title, content, logtime, time));//数据库按ID顺序倒序排列
                 }
@@ -224,11 +237,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        invalidateOptionsMenu();
+        super.onResume();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         /*指定菜单布局文件*/
         inflater.inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (isDebug) {
+            menu.setGroupVisible(R.id.main_menu_debug, true);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -248,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
 //                noteAdapter.addData(Aid.addSQLNote(dbHelper, "", "新建便签"));
 //                recyclerView.scrollToPosition(0);//移动到顶端
-                break;
+                return true;
             case R.id.main_menu_add:
 //                final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
 //                progressDialog.setTitle("保存您的更改");
@@ -274,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
                         "周二晚上11点，辛辛那提市一公寓突然发生火花爆炸，在消防员赶到之前，火焰已经蔓延了6间屋子。\n" +
                         "消防员紧急撤离了楼内住户，并开始灭火。火势很快扑灭，万幸没有人员伤亡，但房屋已被烧毁，三名成年人和五名儿童流离失所。", "13岁熊孩子为了灭虫把整栋楼都烧了 网友：值了"));
                 recyclerView.scrollToPosition(0);//移动到顶端
-                break;
+                return true;
             case R.id.remove_note:
                 /*清空数据库*/
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -298,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
-                break;
+                return true;
             case R.id.list_database:
                 /*遍历数据库输出到Logcat*/
                 Cursor cursor0 = db.query("Note", null, null, null, null, null, null);
@@ -316,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
                     } while (cursor0.moveToNext());
                 }
                 cursor0.close();
-                break;
+                return true;
             case R.id.note_clear:
                 /*删除所有便签，清空列表*/
                 Cursor cursor1 = db.query("Note", null, null, null, null, null, null);
@@ -331,7 +358,10 @@ public class MainActivity extends AppCompatActivity {
                 noteList.clear();
                 initNodes();
                 noteAdapter.refreshAllData(size);
-                break;
+                return true;
+            case R.id.main_menu_setting:
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                return true;
             default:
         }
         return super.onOptionsItemSelected(item);
@@ -353,5 +383,21 @@ public class MainActivity extends AppCompatActivity {
 
     public static RecyclerView getRecyclerView() {
         return recyclerView;
+    }
+
+    public static SharedPreferences.Editor getSettingEditor() {
+        return settingEditor;
+    }
+
+    public static boolean getIsDebug() {
+        return isDebug;
+    }
+
+    public static void setIsDebug(boolean isDebug) {
+        MainActivity.isDebug = isDebug;
+    }
+
+    public static void switchDebug(boolean isDebug){
+
     }
 }
