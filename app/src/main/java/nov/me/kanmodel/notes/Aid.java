@@ -20,6 +20,8 @@ public class Aid {
 
     private static final String TAG = "AidClass";
 
+    public static int pos;
+
     static long getNowTime(){
         return new Date().getTime();
     }

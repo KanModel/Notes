@@ -2,11 +2,15 @@ package nov.me.kanmodel.notes;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +30,7 @@ public class EditActivity extends AppCompatActivity {
     private Intent parentIntent;
     private String title;
     private String content;
+    private int pos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,7 @@ public class EditActivity extends AppCompatActivity {
         parentIntent = getIntent();
         title = parentIntent.getStringExtra("title");
         content = parentIntent.getStringExtra("content");
+        pos = parentIntent.getIntExtra("pos", 0);
         titleET.setText(title);
         contentET.setText(content);
 
@@ -82,6 +88,14 @@ public class EditActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        /*指定菜单布局文件*/
+        inflater.inflate(R.menu.menu_edit, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             /*返回按钮*/
@@ -105,6 +119,12 @@ public class EditActivity extends AppCompatActivity {
                     }
                 }
                 finish();
+                return true;
+            case R.id.add_to_desktop:
+                Aid.pos = pos;
+                MainActivity.getPosEditor().putInt("pos", pos);
+                MainActivity.getPosEditor().apply();
+                Toast.makeText(this, "添加本便签到桌面", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 break;

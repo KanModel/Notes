@@ -107,8 +107,8 @@ public class MainActivity extends AppCompatActivity {
     private static DatabaseHelper dbHelper;
     private List<Note> noteList = new ArrayList<>();
     private static NoteAdapter noteAdapter;
-    private SharedPreferences settingSharedPref;
-    private static SharedPreferences.Editor settingEditor;
+    private SharedPreferences posSharedPref;
+    private static SharedPreferences.Editor posEditor;
 
     static boolean isDebug;
 
@@ -120,9 +120,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         /*SharedPreference存储设置数据*/
-//        settingSharedPref = getSharedPreferences("setting", MODE_PRIVATE);
-        settingSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        isDebug = settingSharedPref.getBoolean("switch_preference_is_debug", false);
+        posSharedPref = getSharedPreferences("app_pos", MODE_PRIVATE);
+        Aid.pos = posSharedPref.getInt("pos", 0);
+        posEditor = posSharedPref.edit();
+
+        isDebug = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("switch_preference_is_debug", false);
 
         /*判断是否是debug模式*/
         Log.d(TAG, "onCreate: isDebug " + isDebug);
@@ -395,8 +397,8 @@ public class MainActivity extends AppCompatActivity {
         return recyclerView;
     }
 
-    public static SharedPreferences.Editor getSettingEditor() {
-        return settingEditor;
+    public static SharedPreferences.Editor getPosEditor() {
+        return posEditor;
     }
 
     public static boolean getIsDebug() {
