@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     private static final String TAG = "ViewHolder";
 
-    private static List<Note> notes;
+    private static List<Note> notes = new ArrayList<>();
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 

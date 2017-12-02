@@ -26,37 +26,53 @@ import java.util.Set;
 public class NoteAppWidget extends AppWidgetProvider {
     private static final String TAG = "NoteAppWidget";
     private static DatabaseHelper dbHelper;
-    private List<WidgetInfo> widgetInfoList= new ArrayList<>();
+    private List<WidgetInfo> widgetInfoList = new ArrayList<>();
+    private static List<Note> notes = new ArrayList<>();
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
-
+    void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.note_app_widget);
-//        CharSequence widgetTitle = context.getString(R.string.appwidget_text);
-        if (NoteAdapter.getNotes() != null) {
-            Note note = NoteAdapter.getNotes().get(Aid.pos);
-            String widgetTitle = note.getTitle();
-            String time = note.getLogTime();
-            String content = note.getContent();
-            views.setTextViewText(R.id.widget_title, widgetTitle);
-            views.setTextViewText(R.id.widget_time, time);
-            views.setTextViewText(R.id.widget_content, content);
-        } else {
-            if (MainActivity.getIsDebug()) {
-                Toast.makeText(context, "开机Debug", Toast.LENGTH_SHORT).show();
-            }
-            List<Note> noteList = Aid.initNotes(dbHelper);
-            Note note = noteList.get(0);
-            if (note != null) {
-                String widgetTitle = note.getTitle();
-                String time = note.getLogTime();
-                String content = note.getContent();
-                views.setTextViewText(R.id.widget_title, widgetTitle);
-                views.setTextViewText(R.id.widget_time, time);
-                views.setTextViewText(R.id.widget_content, content);
+        Note note = null;
+        for (WidgetInfo widgetInfo : widgetInfoList) {//遍历表寻找对应id的挂件
+            if (widgetInfo.getAppWidgetID() == appWidgetId) {
+                note = widgetInfo.getNote();
             }
         }
+        if (note == null) {//数据库中没有相关信息进行添加
+            notes = Aid.initNotes(dbHelper);
+            long time = notes.get(Aid.pos).getTime();
+            Aid.addSQLWidget(dbHelper, time, appWidgetId);
+            note = Aid.querySQLNote(dbHelper, time);
+            updateWidgetInfoList(dbHelper.getWritableDatabase());//添加后刷新表
+        }
+//        CharSequence widgetTitle = context.getString(R.string.appwidget_text);
+        String widgetTitle = note.getTitle();
+        String time = Aid.stampToDate(note.getTime());
+        String content = note.getContent();
+//        if (NoteAdapter.getNotes() != null) {
+//            note = NoteAdapter.getNotes().get(Aid.pos);
+//            widgetTitle = note.getTitle();
+//            time = note.getLogTime();
+//            content = note.getContent();
+//        } else {
+//            if (MainActivity.getIsDebug()) {
+//                Toast.makeText(context, "开机Debug", Toast.LENGTH_SHORT).show();
+//            }
+//            List<Note> noteList = Aid.initNotes(dbHelper);
+//            note = noteList.get(0);
+//            if (note != null) {
+//                widgetTitle = note.getTitle();
+//                time = note.getLogTime();
+//                content = note.getContent();
+//            } else {
+//                widgetTitle = "加载失败，请删除本挂件";
+//                time = "";
+//                content = "";
+//            }
+//        }
+        views.setTextViewText(R.id.widget_title, widgetTitle);
+        views.setTextViewText(R.id.widget_time, time);
+        views.setTextViewText(R.id.widget_content, content);
         Intent intent1 = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent1 = PendingIntent.getActivity(context, 0, intent1, 0);
         views.setOnClickPendingIntent(R.id.widget_title, pendingIntent1);
@@ -74,6 +90,21 @@ public class NoteAppWidget extends AppWidgetProvider {
         boolean isDebug = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("switch_preference_is_debug", false);
         MainActivity.setIsDebug(isDebug);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        updateWidgetInfoList(db);
+        Log.d(TAG, "onUpdate: " + isDebug);
+        // There may be multiple widgets active, so update all of them
+        for (int appWidgetId : appWidgetIds) {
+
+            updateAppWidget(context, appWidgetManager, appWidgetId);
+            //todo 添加到widget表
+            if (isDebug) {
+                Toast.makeText(context, "appWidgetId:" + appWidgetId, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    void updateWidgetInfoList(SQLiteDatabase db) {
+        widgetInfoList.clear();//清空表
         Cursor cursor = db.query("widget", null, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
@@ -82,22 +113,14 @@ public class NoteAppWidget extends AppWidgetProvider {
                 int isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
                 long time = cursor.getLong(cursor.getColumnIndex("time"));
                 if (isDeleted == 0) {
-                    widgetInfoList.add(new WidgetInfo(time, widgetID));
+//                    widgetInfoList.add(new WidgetInfo(time, widgetID));
+                    widgetInfoList.add(new WidgetInfo(time, widgetID, Aid.querySQLNote(dbHelper, time)));
+//                    widgetInfoList.add(Aid.querySQLWidget(dbHelper, time));
 //                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
                 }
             } while (cursor.moveToNext());
         }
         cursor.close();
-        Log.d(TAG, "onUpdate: " + isDebug);
-        // There may be multiple widgets active, so update all of them
-        for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
-
-            //todo 添加到widget表
-            if (isDebug) {
-                Toast.makeText(context, "appWidgetId:" + appWidgetId, Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     @Override

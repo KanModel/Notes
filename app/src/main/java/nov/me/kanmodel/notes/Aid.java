@@ -22,7 +22,7 @@ public class Aid {
 
     private static final String TAG = "AidClass";
 
-    public static int pos;
+    public static int pos = 0;
 
     static long getNowTime() {
         return new Date().getTime();
@@ -197,28 +197,43 @@ public class Aid {
         return noteList;
     }
 
-    public static Note querySQLNote(DatabaseHelper dbHelper, long time){
+    public static Note querySQLNote(DatabaseHelper dbHelper, long time) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String title = "", content = "";
+        int isDeleted;
         Cursor cursor = db.query("Note", null, "time like ?", new String[]{String.valueOf(time)}, null, null, null);
-        String title = cursor.getString(cursor.getColumnIndex("title"));
-        String content = cursor.getString(cursor.getColumnIndex("content"));
-        int isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
+        if (cursor.moveToLast()) {
+            title = cursor.getString(cursor.getColumnIndex("title"));
+            content = cursor.getString(cursor.getColumnIndex("content"));
+            isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
+        } else {
+            isDeleted = 1;
+        }
+        cursor.close();
         if (isDeleted == 1) {
             return null;
         }
-        Note note = new Note(title, content, time);
-        cursor.close();
-        return note;
+        return new Note(title, content, time);
     }
 
-    public static void querySQLWidget(DatabaseHelper dbHelper, long time) {
+    public static WidgetInfo querySQLWidget(DatabaseHelper dbHelper, long time) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int widgetID, isDeleted;
         Cursor cursor = db.query("widget", null, "time like ?", new String[]{String.valueOf(time)}, null, null, null);
-
+        if (cursor.moveToLast()) {
+            widgetID = cursor.getInt(cursor.getColumnIndex("widgetID"));
+            isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
+        } else {
+            widgetID = isDeleted = 1;
+        }
         cursor.close();
+        if (isDeleted == 1) {
+            return null;
+        }
+        return new WidgetInfo(time, widgetID, querySQLNote(dbHelper, time));
     }
 
-    public static void addSQLWidget(DatabaseHelper dbHelper, long time, int appWidgetId){
+    public static void addSQLWidget(DatabaseHelper dbHelper, long time, int appWidgetId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("time", time);

@@ -6,8 +6,8 @@ android {
         applicationId "nov.me.kanmodel.notes"
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 8
-        versionName "Alpha-1.07"
+        versionCode 9
+        versionName "Alpha-1.08"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

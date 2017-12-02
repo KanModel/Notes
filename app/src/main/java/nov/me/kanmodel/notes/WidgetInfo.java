@@ -8,10 +8,24 @@ package nov.me.kanmodel.notes;
 public class WidgetInfo {
     private long time;
     private int appWidgetID;
+    private Note note;
 
     WidgetInfo(long time, int appWidgetID) {
+        this(time, appWidgetID, null);
+    }
+
+    public WidgetInfo(long time, int appWidgetID, Note note) {
         this.time = time;
         this.appWidgetID = appWidgetID;
+        this.note = note;
+    }
+
+    public Note getNote() {
+        return note;
+    }
+
+    public void setNote(Note note) {
+        this.note = note;
     }
 
     public long getTime() {
