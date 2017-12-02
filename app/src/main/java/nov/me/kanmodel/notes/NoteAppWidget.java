@@ -44,6 +44,9 @@ public class NoteAppWidget extends AppWidgetProvider {
             Aid.addSQLWidget(dbHelper, time, appWidgetId);
             note = Aid.querySQLNote(dbHelper, time);
             updateWidgetInfoList(dbHelper.getWritableDatabase());//添加后刷新表
+            if (note == null) {
+                note = new Note("此便签可能以删除,请您手动删除", "", Aid.getNowTime());
+            }
         }
 //        CharSequence widgetTitle = context.getString(R.string.appwidget_text);
         String widgetTitle = note.getTitle();
@@ -77,7 +80,6 @@ public class NoteAppWidget extends AppWidgetProvider {
         PendingIntent pendingIntent1 = PendingIntent.getActivity(context, 0, intent1, 0);
         views.setOnClickPendingIntent(R.id.widget_title, pendingIntent1);
 
-
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
@@ -94,7 +96,6 @@ public class NoteAppWidget extends AppWidgetProvider {
         Log.d(TAG, "onUpdate: " + isDebug);
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-
             updateAppWidget(context, appWidgetManager, appWidgetId);
             //todo 添加到widget表
             if (isDebug) {
@@ -136,8 +137,23 @@ public class NoteAppWidget extends AppWidgetProvider {
     }
 
     @Override
-    public void onDeleted(Context context, int[] appWidgetIds) {
-        Log.d(TAG, "onDeleted: Start");
+    public void onDeleted(Context context, int[] appWidgetIds) {//这里的appWidgetIds是删除的id数组
+        Log.d(TAG, "onDeleted: Start");//todo 删除
+//        for (int appWidgetID : appWidgetIds) {
+//            Toast.makeText(context, "删除的是ID" + appWidgetID, Toast.LENGTH_SHORT).show();
+//        }
+        if (MainActivity.getIsDebug()){
+            Toast.makeText(context, "删除的是ID" + appWidgetIds[0], Toast.LENGTH_SHORT).show();
+        }
+        Aid.deleteSQLWidget(dbHelper, appWidgetIds[0]);
+        updateWidgetInfoList(dbHelper.getWritableDatabase());
+        int pos = 0;
+        for (int i = 0; i < widgetInfoList.size(); i++) {
+            if (widgetInfoList.get(i).getAppWidgetID() == appWidgetIds[0]) {
+                pos = i;
+            }
+        }
+        widgetInfoList.remove(pos);
         super.onDeleted(context, appWidgetIds);
     }
 

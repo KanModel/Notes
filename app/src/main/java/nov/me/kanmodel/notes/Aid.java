@@ -242,4 +242,11 @@ public class Aid {
 //        db.update("Note", values, "time = ?", new String[]{String.valueOf(time)});
     }
 
+    static void deleteSQLWidget(DatabaseHelper dbHelper, int widgetID) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("isDeleted", 1);
+        db.update("widget", values, "widgetID = ?", new String[]{String.valueOf(widgetID)});
+    }
+
 }
