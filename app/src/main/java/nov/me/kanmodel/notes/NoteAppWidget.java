@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -157,5 +158,12 @@ public class NoteAppWidget extends AppWidgetProvider {
         super.onDeleted(context, appWidgetIds);
     }
 
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
+        if (MainActivity.getIsDebug()) {
+            Toast.makeText(context, "改变大小id：" + appWidgetId, Toast.LENGTH_SHORT).show();
+        }
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
+    }
 }
 
