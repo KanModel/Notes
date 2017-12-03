@@ -8,13 +8,9 @@
         android:title="@string/pref_header_general" />
 
     <header
-        android:fragment="nov.me.kanmodel.notes.SettingsActivity$NotificationPreferenceFragment"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/pref_header_notifications" />
+        android:fragment="nov.me.kanmodel.notes.SettingsActivity$FontFragment"
+        android:icon="@drawable/ic_font_black_24dp"
+        android:title="@string/pref_header_font" />
 
-    <header
-        android:fragment="nov.me.kanmodel.notes.SettingsActivity$DataSyncPreferenceFragment"
-        android:icon="@drawable/ic_sync_black_24dp"
-        android:title="@string/pref_header_data_sync" />
 
 </preference-headers>

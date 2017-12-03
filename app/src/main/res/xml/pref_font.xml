@@ -1,0 +1,32 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="30"
+        android:inputType="number"
+        android:key="font_title_size"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="标题字号"
+        android:visibility="visible" />
+    <EditTextPreference
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:defaultValue="16"
+        android:inputType="number"
+        android:key="font_time_size"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="时间字号"
+        android:visibility="visible" />
+    <EditTextPreference
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:defaultValue="24"
+        android:inputType="number"
+        android:key="font_content_size"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="内容字号"
+        android:visibility="visible" />
+
+</PreferenceScreen>
