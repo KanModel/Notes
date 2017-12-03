@@ -1,5 +1,6 @@
 package nov.me.kanmodel.notes;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -120,11 +121,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         /*SharedPreference存储设置数据*/
-        posSharedPref = getSharedPreferences("app_pos", MODE_PRIVATE);
-        Aid.pos = posSharedPref.getInt("pos", 0);
-        posEditor = posSharedPref.edit();
+//        posSharedPref = getSharedPreferences("app_pos", MODE_PRIVATE);
+//        Aid.pos = posSharedPref.getInt("pos", 0);
+//        posEditor = posSharedPref.edit();
 
         isDebug = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("switch_preference_is_debug", false);
+        NoteAdapter.setTitleFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("font_title_size", "30")));
+        NoteAdapter.setTimeFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("font_time_size", "16")));
+        NoteAdapter.setContentFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("font_content_size", "24")));
 
         /*判断是否是debug模式*/
         Log.d(TAG, "onCreate: isDebug " + isDebug);
@@ -250,6 +254,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             setTitle(getResources().getString(R.string.app_name));
         }
+//        noteAdapter.notifyDataSetChanged();
         super.onResume();
     }
 

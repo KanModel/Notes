@@ -1,14 +1,11 @@
 package nov.me.kanmodel.notes;
 
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +17,10 @@ import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
+    private static int titleFontSize;
+    private static int timeFontSize;
+    private static int contentFontSize;
+
     private static final String TAG = "ViewHolder";
 
     private static List<Note> notes = new ArrayList<>();
@@ -27,10 +28,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         View noteView;
+
         EditText titleET;
         EditText contentET;
         TextView timeTV;
-
         ViewHolder(View itemView) {
             super(itemView);
             noteView = itemView;
@@ -38,8 +39,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             contentET = itemView.findViewById(R.id.r_content);
             timeTV = itemView.findViewById(R.id.r_time);
         }
-    }
 
+    }
     NoteAdapter(List<Note> notes) {
         this.notes = notes;
     }
@@ -56,31 +57,34 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         Note note = notes.get(position);
         holder.titleET.setText(note.getTitle());
         holder.contentET.setText(note.getContent());
-//        holder.timeTV.setText(note.getLogTime());
+        holder.titleET.setTextSize(titleFontSize);
+        holder.contentET.setTextSize(contentFontSize);
         TextView timeTV = holder.timeTV;
+        timeTV.setTextSize(timeFontSize);
         long time = note.getTime(), lastChangedTime = note.getLastChangedTime();
         if (time == lastChangedTime) {
             timeTV.setText(Aid.stampToDate(time));
         } else {
             timeTV.setText(Aid.stampToDate(time) + " - 最后更改于" + Aid.stampToDate(lastChangedTime));
         }
-        holder.noteView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int position = holder.getAdapterPosition();
-//                Note note = notes.get(position);
-//                Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
-//                        note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
-//                Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
-//                intent.putExtra("pos", position);
-//                intent.putExtra("title", note.getTitle());
-//                intent.putExtra("content", note.getContent());
-//                intent.putExtra("time", Aid.stampToDate(note.getTime()));
-//                intent.putExtra("timeLong", note.getTime());
-//                view.getContext().startActivity(intent);
-            }
-        });//todo 存在点击事件需要多次才会生效
+//        holder.noteView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                int position = holder.getAdapterPosition();
+////                Note note = notes.get(position);
+////                Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
+////                        note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
+////                Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
+////                intent.putExtra("pos", position);
+////                intent.putExtra("title", note.getTitle());
+////                intent.putExtra("content", note.getContent());
+////                intent.putExtra("time", Aid.stampToDate(note.getTime()));
+////                intent.putExtra("timeLong", note.getTime());
+////                view.getContext().startActivity(intent);
+//            }
+//        });
     }
+
 
     @Override
     public int getItemCount() {
@@ -134,5 +138,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
      */
     public static List<Note> getNotes() {
         return notes;
+    }
+
+    public static void setTitleFontSize(int titleFontSize) {
+        NoteAdapter.titleFontSize = titleFontSize;
+    }
+
+    public static void setTimeFontSize(int timeFontSize) {
+        NoteAdapter.timeFontSize = timeFontSize;
+    }
+
+    public static void setContentFontSize(int contentFontSize) {
+        NoteAdapter.contentFontSize = contentFontSize;
     }
 }

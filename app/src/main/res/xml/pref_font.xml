@@ -25,7 +25,6 @@
         android:inputType="number"
         android:key="font_content_size"
         android:selectAllOnFocus="true"
-        android:singleLine="true"
         android:title="内容字号"
         android:visibility="visible" />
 

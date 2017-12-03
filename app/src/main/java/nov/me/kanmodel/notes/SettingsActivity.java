@@ -1,6 +1,8 @@
 package nov.me.kanmodel.notes;
 
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -9,6 +11,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -226,7 +229,34 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_font);
             setHasOptionsMenu(true);
+            final EditTextPreference fontTitleSize = (EditTextPreference) findPreference("font_title_size");
+            final EditTextPreference fontTimeSize = (EditTextPreference) findPreference("font_time_size");
+            final EditTextPreference fontContentSize = (EditTextPreference) findPreference("font_content_size");
+            fontTitleSize.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+                    NoteAdapter.setTitleFontSize(Integer.parseInt(fontTitleSize.getText()));
+                    return true;
+                }
+            });
+            fontTimeSize.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+                    NoteAdapter.setTimeFontSize(Integer.parseInt(fontTimeSize.getText()));
+                    return true;
+                }
+            });
+            fontContentSize.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+                    NoteAdapter.setContentFontSize(Integer.parseInt(fontContentSize.getText()));
+                    return true;
+                }
+            });
             //todo 更改字体设置改变相应字体
+            bindPreferenceSummaryToValue(findPreference("font_title_size"));
+            bindPreferenceSummaryToValue(findPreference("font_time_size"));
+            bindPreferenceSummaryToValue(findPreference("font_content_size"));
         }
 
         @Override
