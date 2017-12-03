@@ -136,7 +136,7 @@ public class EditActivity extends AppCompatActivity {
 
     private void saveNewNote(String title, String content) {
         lastChangedTime = Aid.getNowTime();
-        MainActivity.getNoteAdapter().addData(Aid.addSQLNote(MainActivity.getDbHelper(), content, title, time, lastChangedTime));
+        MainActivity.getNoteAdapter().addData(Aid.addSQLNote(MainActivity.getDbHelper(), content, title, lastChangedTime, lastChangedTime));
         MainActivity.getRecyclerView().scrollToPosition(0);
         ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);
         progressDialog.setTitle("保存您的更改");

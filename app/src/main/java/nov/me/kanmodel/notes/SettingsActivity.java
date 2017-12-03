@@ -253,7 +253,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     return true;
                 }
             });
-            //todo 更改字体设置改变相应字体
+            //todo 更改字体设置改变相应字体，提示，设置字体安全范围
             bindPreferenceSummaryToValue(findPreference("font_title_size"));
             bindPreferenceSummaryToValue(findPreference("font_time_size"));
             bindPreferenceSummaryToValue(findPreference("font_content_size"));
