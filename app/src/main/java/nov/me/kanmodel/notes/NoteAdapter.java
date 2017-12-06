@@ -19,6 +19,19 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     private static int titleFontSize;
     private static int timeFontSize;
+
+    public static int getTitleFontSize() {
+        return titleFontSize;
+    }
+
+    public static int getTimeFontSize() {
+        return timeFontSize;
+    }
+
+    public static int getContentFontSize() {
+        return contentFontSize;
+    }
+
     private static int contentFontSize;
 
     private static final String TAG = "ViewHolder";

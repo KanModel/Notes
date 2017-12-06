@@ -1,5 +1,6 @@
 package nov.me.kanmodel.notes;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -8,9 +9,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import android.widget.Toast;
@@ -30,6 +33,7 @@ public class NoteAppWidget extends AppWidgetProvider {
     private List<WidgetInfo> widgetInfoList = new ArrayList<>();
     private static List<Note> notes = new ArrayList<>();
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.note_app_widget);
@@ -74,9 +78,13 @@ public class NoteAppWidget extends AppWidgetProvider {
 //                content = "";
 //            }
 //        }
+        //设置挂件内容
         views.setTextViewText(R.id.widget_title, widgetTitle);
         views.setTextViewText(R.id.widget_time, time);
         views.setTextViewText(R.id.widget_content, content);
+        views.setTextViewTextSize(R.id.widget_title, TypedValue.COMPLEX_UNIT_SP,NoteAdapter.getTitleFontSize());
+        views.setTextViewTextSize(R.id.widget_time, TypedValue.COMPLEX_UNIT_SP,NoteAdapter.getTimeFontSize());
+        views.setTextViewTextSize(R.id.widget_content, TypedValue.COMPLEX_UNIT_SP,NoteAdapter.getContentFontSize());
         Intent intent1 = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent1 = PendingIntent.getActivity(context, 0, intent1, 0);
         views.setOnClickPendingIntent(R.id.widget_title, pendingIntent1);
@@ -88,7 +96,9 @@ public class NoteAppWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Log.d(TAG, "onUpdate: Start");
-
+        NoteAdapter.setTitleFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_title_size", "30")));
+        NoteAdapter.setTimeFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_time_size", "16")));
+        NoteAdapter.setContentFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_content_size", "24")));
         dbHelper = new DatabaseHelper(context, "Note.db", null, 11);//版本需要一致
         boolean isDebug = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("switch_preference_is_debug", false);
         MainActivity.setIsDebug(isDebug);
