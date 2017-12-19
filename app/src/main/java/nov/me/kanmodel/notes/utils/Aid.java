@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.utils;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -13,18 +13,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nov.me.kanmodel.notes.MainActivity;
+import nov.me.kanmodel.notes.Note;
+import nov.me.kanmodel.notes.NoteAdapter;
+import nov.me.kanmodel.notes.widget.WidgetInfo;
+
 /**
  * 存放各种操作方法的助手类
  * Created by KanModel on 2017/11/26.
  */
 
-public class Aid {
+public abstract class Aid {
 
     private static final String TAG = "AidClass";
 
     public static int pos = 0;
 
-    static long getNowTime() {
+    public static long getNowTime() {
         return new Date().getTime();
     }
 
@@ -32,7 +37,7 @@ public class Aid {
      * @param time 字符串类型的时间戳
      * @return 时间字符串
      */
-    static String stampToDate(String time) {
+    public static String stampToDate(String time) {
         String res;
         @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         long lt = Long.valueOf(time);
@@ -45,7 +50,7 @@ public class Aid {
      * @param time long类型的时间戳
      * @return 时间字符串
      */
-    static String stampToDate(long time) {
+    public static String stampToDate(long time) {
         return stampToDate(String.valueOf(time));
     }
 
@@ -71,11 +76,11 @@ public class Aid {
      * @param title    标题
      * @return 返回新添加的Note类
      */
-    static Note addSQLNote(DatabaseHelper dbHelper, String content, String title) {
+    public static Note addSQLNote(DatabaseHelper dbHelper, String content, String title) {
         return addSQLNote(dbHelper, content, title, Aid.getNowTime(), Aid.getNowTime());
     }
 
-    static Note addSQLNote(DatabaseHelper dbHelper, String content, String title, long timeStamp, long lastChangedTimeStamp) {
+    public static Note addSQLNote(DatabaseHelper dbHelper, String content, String title, long timeStamp, long lastChangedTimeStamp) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Note note;
         ContentValues values = new ContentValues();
@@ -106,7 +111,7 @@ public class Aid {
      * @param pos             在RecyclerView中的位置
      * @param lastChangedTime 最后更改的时间戳
      */
-    static void updateSQLNote(String title, String content, long time, int pos, long lastChangedTime) {
+    public static void updateSQLNote(String title, String content, long time, int pos, long lastChangedTime) {
         SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("title", title);
@@ -124,7 +129,7 @@ public class Aid {
      *
      * @param time 时间戳
      */
-    static void deleteSQLNote(long time) {
+    public static void deleteSQLNote(long time) {
         SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("isDeleted", 1);
@@ -134,7 +139,7 @@ public class Aid {
     /**
      * 清空数据库
      */
-    static void deleteSQLNoteForced() {
+    public static void deleteSQLNoteForced() {
         SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
         db.delete("Note", "time > ?", new String[]{"0"});
     }
@@ -242,7 +247,7 @@ public class Aid {
 //        db.update("Note", values, "time = ?", new String[]{String.valueOf(time)});
     }
 
-    static void deleteSQLWidget(DatabaseHelper dbHelper, int widgetID) {
+    public static void deleteSQLWidget(DatabaseHelper dbHelper, int widgetID) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("isDeleted", 1);

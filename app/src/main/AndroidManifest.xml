@@ -35,7 +35,7 @@
             android:parentActivityName=".MainActivity"
             tools:targetApi="jelly_bean" />
 
-        <receiver android:name=".NoteAppWidget">
+        <receiver android:name=".widget.NoteAppWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

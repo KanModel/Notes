@@ -1,9 +1,11 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.utils;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
+
+import nov.me.kanmodel.notes.MainActivity;
 
 /**
  * 用于数据库创建
@@ -21,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param factory 不知道
      * @param version 数据库，增加自动调用onUpgrade更新数据库
      */
-    DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         mContext = context;
     }

@@ -10,6 +10,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import nov.me.kanmodel.notes.utils.Aid;
+
 /**
  * 重写RecyclerView类
  * Created by KanModel on 2017/11/26.
@@ -127,7 +129,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         notifyItemRangeChanged(position, notes.size());
     }
 
-    void refreshData(int position) {
+    public void refreshData(int position) {
         notifyItemRangeChanged(position, notes.size());
     }
 

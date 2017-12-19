@@ -1,6 +1,5 @@
 package nov.me.kanmodel.notes;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +32,8 @@ import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import nov.me.kanmodel.notes.utils.Aid;
+import nov.me.kanmodel.notes.utils.DatabaseHelper;
 import nov.me.kanmodel.notes.utils.RecyclerViewClickListener;
 import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
 

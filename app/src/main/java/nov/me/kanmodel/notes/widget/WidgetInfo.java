@@ -1,4 +1,6 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.widget;
+
+import nov.me.kanmodel.notes.Note;
 
 /**
  * WidgetInfo记录widget信息

@@ -19,7 +19,7 @@ public class Note {
      * @param logTime 便签时间
      * @param time    时间戳
      */
-    Note(String title, String content, String logTime, long time, long lastChangedTime) {
+    public Note(String title, String content, String logTime, long time, long lastChangedTime) {
         this.title = title;
         this.content = content;
         this.logTime = logTime;
@@ -27,7 +27,7 @@ public class Note {
         this.lastChangedTime = lastChangedTime;
     }
 
-    Note(String title, String content, long time) {
+    public Note(String title, String content, long time) {
         this(title, content, "", time, 0);
     }
 
@@ -35,7 +35,7 @@ public class Note {
         return title;
     }
 
-    String getContent() {
+    public String getContent() {
         return content;
     }
 
@@ -47,7 +47,7 @@ public class Note {
         return time;
     }
 
-    void setContent(String content) {
+    public void setContent(String content) {
         this.content = content;
     }
 

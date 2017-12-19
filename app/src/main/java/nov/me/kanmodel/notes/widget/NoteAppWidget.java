@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.widget;
 
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
@@ -15,14 +14,17 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
-import android.widget.RemoteViewsService;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+
+import nov.me.kanmodel.notes.utils.Aid;
+import nov.me.kanmodel.notes.utils.DatabaseHelper;
+import nov.me.kanmodel.notes.MainActivity;
+import nov.me.kanmodel.notes.Note;
+import nov.me.kanmodel.notes.NoteAdapter;
+import nov.me.kanmodel.notes.R;
 
 /**
  * Implementation of App Widget functionality.
@@ -82,7 +84,7 @@ public class NoteAppWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.widget_title, widgetTitle);
         views.setTextViewText(R.id.widget_time, time);
         views.setTextViewText(R.id.widget_content, content);
-        views.setTextViewTextSize(R.id.widget_title, TypedValue.COMPLEX_UNIT_SP,NoteAdapter.getTitleFontSize());
+        views.setTextViewTextSize(R.id.widget_title, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getTitleFontSize());
         views.setTextViewTextSize(R.id.widget_time, TypedValue.COMPLEX_UNIT_SP,NoteAdapter.getTimeFontSize());
         views.setTextViewTextSize(R.id.widget_content, TypedValue.COMPLEX_UNIT_SP,NoteAdapter.getContentFontSize());
         Intent intent1 = new Intent(context, MainActivity.class);

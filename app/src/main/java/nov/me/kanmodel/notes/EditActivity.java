@@ -2,7 +2,6 @@ package nov.me.kanmodel.notes;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,9 +9,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import nov.me.kanmodel.notes.utils.Aid;
 
 /**
  * 编辑便签的Activity
