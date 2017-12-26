@@ -5,12 +5,14 @@
     <header
         android:fragment="nov.me.kanmodel.notes.SettingsActivity$GeneralPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
-        android:title="@string/pref_header_general" />
+        android:title="@string/pref_header_general"
+        android:summary="@string/pref_header_general_summary"/>
 
     <header
         android:fragment="nov.me.kanmodel.notes.SettingsActivity$FontFragment"
         android:icon="@drawable/ic_font_black_24dp"
-        android:title="@string/pref_header_font" />
+        android:title="@string/pref_header_font"
+        android:summary="@string/pref_header_font_summary"/>
 
 
 </preference-headers>

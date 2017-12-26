@@ -121,23 +121,59 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*SharedPreference存储设置数据*/
-//        posSharedPref = getSharedPreferences("app_pos", MODE_PRIVATE);
-//        Aid.pos = posSharedPref.getInt("pos", 0);
-//        posEditor = posSharedPref.edit();
-
-        isDebug = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("switch_preference_is_debug", false);
-        NoteAdapter.setTitleFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("font_title_size", "30")));
-        NoteAdapter.setTimeFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("font_time_size", "16")));
-        NoteAdapter.setContentFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("font_content_size", "24")));
 
         /*判断是否是debug模式*/
+        isDebug = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("switch_preference_is_debug", false);
         Log.d(TAG, "onCreate: isDebug " + isDebug);
         if (isDebug) {
             Toast.makeText(this, "isDebug:" + isDebug + "\n当前版本名称:" + Aid.getVersionName(this) +
                     "\n当前版本号" + Aid.getVersionCode(this), Toast.LENGTH_SHORT).show();
             setTitle(getResources().getString(R.string.app_name) + "[Debug模式]");
         }
+        Log.d(TAG, "onCreate: DatabaseDir: " + getDatabasePath("Note.db").getAbsolutePath());
+
+        initRecyclerView();
+
+        /*组件初始化*/
+        actionBar = getActionBar();
+    }
+
+    /**
+     * 从数据库获取数据添加到noteList集合中
+     */
+    private void initNodes() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query("Note", null, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                /*获取数据库数据*/
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
+                String content = cursor.getString(cursor.getColumnIndex("content"));
+                String title = cursor.getString(cursor.getColumnIndex("title"));
+                int isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
+                String logtime = cursor.getString(cursor.getColumnIndex("logtime"));
+                long time = cursor.getLong(cursor.getColumnIndex("time"));
+                long lastChangedTime = cursor.getLong(cursor.getColumnIndex("lastChangedTime"));
+                if (isDebug) {
+                    Log.d(TAG, "onOptionsItemSelected: id:" + id + "\ntitle:" + title + "\ncontent:"
+                            + content + "\nlogtime:" + logtime + "\ntime:" + time + "\nisDeleted:" + isDeleted);
+                }
+                if (isDeleted == 0) {
+                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+    }
+
+    /**
+     * 初始画RecyclerView
+     */
+    private void initRecyclerView(){
+        /*设置RecyclerView内容字体大小*/
+        NoteAdapter.setTitleFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("font_title_size", "30")));
+        NoteAdapter.setTimeFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("font_time_size", "16")));
+        NoteAdapter.setContentFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("font_content_size", "24")));
 
         /*sql数据库*/
         dbHelper = new DatabaseHelper(this, "Note.db", null, 11);
@@ -180,71 +216,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Long Click " + noteList.get(position), Toast.LENGTH_SHORT).show();
             }
         }));
-//       recyclerView.addOnItemTouchListener(new RecyclerViewClickListener2(this, recyclerView, new RecyclerViewClickListener2.OnItemClickListener() {
-//           @Override
-//           public void onItemClick(View view, int position) {
-//               Note note = noteList.get(position);
-//               Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
-//                       note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
-//               Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
-//               intent.putExtra("pos", position);
-//               intent.putExtra("title", note.getTitle());
-//               intent.putExtra("content", note.getContent());
-//               intent.putExtra("time", Aid.stampToDate(note.getTime()));
-//               intent.putExtra("timeLong", note.getTime());
-//               view.getContext().startActivity(intent);
-//               Toast.makeText(MainActivity.this,"Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
-//           }
-//
-//           @Override
-//           public void onItemLongClick(View view, int position) {
-//               Toast.makeText(MainActivity.this,"Long Click "+ noteList.get(position),Toast.LENGTH_SHORT).show();
-//           }
-//       }));
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                Toast.makeText(MainActivity.this, "onScrollChanged", Toast.LENGTH_SHORT).show();
-//                super.onScrollStateChanged(recyclerView, newState);
-//            }
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-////                Toast.makeText(MainActivity.this, "onScrolled", Toast.LENGTH_SHORT).show();
-//                super.onScrolled(recyclerView, dx, dy);
-//            }
-//        });
-
-        /*组件初始化*/
-        actionBar = getActionBar();
-    }
-
-    /**
-     * 从数据库获取数据添加到noteList集合中
-     */
-    private void initNodes() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.query("Note", null, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                /*获取数据库数据*/
-                int id = cursor.getInt(cursor.getColumnIndex("id"));
-                String content = cursor.getString(cursor.getColumnIndex("content"));
-                String title = cursor.getString(cursor.getColumnIndex("title"));
-                int isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
-                String logtime = cursor.getString(cursor.getColumnIndex("logtime"));
-                long time = cursor.getLong(cursor.getColumnIndex("time"));
-                long lastChangedTime = cursor.getLong(cursor.getColumnIndex("lastChangedTime"));
-                if (isDebug) {
-                    Log.d(TAG, "onOptionsItemSelected: id:" + id + "\ntitle:" + title + "\ncontent:"
-                            + content + "\nlogtime:" + logtime + "\ntime:" + time + "\nisDeleted:" + isDeleted);
-                }
-                if (isDeleted == 0) {
-                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
-                }
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
     }
 
     @Override

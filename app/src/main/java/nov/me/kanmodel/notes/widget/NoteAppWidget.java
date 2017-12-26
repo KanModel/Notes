@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
@@ -35,8 +36,8 @@ public class NoteAppWidget extends AppWidgetProvider {
     private List<WidgetInfo> widgetInfoList = new ArrayList<>();
     private static List<Note> notes = new ArrayList<>();
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    void updateAppWidget(Context context, AppWidgetManager appWidgetManager, final int appWidgetId) {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.note_app_widget);
         Note note = null;
@@ -45,6 +46,11 @@ public class NoteAppWidget extends AppWidgetProvider {
                 note = widgetInfo.getNote();
             }
         }
+        /*widgetInfoList.forEach(wi -> {
+            if (wi.getAppWidgetID() == appWidgetId) {
+                note = wi.getNote();
+            }
+        });*/
         if (note == null) {//数据库中没有相关信息进行添加
             notes = Aid.initNotes(dbHelper);
             long time = notes.get(Aid.pos).getTime();
@@ -85,8 +91,8 @@ public class NoteAppWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.widget_time, time);
         views.setTextViewText(R.id.widget_content, content);
         views.setTextViewTextSize(R.id.widget_title, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getTitleFontSize());
-        views.setTextViewTextSize(R.id.widget_time, TypedValue.COMPLEX_UNIT_SP,NoteAdapter.getTimeFontSize());
-        views.setTextViewTextSize(R.id.widget_content, TypedValue.COMPLEX_UNIT_SP,NoteAdapter.getContentFontSize());
+        views.setTextViewTextSize(R.id.widget_time, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getTimeFontSize());
+        views.setTextViewTextSize(R.id.widget_content, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getContentFontSize());
         Intent intent1 = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent1 = PendingIntent.getActivity(context, 0, intent1, 0);
         views.setOnClickPendingIntent(R.id.widget_title, pendingIntent1);
@@ -95,9 +101,11 @@ public class NoteAppWidget extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Log.d(TAG, "onUpdate: Start");
+        //设置挂件字体大小
         NoteAdapter.setTitleFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_title_size", "30")));
         NoteAdapter.setTimeFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_time_size", "16")));
         NoteAdapter.setContentFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_content_size", "24")));
@@ -155,7 +163,7 @@ public class NoteAppWidget extends AppWidgetProvider {
 //        for (int appWidgetID : appWidgetIds) {
 //            Toast.makeText(context, "删除的是ID" + appWidgetID, Toast.LENGTH_SHORT).show();
 //        }
-        if (MainActivity.getIsDebug()){
+        if (MainActivity.getIsDebug()) {
             Toast.makeText(context, "删除的是ID" + appWidgetIds[0], Toast.LENGTH_SHORT).show();
         }
         Aid.deleteSQLWidget(dbHelper, appWidgetIds[0]);
