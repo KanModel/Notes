@@ -1,8 +1,6 @@
 package nov.me.kanmodel.notes;
 
 import android.annotation.TargetApi;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -21,10 +19,14 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.List;
+
+import nov.me.kanmodel.notes.utils.FileUtils;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -121,6 +123,26 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
                         .getString(preference.getKey(), ""));
+    }
+
+    @Override
+    public void onHeaderClick(Header header, int position) {
+        Log.d(TAG, "onHeaderClick id: " + header.id);
+        if (header.id == R.id.header_backup) {
+            Log.d(TAG, "onHeaderClick id headerBackup: " + header.id);
+            try {
+                String dbCopy = FileUtils.saveDatabaseCopy(getApplicationContext(),getFilesDir());//获取备份数据库文件路径
+//                Intent intent = new Intent(Intent.ACTION_SEND);
+//                Intent chooser = Intent.createChooser(intent, getResources().getString(R.string.save_backup));
+//                startActivity(chooser);
+                FileUtils.showSendFileScreen(dbCopy,this);
+                Log.d(TAG, "onHeaderClick: file_path :" + dbCopy);
+                Log.d(TAG, "onHeaderClick: Success");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        super.onHeaderClick(header, position);
     }
 
     @Override

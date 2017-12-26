@@ -14,5 +14,10 @@
         android:title="@string/pref_header_font"
         android:summary="@string/pref_header_font_summary"/>
 
+    <header
+        android:id="@+id/header_backup"
+        android:icon="@drawable/ic_backup_black_24dp"
+        android:title="@string/pref_header_backup"
+        android:summary="@string/pref_header_backup_summary" />
 
 </preference-headers>
