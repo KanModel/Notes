@@ -23,7 +23,7 @@ import static android.support.v4.content.FileProvider.getUriForFile;
  * 文件操作相关函数集
  */
 
-public class FileUtils {
+public abstract class FileUtils {
     public static void copy(File src, File dst) throws IOException {
         FileInputStream inStream = new FileInputStream(src);
         FileOutputStream outStream = new FileOutputStream(dst);

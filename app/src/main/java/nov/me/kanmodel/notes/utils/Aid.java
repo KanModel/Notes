@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
@@ -252,6 +253,22 @@ public abstract class Aid {
         ContentValues values = new ContentValues();
         values.put("isDeleted", 1);
         db.update("widget", values, "widgetID = ?", new String[]{String.valueOf(widgetID)});
+    }
+
+    private static Typeface fontAwesome;
+
+
+    /**
+     * @param context Context
+     * @return fontawesome字体
+     */
+    public static Typeface getFontAwesome(Context context) {
+        if (fontAwesome == null) {
+            Log.d(TAG, "getFontAwesome: 不存在并添加");
+            fontAwesome = Typeface.createFromAsset(context.getAssets(), "fontawesome-webfont.ttf");
+        }
+        Log.d(TAG, "getFontAwesome: 存在");
+        return fontAwesome;
     }
 
 }

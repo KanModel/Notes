@@ -11,10 +11,14 @@
         android:visible="false">
         <item
             android:id="@+id/main_menu_add"
-            android:title="添加[开发用]" />
+            android:icon="@android:drawable/ic_input_add"
+            android:title="添加[开发用]"
+            app:showAsAction="never" />
         <item
             android:id="@+id/list_database"
-            android:title="数据库遍历[输出至Logcat]" />
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="数据库遍历[输出至Logcat]"
+            app:showAsAction="never" />
         <item
             android:id="@+id/remove_note"
             android:icon="@android:drawable/ic_menu_delete"
@@ -23,8 +27,17 @@
     </group>
     <item
         android:id="@+id/note_clear"
-        android:title="清空列表" />
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:title="清空列表"
+        app:showAsAction="never" />
     <item
         android:id="@+id/main_menu_setting"
-        android:title="@string/main_menu_setting" />
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="@string/main_menu_setting"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/main_menu_about"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="@string/main_menu_about"
+        app:showAsAction="never" />
 </menu>

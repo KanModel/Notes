@@ -29,6 +29,7 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -190,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemViewSwipeEnabled(true);
         noteAdapter = new NoteAdapter(noteList);
         recyclerView.setAdapter(noteAdapter);//设置Note集合
+        Log.d(TAG, "initRecyclerView: length : " + noteAdapter.getItemCount());
 //        recyclerView.addItemDecoration(new NoteDecoration(this, NoteDecoration.VERTICAL_LIST));//todo 分割线与动画联动不美观
 //        recyclerView.addItemDecoration(new DefaultItemDecoration(Color.BLUE, 5, 5));
         recyclerView.addOnItemTouchListener(new RecyclerViewClickListener(this, new RecyclerViewClickListener.OnItemClickListener() {
@@ -244,6 +246,25 @@ public class MainActivity extends AppCompatActivity {
             menu.setGroupVisible(R.id.main_menu_debug, true);
         }
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * 通过反射使图标与文字同时显示
+     */
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        if (menu != null) {
+            if (menu.getClass().getSimpleName().equalsIgnoreCase("MenuBuilder")) {
+                try {
+                    Method method = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+                    method.setAccessible(true);
+                    method.invoke(menu, true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return super.onMenuOpened(featureId, menu);
     }
 
     @Override
@@ -351,6 +372,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.main_menu_setting:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                return true;
+            case R.id.main_menu_about:
+                /*启动关于应用*/
                 return true;
             default:
         }
