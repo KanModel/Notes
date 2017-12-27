@@ -416,6 +416,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.main_menu_about:
                 /*启动关于应用*/
+                startActivity(new Intent(MainActivity.this,AppAboutActivity.class));
                 return true;
             default:
         }

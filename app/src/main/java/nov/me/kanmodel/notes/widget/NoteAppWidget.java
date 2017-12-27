@@ -166,6 +166,7 @@ public class NoteAppWidget extends AppWidgetProvider {
         if (MainActivity.getIsDebug()) {
             Toast.makeText(context, "删除的是ID" + appWidgetIds[0], Toast.LENGTH_SHORT).show();
         }
+        dbHelper = new DatabaseHelper(context, "Note.db", null, 11);//版本需要一致
         Aid.deleteSQLWidget(dbHelper, appWidgetIds[0]);
         updateWidgetInfoList(dbHelper.getWritableDatabase());
         int pos = 0;

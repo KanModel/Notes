@@ -39,6 +39,10 @@
             android:name=".ui.IntroActivity"
             android:label="@string/intro"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".AppAboutActivity"
+            android:parentActivityName=".MainActivity"
+            tools:targetApi="jelly_bean" />
 
         <receiver android:name=".widget.NoteAppWidget">
             <intent-filter>

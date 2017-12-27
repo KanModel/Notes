@@ -34,6 +34,9 @@
     <string name="intro2_title">介绍2</string>
     <string name="intro3_desc">？？？</string>
     <string name="intro">欢迎使用</string>
-    <string translatable="false" name="fa_star_half_o">&#xf123;</string>
+    <string name="fa_star_half_o" translatable="false">&#xf123;</string>
     <string name="empty_note_text">点击右上角＋号添加你的便笺吧</string>
+    <string name="app_about">
+        APP简介:\n   多功能选择的便签\n   精美的画面设计\n   独特的设计理念\n   便捷的手势操作\n开发团队:\n   Piexl\n
+    </string>
 </resources>

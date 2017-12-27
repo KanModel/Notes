@@ -1,10 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#09C"
-    android:padding="@dimen/widget_margin"
     android:orientation="vertical"
-    android:id="@+id/widget_view">
+    android:padding="@dimen/widget_margin">
 
     <TextView
         android:id="@+id/widget_title"
@@ -12,8 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:background="#09C"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
         android:textColor="#ffffff"
         android:textSize="24sp"
         android:textStyle="bold|italic" />
@@ -23,15 +21,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:textColor="#fcee72"
-        android:text="TextView" />
+        android:textColor="#fcee72" />
 
     <TextView
         android:id="@+id/widget_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:textColor="#f2fd8f"
-        android:text="@string/app_name"/>
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:text="@string/app_name"
+        android:textColor="#f2fd8f">
+
+        <requestFocus
+            android:duplicateParentState="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+    </TextView>
 
 </LinearLayout>
