@@ -28,10 +28,12 @@
     <string name="save_backup">保存备份至…</string>
     <string name="main_menu_about">关于应用</string>
     <string name="intro_done">完成</string>
-    <string name="intro_skip">跳过...</string>
+    <string name="intro_skip">跳过…</string>
     <string name="intro1_title">欢迎来到时间便笺</string>
     <string name="intro1_desc">在这里你可以记录你的心情</string>
     <string name="intro2_title">介绍2</string>
     <string name="intro3_desc">？？？</string>
     <string name="intro">欢迎使用</string>
+    <string translatable="false" name="fa_star_half_o">&#xf123;</string>
+    <string name="empty_note_text">点击右上角＋号添加你的便笺吧</string>
 </resources>

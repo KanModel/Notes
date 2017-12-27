@@ -142,7 +142,7 @@ public class EditActivity extends AppCompatActivity {
         progressDialog.setTitle("保存您的更改");
         progressDialog.setMessage("正在保存...");
         progressDialog.setCancelable(false);
-        progressDialog.show();
+//        progressDialog.show();
     }
 
     private void saveOriginalNote(String title, String content) {
@@ -153,6 +153,6 @@ public class EditActivity extends AppCompatActivity {
         progressDialog.setTitle("保存您的更改");
         progressDialog.setMessage("正在保存...");
         progressDialog.setCancelable(false);
-        progressDialog.show();
+//        progressDialog.show();
     }
 }

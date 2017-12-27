@@ -17,6 +17,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -44,8 +46,8 @@ import nov.me.kanmodel.notes.utils.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    //    public static RecyclerView recyclerView;
     public static SwipeMenuRecyclerView recyclerView;
+
     /**
      * 菜单创建器。在Item要创建菜单的时候调用。
      */
@@ -88,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             long time = NoteAdapter.getNotes().get(adapterPosition).getTime();
             Aid.deleteSQLNote(time);
             noteAdapter.removeData(adapterPosition);
+            checkEmpty();
         }
     };
 
@@ -111,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Note> noteList = new ArrayList<>();
     private static NoteAdapter noteAdapter;
     private PreferenceManager preferences;
+    private static LinearLayout emptyView;
+    private static TextView emptyTV;
 
     static boolean isDebug = false;
     int REQUEST_CODE_INTRO = 1001;
@@ -159,6 +164,9 @@ public class MainActivity extends AppCompatActivity {
         /*组件初始化*/
         actionBar = getActionBar();
         preferences = new PreferenceManager(this.getApplicationContext());
+        emptyView = findViewById(R.id.empty_view);
+        emptyTV = findViewById(R.id.empty_view_text);
+        emptyTV.setTypeface(Aid.getFontAwesome(getApplicationContext()));
 
         /*判断是否是debug模式*/
         isDebug = preferences.getDebug();
@@ -195,8 +203,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 //        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));//瀑布流
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setSwipeMenuCreator(swipeMenuCreator);
-        recyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
+//        recyclerView.setSwipeMenuCreator(swipeMenuCreator);
+//        recyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
         recyclerView.setOnItemMoveListener(mItemMoveListener);
         recyclerView.setItemViewSwipeEnabled(true);
         noteAdapter = new NoteAdapter(noteList);
@@ -228,6 +236,17 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Long Click " + noteList.get(position), Toast.LENGTH_SHORT).show();
             }
         }));
+        checkEmpty();
+    }
+
+    public static void checkEmpty(){
+        if (noteAdapter.getItemCount() == 0) {
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -247,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
             setTitle(getResources().getString(R.string.app_name));
         }
 //        noteAdapter.notifyDataSetChanged();
+        checkEmpty();
         super.onResume();
     }
 
@@ -330,6 +350,7 @@ public class MainActivity extends AppCompatActivity {
                         "周二晚上11点，辛辛那提市一公寓突然发生火花爆炸，在消防员赶到之前，火焰已经蔓延了6间屋子。\n" +
                         "消防员紧急撤离了楼内住户，并开始灭火。火势很快扑灭，万幸没有人员伤亡，但房屋已被烧毁，三名成年人和五名儿童流离失所。", "13岁熊孩子为了灭虫把整栋楼都烧了 网友：值了"));
                 recyclerView.scrollToPosition(0);//移动到顶端
+                checkEmpty();
                 return true;
             case R.id.remove_note:
                 /*清空数据库*/
@@ -350,6 +371,7 @@ public class MainActivity extends AppCompatActivity {
                         noteList.clear();
                         initNodes();
                         noteAdapter.refreshAllData(size);
+                        checkEmpty();
                     }
                 });
                 AlertDialog dialog = builder.create();
@@ -387,6 +409,7 @@ public class MainActivity extends AppCompatActivity {
                 noteList.clear();
                 initNodes();
                 noteAdapter.refreshAllData(size);
+                checkEmpty();
                 return true;
             case R.id.main_menu_setting:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));

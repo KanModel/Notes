@@ -1,8 +1,6 @@
 package nov.me.kanmodel.notes.ui;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
