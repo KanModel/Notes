@@ -2,11 +2,9 @@ package nov.me.kanmodel.notes;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,10 +31,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import nov.me.kanmodel.notes.ui.IntroActivity;
 import nov.me.kanmodel.notes.utils.Aid;
 import nov.me.kanmodel.notes.utils.DatabaseHelper;
 import nov.me.kanmodel.notes.utils.RecyclerViewClickListener;
 import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
+import nov.me.kanmodel.notes.utils.PreferenceManager;
 
 /**
  * 主要Activity
@@ -110,10 +110,10 @@ public class MainActivity extends AppCompatActivity {
     private static DatabaseHelper dbHelper;
     private List<Note> noteList = new ArrayList<>();
     private static NoteAdapter noteAdapter;
-    private SharedPreferences posSharedPref;
-    private static SharedPreferences.Editor posEditor;
+    private PreferenceManager preferences;
 
     static boolean isDebug = false;
+    int REQUEST_CODE_INTRO = 1001;
 
     public android.app.ActionBar actionBar;
 
@@ -122,21 +122,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        /*判断是否是debug模式*/
-        isDebug = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("switch_preference_is_debug", false);
-        Log.d(TAG, "onCreate: isDebug " + isDebug);
-        if (isDebug) {
-            Toast.makeText(this, "isDebug:" + isDebug + "\n当前版本名称:" + Aid.getVersionName(this) +
-                    "\n当前版本号" + Aid.getVersionCode(this), Toast.LENGTH_SHORT).show();
-            setTitle(getResources().getString(R.string.app_name) + "[Debug模式]");
-        }
-        Log.d(TAG, "onCreate: DatabaseDir: " + getDatabasePath("Note.db").getAbsolutePath());
+        initComponent();
 
         initRecyclerView();
-
-        /*组件初始化*/
-        actionBar = getActionBar();
     }
 
     /**
@@ -167,14 +155,36 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
     }
 
+    private void initComponent() {
+        /*组件初始化*/
+        actionBar = getActionBar();
+        preferences = new PreferenceManager(this.getApplicationContext());
+
+        /*判断是否是debug模式*/
+        isDebug = preferences.getDebug();
+        Log.d(TAG, "onCreate: isDebug " + isDebug);
+        if (isDebug) {
+            Toast.makeText(this, "isDebug:" + isDebug + "\n当前版本名称:" + Aid.getVersionName(this) +
+                    "\n当前版本号" + Aid.getVersionCode(this), Toast.LENGTH_SHORT).show();
+            setTitle(getResources().getString(R.string.app_name) + "[Debug模式]");
+            Log.d(TAG, "onCreate: DatabaseDir: " + getDatabasePath("Note.db").getAbsolutePath());
+        }
+//        if (preferences.isFirstLaunch()) {
+        if (isDebug || preferences.isFirstLaunch()) {
+            startActivityForResult(new Intent(this, IntroActivity.class), REQUEST_CODE_INTRO);
+            Log.d(TAG, "initComponent: IntroActivity");
+//            startActivity(new Intent(MainActivity.this, IntroActivity.class));
+        }
+    }
+
     /**
      * 初始画RecyclerView
      */
-    private void initRecyclerView(){
+    private void initRecyclerView() {
         /*设置RecyclerView内容字体大小*/
-        NoteAdapter.setTitleFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("font_title_size", "30")));
-        NoteAdapter.setTimeFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("font_time_size", "16")));
-        NoteAdapter.setContentFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("font_content_size", "24")));
+        NoteAdapter.setTitleFontSize(preferences.getFontTitleSize());
+        NoteAdapter.setTimeFontSize(preferences.getFontTimeSize());
+        NoteAdapter.setContentFontSize(preferences.getFontContextSize());
 
         /*sql数据库*/
         dbHelper = new DatabaseHelper(this, "Note.db", null, 11);
@@ -218,6 +228,14 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Long Click " + noteList.get(position), Toast.LENGTH_SHORT).show();
             }
         }));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_INTRO) {
+            preferences.setFirstLaunch(false);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -399,19 +417,11 @@ public class MainActivity extends AppCompatActivity {
         return recyclerView;
     }
 
-    public static SharedPreferences.Editor getPosEditor() {
-        return posEditor;
-    }
-
     public static boolean getIsDebug() {
         return isDebug;
     }
 
     public static void setIsDebug(boolean isDebug) {
         MainActivity.isDebug = isDebug;
-    }
-
-    public static void switchDebug(boolean isDebug) {
-
     }
 }

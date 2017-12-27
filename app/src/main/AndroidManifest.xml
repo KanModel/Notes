@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="nov.me.kanmodel.notes">
+
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
 
     <application
@@ -34,6 +35,10 @@
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity"
             tools:targetApi="jelly_bean" />
+        <activity
+            android:name=".ui.IntroActivity"
+            android:label="@string/intro"
+            android:screenOrientation="portrait" />
 
         <receiver android:name=".widget.NoteAppWidget">
             <intent-filter>
@@ -47,8 +52,8 @@
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="nov.me.kanmodel.notes"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
