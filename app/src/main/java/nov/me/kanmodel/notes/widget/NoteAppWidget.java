@@ -46,11 +46,6 @@ public class NoteAppWidget extends AppWidgetProvider {
                 note = widgetInfo.getNote();
             }
         }
-        /*widgetInfoList.forEach(wi -> {
-            if (wi.getAppWidgetID() == appWidgetId) {
-                note = wi.getNote();
-            }
-        });*/
         if (note == null) {//数据库中没有相关信息进行添加
             notes = Aid.initNotes(dbHelper);
             long time = notes.get(Aid.pos).getTime();
@@ -61,7 +56,6 @@ public class NoteAppWidget extends AppWidgetProvider {
                 note = new Note("此便签可能以删除,请您手动删除", "", Aid.getNowTime());
             }
         }
-//        CharSequence widgetTitle = context.getString(R.string.appwidget_text);
         String widgetTitle = note.getTitle();
         String time = Aid.stampToDate(note.getTime());
         String content = note.getContent();
@@ -87,15 +81,17 @@ public class NoteAppWidget extends AppWidgetProvider {
 //            }
 //        }
         //设置挂件内容
+        //设置对应挂件内容
         views.setTextViewText(R.id.widget_title, widgetTitle);
         views.setTextViewText(R.id.widget_time, time);
         views.setTextViewText(R.id.widget_content, content);
+        //设置挂件字体大小
         views.setTextViewTextSize(R.id.widget_title, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getTitleFontSize());
         views.setTextViewTextSize(R.id.widget_time, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getTimeFontSize());
         views.setTextViewTextSize(R.id.widget_content, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getContentFontSize());
-        Intent intent1 = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent1 = PendingIntent.getActivity(context, 0, intent1, 0);
-        views.setOnClickPendingIntent(R.id.widget_title, pendingIntent1);
+        Intent openAppIntent = new Intent(context, MainActivity.class);
+        PendingIntent openAppPendingIntent = PendingIntent.getActivity(context, 0, openAppIntent, 0);
+        views.setOnClickPendingIntent(R.id.widget_title, openAppPendingIntent);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
