@@ -1,6 +1,5 @@
 package nov.me.kanmodel.notes.widget;
 
-import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -20,12 +19,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import nov.me.kanmodel.notes.utils.Aid;
+import nov.me.kanmodel.notes.utils.dbAid;
 import nov.me.kanmodel.notes.utils.DatabaseHelper;
 import nov.me.kanmodel.notes.MainActivity;
 import nov.me.kanmodel.notes.Note;
 import nov.me.kanmodel.notes.NoteAdapter;
 import nov.me.kanmodel.notes.R;
+import nov.me.kanmodel.notes.utils.TimeAid;
 
 /**
  * Implementation of App Widget functionality.
@@ -47,20 +47,20 @@ public class NoteAppWidget extends AppWidgetProvider {
             }
         }
         if (note == null) {//数据库中没有相关信息进行添加
-            notes = Aid.initNotes(dbHelper);
-            long time = notes.get(Aid.pos).getTime();
-            Aid.addSQLWidget(dbHelper, time, appWidgetId);
-            note = Aid.querySQLNote(dbHelper, time);
+            notes = dbAid.initNotes(dbHelper);
+            long time = notes.get(dbAid.pos).getTime();
+            dbAid.addSQLWidget(dbHelper, time, appWidgetId);
+            note = dbAid.querySQLNote(dbHelper, time);
             updateWidgetInfoList(dbHelper.getWritableDatabase());//添加后刷新表
             if (note == null) {
-                note = new Note("此便签可能以删除,请您手动删除", "", Aid.getNowTime());
+                note = new Note("此便签可能以删除,请您手动删除", "", TimeAid.getNowTime());
             }
         }
         String widgetTitle = note.getTitle();
-        String time = Aid.stampToDate(note.getTime());
+        String time = TimeAid.stampToDate(note.getTime());
         String content = note.getContent();
 //        if (NoteAdapter.getNotes() != null) {
-//            note = NoteAdapter.getNotes().get(Aid.pos);
+//            note = NoteAdapter.getNotes().get(dbAid.pos);
 //            widgetTitle = note.getTitle();
 //            time = note.getLogTime();
 //            content = note.getContent();
@@ -68,7 +68,7 @@ public class NoteAppWidget extends AppWidgetProvider {
 //            if (MainActivity.getIsDebug()) {
 //                Toast.makeText(context, "开机Debug", Toast.LENGTH_SHORT).show();
 //            }
-//            List<Note> noteList = Aid.initNotes(dbHelper);
+//            List<Note> noteList = dbAid.initNotes(dbHelper);
 //            note = noteList.get(0);
 //            if (note != null) {
 //                widgetTitle = note.getTitle();
@@ -132,8 +132,8 @@ public class NoteAppWidget extends AppWidgetProvider {
                 long time = cursor.getLong(cursor.getColumnIndex("time"));
                 if (isDeleted == 0) {
 //                    widgetInfoList.add(new WidgetInfo(time, widgetID));
-                    widgetInfoList.add(new WidgetInfo(time, widgetID, Aid.querySQLNote(dbHelper, time)));
-//                    widgetInfoList.add(Aid.querySQLWidget(dbHelper, time));
+                    widgetInfoList.add(new WidgetInfo(time, widgetID, dbAid.querySQLNote(dbHelper, time)));
+//                    widgetInfoList.add(dbAid.querySQLWidget(dbHelper, time));
 //                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
                 }
             } while (cursor.moveToNext());
@@ -163,7 +163,7 @@ public class NoteAppWidget extends AppWidgetProvider {
             Toast.makeText(context, "删除的是ID" + appWidgetIds[0], Toast.LENGTH_SHORT).show();
         }
         dbHelper = new DatabaseHelper(context, "Note.db", null, 11);//版本需要一致
-        Aid.deleteSQLWidget(dbHelper, appWidgetIds[0]);
+        dbAid.deleteSQLWidget(dbHelper, appWidgetIds[0]);
         updateWidgetInfoList(dbHelper.getWritableDatabase());
         int pos = 0;
         for (int i = 0; i < widgetInfoList.size(); i++) {

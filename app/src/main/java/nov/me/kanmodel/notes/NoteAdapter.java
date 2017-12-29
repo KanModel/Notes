@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import nov.me.kanmodel.notes.utils.Aid;
+import nov.me.kanmodel.notes.utils.TimeAid;
 
 /**
  * 重写RecyclerView类
@@ -78,9 +78,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         timeTV.setTextSize(timeFontSize);
         long time = note.getTime(), lastChangedTime = note.getLastChangedTime();
         if (time == lastChangedTime) {
-            timeTV.setText(Aid.stampToDate(time));
+            timeTV.setText(TimeAid.stampToDate(time));
         } else {
-            timeTV.setText(Aid.stampToDate(time) + " - 最后更改于" + Aid.stampToDate(lastChangedTime));
+            timeTV.setText(TimeAid.stampToDate(time) + " - 最后更改于" + TimeAid.stampToDate(lastChangedTime));
         }
 //        holder.noteView.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -93,7 +93,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 ////                intent.putExtra("pos", position);
 ////                intent.putExtra("title", note.getTitle());
 ////                intent.putExtra("content", note.getContent());
-////                intent.putExtra("time", Aid.stampToDate(note.getTime()));
+////                intent.putExtra("time", dbAid.stampToDate(note.getTime()));
 ////                intent.putExtra("timeLong", note.getTime());
 ////                view.getContext().startActivity(intent);
 //            }

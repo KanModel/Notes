@@ -9,8 +9,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.util.Log;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -24,36 +26,13 @@ import nov.me.kanmodel.notes.widget.WidgetInfo;
  * Created by KanModel on 2017/11/26.
  */
 
-public abstract class Aid {
+public abstract class dbAid {
 
     private static final String TAG = "AidClass";
 
     public static int pos = 0;
 
-    public static long getNowTime() {
-        return new Date().getTime();
-    }
 
-    /**
-     * @param time 字符串类型的时间戳
-     * @return 时间字符串
-     */
-    public static String stampToDate(String time) {
-        String res;
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        long lt = Long.valueOf(time);
-        Date date = new Date(lt);
-        res = simpleDateFormat.format(date);
-        return res;
-    }
-
-    /**
-     * @param time long类型的时间戳
-     * @return 时间字符串
-     */
-    public static String stampToDate(long time) {
-        return stampToDate(String.valueOf(time));
-    }
 
     /**
      * @param dbHelper 数据库操作类
@@ -78,7 +57,7 @@ public abstract class Aid {
      * @return 返回新添加的Note类
      */
     public static Note addSQLNote(DatabaseHelper dbHelper, String content, String title) {
-        return addSQLNote(dbHelper, content, title, Aid.getNowTime(), Aid.getNowTime());
+        return addSQLNote(dbHelper, content, title, TimeAid.getNowTime(), TimeAid.getNowTime());
     }
 
     public static Note addSQLNote(DatabaseHelper dbHelper, String content, String title, long timeStamp, long lastChangedTimeStamp) {
@@ -143,41 +122,6 @@ public abstract class Aid {
     public static void deleteSQLNoteForced() {
         SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
         db.delete("Note", "time > ?", new String[]{"0"});
-    }
-
-    /**
-     * 获取当前本地apk的版本
-     *
-     * @param context
-     * @return 返回版本号
-     */
-    public static int getVersionCode(Context context) {
-        int versionCode = 0;
-        try {
-            //获取软件版本号，对应AndroidManifest.xml下android:versionCode
-            versionCode = context.getPackageManager().
-                    getPackageInfo(context.getPackageName(), 0).versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return versionCode;
-    }
-
-    /**
-     * 获取版本号名称
-     *
-     * @param context 上下文
-     * @return 版本名称
-     */
-    public static String getVersionName(Context context) {
-        String verName = "";
-        try {
-            verName = context.getPackageManager().
-                    getPackageInfo(context.getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return verName;
     }
 
     public static List<Note> initNotes(DatabaseHelper dbHelper) {
@@ -253,22 +197,6 @@ public abstract class Aid {
         ContentValues values = new ContentValues();
         values.put("isDeleted", 1);
         db.update("widget", values, "widgetID = ?", new String[]{String.valueOf(widgetID)});
-    }
-
-    private static Typeface fontAwesome;
-
-
-    /**
-     * @param context Context
-     * @return fontawesome字体
-     */
-    public static Typeface getFontAwesome(Context context) {
-        if (fontAwesome == null) {
-            Log.d(TAG, "getFontAwesome: 不存在并添加");
-            fontAwesome = Typeface.createFromAsset(context.getAssets(), "fontawesome-webfont.ttf");
-        }
-        Log.d(TAG, "getFontAwesome: 存在");
-        return fontAwesome;
     }
 
 }

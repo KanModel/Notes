@@ -12,14 +12,21 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import nov.me.kanmodel.notes.utils.Aid;
+import java.util.Locale;
+
+import nov.me.kanmodel.notes.ui.TimeAndDatePickerDialog;
+import nov.me.kanmodel.notes.utils.Utils;
+import nov.me.kanmodel.notes.utils.dbAid;
+import nov.me.kanmodel.notes.utils.TimeAid;
 
 /**
  * 编辑便签的Activity
  */
 
-public class EditActivity extends AppCompatActivity {
+public class EditActivity extends AppCompatActivity implements TimeAndDatePickerDialog.TimePickerDialogInterface {
     private static final String TAG = "EditActivity";
+
+    private TimeAndDatePickerDialog dialog;
 
     private EditText titleET;
     private TextView timeTV;
@@ -37,7 +44,7 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        Log.d(TAG, "onCreate: start " + Aid.getVersionName(this));
+        Log.d(TAG, "onCreate: start " + Utils.getVersionName(this));
         titleET = findViewById(R.id.editor_title);
         timeTV = findViewById(R.id.editor_time);
         contentET = findViewById(R.id.editor_content);
@@ -53,7 +60,7 @@ public class EditActivity extends AppCompatActivity {
         if (time == lastChangedTime) {
             timeTV.setText(parentIntent.getStringExtra("time"));
         } else {
-            timeTV.setText(Aid.stampToDate(time) + " - 最后更改于" + Aid.stampToDate(lastChangedTime));
+            timeTV.setText(TimeAid.stampToDate(time) + " - 最后更改于" + TimeAid.stampToDate(lastChangedTime));
         }
 
         isNew = parentIntent.getBooleanExtra("isNew", false);
@@ -71,7 +78,7 @@ public class EditActivity extends AppCompatActivity {
             }
         } else {
             if (this.content.equals(content) && this.title.equals(title)) {
-                if (MainActivity.getIsDebug()){
+                if (MainActivity.getIsDebug()) {
                     Toast.makeText(this, "未改变便签不保存", Toast.LENGTH_SHORT).show();
                 }
             } else {
@@ -111,7 +118,7 @@ public class EditActivity extends AppCompatActivity {
                     }
                 } else {
                     if (this.content.equals(content) && this.title.equals(title)) {
-                        if (MainActivity.getIsDebug()){
+                        if (MainActivity.getIsDebug()) {
                             Toast.makeText(this, "未改变便签不保存", Toast.LENGTH_SHORT).show();
                         }
                     } else {
@@ -121,12 +128,16 @@ public class EditActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.add_to_desktop:
-                Aid.pos = pos;
+                dbAid.pos = pos;
                 Toast.makeText(this, "添加本便签到桌面", Toast.LENGTH_SHORT).show();
                 Intent home = new Intent(Intent.ACTION_MAIN);
                 home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 home.addCategory(Intent.CATEGORY_HOME);
                 startActivity(home);
+                return true;
+            case R.id.add_time:
+                dialog = new TimeAndDatePickerDialog(this);
+                dialog.showDateAndTimePickerDialog();
                 return true;
             default:
                 break;
@@ -135,8 +146,8 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void saveNewNote(String title, String content) {
-        lastChangedTime = Aid.getNowTime();
-        MainActivity.getNoteAdapter().addData(Aid.addSQLNote(MainActivity.getDbHelper(), content, title, lastChangedTime, lastChangedTime));
+        lastChangedTime = TimeAid.getNowTime();
+        MainActivity.getNoteAdapter().addData(dbAid.addSQLNote(MainActivity.getDbHelper(), content, title, lastChangedTime, lastChangedTime));
         MainActivity.getRecyclerView().scrollToPosition(0);
         ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);
         progressDialog.setTitle("保存您的更改");
@@ -146,13 +157,40 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void saveOriginalNote(String title, String content) {
-        lastChangedTime = Aid.getNowTime();
+        lastChangedTime = TimeAid.getNowTime();
         int pos = parentIntent.getIntExtra("pos", 0);
-        Aid.updateSQLNote(title, content, time, pos, lastChangedTime);
+        dbAid.updateSQLNote(title, content, time, pos, lastChangedTime);
         ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);
         progressDialog.setTitle("保存您的更改");
         progressDialog.setMessage("正在保存...");
         progressDialog.setCancelable(false);
 //        progressDialog.show();
+    }
+
+    @Override
+    public void positiveListener() {
+//        mTv_getOffWork.setText(hour+":"+minute);
+        Log.d(TAG, "positiveListener: year  :" + dialog.getYear());
+        Log.d(TAG, "positiveListener: month :" + dialog.getMonth());
+        Log.d(TAG, "positiveListener: day   :" + dialog.getDay());
+        Log.d(TAG, "positiveListener: hour  :" + dialog.getHour());
+        Log.d(TAG, "positiveListener: minute:" + dialog.getMinute());
+        String dstStr = String.format(Locale.CHINA, "%d-%d-%d %d:%d:00", dialog.getYear(), dialog.getMonth(), dialog.getDay(), dialog.getHour(), dialog.getMinute());
+//        long dstTime = dbAid.getTimeStamp(dialog.getYear(),
+//                dialog.getMonth(), dialog.getDay(), dialog.getHour(), dialog.getMinute());
+        long dstTime = TimeAid.dateToStamp(dstStr);
+        long nowTime = TimeAid.getNowTime();
+        Log.d(TAG, "positiveListener: dstTime:" + dstTime);
+        Log.d(TAG, "positiveListener: nowTime:" + nowTime);
+        Log.d(TAG, "positiveListener: STAMP :" + dstTime);
+        Log.d(TAG, "positiveListener: diff  :" + TimeAid.getDiff(dstTime, nowTime));
+        Log.d(TAG, "positiveListener: diff DAY    : " + TimeAid.getDiffDay(dstTime, nowTime));
+        Log.d(TAG, "positiveListener: diff Hour   : " + TimeAid.getDiffHour(dstTime, nowTime));
+        Log.d(TAG, "positiveListener: diff Minutes: " + TimeAid.getDiffMinutes(dstTime, nowTime));
+    }
+
+    @Override
+    public void negativeListener() {
+
     }
 }

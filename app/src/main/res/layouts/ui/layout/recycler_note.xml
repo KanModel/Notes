@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="4dp"
-    android:layout_marginRight="4dp"
     android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    android:layout_marginTop="4dp"
     android:background="@drawable/recycler_note_shape"
     android:orientation="vertical">
 
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@null"
-        android:editable="false"
+        android:focusable="false"
         android:inputType="none"
         android:textSize="30sp" />
 
@@ -29,6 +29,15 @@
         android:layout_height="wrap_content"
         android:background="@null"
         android:editable="false"
+        android:ellipsize="end"
+        android:focusable="false"
+        android:scrollHorizontally="false"
+        android:singleLine="true"
         android:textSize="24sp" />
 
+    <TextView
+        android:id="@+id/r_dis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 </LinearLayout>

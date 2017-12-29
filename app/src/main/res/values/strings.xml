@@ -39,4 +39,6 @@
     <string name="app_about">
         APP简介:\n   多功能选择的便签\n   精美的画面设计\n   独特的设计理念\n   便捷的手势操作\n开发团队:\n   Piexl\n
     </string>
+    <string name="add_to_desktop">添加到桌面</string>
+    <string name="add_time">添加提醒时间</string>
 </resources>

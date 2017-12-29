@@ -47,7 +47,7 @@ public abstract class FileUtils {
     public static String saveDatabaseCopy(Context context, File dir)
             throws IOException {
         SimpleDateFormat dateFormat = DateFormats.getBackupDateFormat();
-        String date = dateFormat.format(Aid.getNowTime());
+        String date = dateFormat.format(TimeAid.getNowTime());
         String format = "%s/Note Backup %s.db";
         String filename = String.format(format, dir.getAbsolutePath(), date);
 

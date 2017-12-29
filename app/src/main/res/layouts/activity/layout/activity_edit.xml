@@ -34,4 +34,10 @@
         android:inputType="textMultiLine"
         android:scrollbars="vertical"
         android:text="Name" />
+
+    <TextView
+        android:id="@+id/editor_dis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 </LinearLayout>
