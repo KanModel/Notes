@@ -36,13 +36,15 @@ import nov.me.kanmodel.notes.utils.TimeAid;
 public class NoteAppWidget extends AppWidgetProvider {
     private static final String TAG = "NoteAppWidget";
     private static DatabaseHelper dbHelper;
-    private List<WidgetInfo> widgetInfoList = new ArrayList<>();
+    private static Context mContext;
+    private static List<WidgetInfo> widgetInfoList = new ArrayList<>();
     private static List<Note> notes = new ArrayList<>();
 
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager, final int appWidgetId) {
         // Construct the RemoteViews object
+//        context.registerReceiver()
         Note note = null;
         for (WidgetInfo widgetInfo : widgetInfoList) {//遍历表寻找对应id的挂件
             if (widgetInfo.getAppWidgetID() == appWidgetId) {
@@ -56,7 +58,7 @@ public class NoteAppWidget extends AppWidgetProvider {
                 dbAid.addSQLWidget(dbHelper, time, appWidgetId);
                 note = dbAid.querySQLNote(dbHelper, time);
                 updateWidgetInfoList(dbHelper.getWritableDatabase());//添加后刷新表
-            }catch (IndexOutOfBoundsException e){
+            } catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
             }
             if (note == null) {
@@ -139,6 +141,8 @@ public class NoteAppWidget extends AppWidgetProvider {
                 views.setTextViewText(R.id.widget_dis, "剩余 " + hour + "小时");
             } else if (minute > 0) {
                 views.setTextViewText(R.id.widget_dis, "剩余 " + minute + "分钟");
+            } else {
+                views.setViewVisibility(R.id.widget_dis, View.GONE);
             }
         }
 
@@ -164,8 +168,14 @@ public class NoteAppWidget extends AppWidgetProvider {
         return getRemoteView(context, time, title, TimeAid.stampToDate(time), content);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public static RemoteViews getRemoteView(Context context, long time) {
+        Note note = dbAid.querySQLNote(dbAid.getDbHelper(context), time);
+        return getRemoteView(context, time, note.getTitle(), note.getContent());
+    }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public static void updateWidget(Context context, long time, String title, String content){
+    public static void updateWidget(Context context, long time, String title, String content) {
         try {
             AppWidgetManager.getInstance(context).updateAppWidget(dbAid.querySQLWidget(context, time).getAppWidgetID()
                     , NoteAppWidget.getRemoteView(context, time, title, content));
@@ -174,10 +184,19 @@ public class NoteAppWidget extends AppWidgetProvider {
         }
     }
 
+    public static void updateAllWidget() {
+        for (WidgetInfo info : widgetInfoList) {
+            Note note = dbAid.querySQLNote(dbAid.getDbHelper(mContext), info.getTime());
+            updateWidget(mContext, info.getTime(), note.getTitle(), note.getContent());
+        }
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Log.d(TAG, "onUpdate: Start");
+        mContext = context;
+        context.startService(new Intent(context, UpdateWidgetService.class));
         //设置挂件字体大小
         NoteAdapter.setTitleFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_title_size", "20")));
         NoteAdapter.setTimeFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_time_size", "16")));

@@ -7,9 +7,14 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import java.io.File;
 import java.util.Date;
 
 import nov.me.kanmodel.notes.MainActivity;
@@ -37,8 +42,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             Notification notify = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.drawable.logo_appwidget_preview)
                     .setContentTitle("时间便笺提醒")
-//                    .setTicker("您的***项目即将到期，请及时处理！")
-//                    .setTicker(intent.getStringExtra("title"))
+                    .setSound(Uri.fromFile(new File("/system/media/audio/alarms/White_Rabbit.ogg")))
+                    .setVibrate(new long[]{0, 1000, 1000, 1000})
+                    .setLights(Color.GREEN, 1000, 1000)
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(intent.getStringExtra("title")))
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
@@ -47,6 +53,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static void setAlarm(Context context, long time, String title) {
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.setAction("NOTIFICATION");
@@ -60,7 +67,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 //        long intervalMillis = 1000 * 60;
 //        manager.setInexactRepeating(type, triggerAtMillis, intervalMillis, pi);
         if (manager != null) {
-            manager.set(type, triggerAtMillis, pi);
+            manager.setExact(type, triggerAtMillis, pi);
         }
     }
 }

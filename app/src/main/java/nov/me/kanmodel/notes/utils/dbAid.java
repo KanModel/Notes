@@ -176,7 +176,7 @@ public abstract class dbAid {
         }
         cursor.close();
         if (isDeleted == 1) {
-            return null;
+            return new Note("此便签可能以删除,请您手动删除", "", TimeAid.getNowTime());
         }
         return new Note(title, content, time);
     }
