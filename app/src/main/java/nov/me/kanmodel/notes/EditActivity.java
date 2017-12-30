@@ -1,7 +1,5 @@
 package nov.me.kanmodel.notes;
 
-import android.app.ProgressDialog;
-import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +15,7 @@ import android.widget.Toast;
 
 import java.util.Locale;
 
+import nov.me.kanmodel.notes.receiver.AlarmReceiver;
 import nov.me.kanmodel.notes.ui.TimeAndDatePickerDialog;
 import nov.me.kanmodel.notes.utils.TimeAid;
 import nov.me.kanmodel.notes.utils.Utils;
@@ -212,6 +211,7 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
         Log.d(TAG, "positiveListener: diff Minutes: " + dMinute);
 //        dbAid.addSQLNotice(this, time, dstTime);
 //        dbAid.updateSQLNotice(this, time, dstTime);
+        title = titleET.getText().toString();
         if (dDay > 0) {
             Toast.makeText(this, "你设定了提醒时间 :" + dstStr
                     + "\n将于" + dDay + "天后提醒你", Toast.LENGTH_SHORT).show();
@@ -222,6 +222,8 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
             Toast.makeText(this, "你设定了提醒时间 :" + dstStr
                     + "\n将于" + dMinute + "分钟后提醒你", Toast.LENGTH_SHORT).show();
         }
+        AlarmReceiver.setAlarm(this, dDay * 1000 * 60 * 60 * 24 + dHour * 1000 * 60 *60 + dMinute * 1000 * 60, title);
+        Log.d(TAG, "positiveListener: title" + title);
         dbAid.newSQLNotice(this, time, dstTime);
     }
 

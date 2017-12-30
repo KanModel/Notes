@@ -103,6 +103,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                 dstTV.setText("剩余 " + hour + "小时");
             } else if (minute > 0) {
                 dstTV.setText("剩余 " + minute + "分钟");
+            } else {
+                dstTV.setVisibility(View.GONE);
             }
         }
 //        holder.noteView.setOnClickListener(new View.OnClickListener() {
