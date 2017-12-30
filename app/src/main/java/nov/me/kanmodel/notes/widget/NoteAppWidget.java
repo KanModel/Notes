@@ -1,5 +1,6 @@
 package nov.me.kanmodel.notes.widget;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -157,6 +158,16 @@ public class NoteAppWidget extends AppWidgetProvider {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public static RemoteViews getRemoteView(Context context, long time, String title, String content) {
         return getRemoteView(context, time, title, TimeAid.stampToDate(time), content);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static void updateWidget(Context context, long time, String title, String content){
+        try {
+            AppWidgetManager.getInstance(context).updateAppWidget(dbAid.querySQLWidget(context, time).getAppWidgetID()
+                    , NoteAppWidget.getRemoteView(context, time, title, content));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)

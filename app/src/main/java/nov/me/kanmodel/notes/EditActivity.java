@@ -89,8 +89,7 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
             } else {
                 saveOriginalNote(title, content);
             }
-            AppWidgetManager.getInstance(this).updateAppWidget(dbAid.querySQLWidget(this, time).getAppWidgetID()
-                    , NoteAppWidget.getRemoteView(this, time, title, content));
+            NoteAppWidget.updateWidget(this, time, title, content);
         }
         finish();
         super.onBackPressed();
@@ -141,8 +140,9 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
                     } else {
                         saveOriginalNote(title, content);
                     }
-                    AppWidgetManager.getInstance(this).updateAppWidget(dbAid.querySQLWidget(this, time).getAppWidgetID()
-                            , NoteAppWidget.getRemoteView(this, time, title, content));
+//                    AppWidgetManager.getInstance(this).updateAppWidget(dbAid.querySQLWidget(this, time).getAppWidgetID()
+//                            , NoteAppWidget.getRemoteView(this, time, title, content));
+                    NoteAppWidget.updateWidget(this, time, title, content);
                 }
                 finish();
                 return true;
