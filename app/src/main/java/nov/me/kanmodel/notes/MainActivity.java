@@ -1,5 +1,6 @@
 package nov.me.kanmodel.notes;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -56,16 +57,22 @@ public class MainActivity extends AppCompatActivity {
     private PreferenceManager preferences;
     private static LinearLayout emptyView;
     private static TextView emptyTV;
+    private static Context context;
 
     static boolean isDebug = false;
     int REQUEST_CODE_INTRO = 1001;
 
     public android.app.ActionBar actionBar;
 
+    public static Context getContext() {
+        return context;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
 
         initComponent();
 
@@ -210,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
         }
 //        noteAdapter.notifyDataSetChanged();
         checkEmpty();
+        noteAdapter.refreshAllDataForce();
         super.onResume();
     }
 

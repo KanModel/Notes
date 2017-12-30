@@ -13,6 +13,7 @@ import java.util.List;
 
 import nov.me.kanmodel.notes.utils.TimeAid;
 import nov.me.kanmodel.notes.utils.dbAid;
+import nov.me.kanmodel.notes.widget.NoteAppWidget;
 
 /**
  * 重写RecyclerView类
@@ -176,6 +177,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
      */
     void refreshAllData() {
         refreshAllData(notes.size());
+    }
+
+    /**
+     * 刷新RecyclerView
+     */
+    void refreshAllDataForce() {
+        notes = dbAid.initNotes(dbAid.getDbHelper(MainActivity.getContext()));
+        refreshAllData();
     }
 
     /**

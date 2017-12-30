@@ -19,6 +19,7 @@ import java.util.Date;
 
 import nov.me.kanmodel.notes.MainActivity;
 import nov.me.kanmodel.notes.R;
+import nov.me.kanmodel.notes.utils.TimeAid;
 
 /**
  * 接受通知
@@ -63,7 +64,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         int type = AlarmManager.RTC_WAKEUP;
         //new Date()：表示当前日期，可以根据项目需求替换成所求日期
         //getTime()：日期的该方法同样可以表示从1970年1月1日0点至今所经历的毫秒数
-        long triggerAtMillis = new Date().getTime() + time;
+//        long triggerAtMillis = new Date().getTime() + time;
+        long triggerAtMillis = TimeAid.getNowTime() + time;
 //        long intervalMillis = 1000 * 60;
 //        manager.setInexactRepeating(type, triggerAtMillis, intervalMillis, pi);
         if (manager != null) {

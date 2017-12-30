@@ -278,5 +278,11 @@ public class NoteAppWidget extends AppWidgetProvider {
         }
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
     }
+
+    public static Context getmContext() {
+        return mContext;
+    }
+
+
 }
 
