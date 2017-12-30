@@ -75,7 +75,7 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
         String title = titleET.getText().toString();
         String content = contentET.getText().toString();
         if (isNew) {
-            if (content.equals("")) {
+            if (content.equals("") && title.equals("")) {
                 Toast.makeText(this, "空便签不会被保存", Toast.LENGTH_SHORT).show();
             } else {
                 saveNewNote(title, content);
@@ -125,7 +125,7 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
                 String title = titleET.getText().toString();
                 String content = contentET.getText().toString();
                 if (isNew) {
-                    if (content.equals("")) {
+                    if (content.equals("") && title.equals("")) {
                         Toast.makeText(this, "空便签不会被保存", Toast.LENGTH_SHORT).show();
                     } else {
                         saveNewNote(title, content);

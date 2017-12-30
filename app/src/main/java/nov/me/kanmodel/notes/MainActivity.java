@@ -130,10 +130,6 @@ public class MainActivity extends AppCompatActivity {
      * 初始画RecyclerView
      */
     private void initRecyclerView() {
-        /*设置RecyclerView内容字体大小*/
-        NoteAdapter.setTitleFontSize(preferences.getFontTitleSize());
-        NoteAdapter.setTimeFontSize(preferences.getFontTimeSize());
-        NoteAdapter.setContentFontSize(preferences.getFontContextSize());
 
         /*sql数据库初始化*/
         dbHelper = dbAid.getDbHelper(this);
@@ -150,6 +146,12 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemViewSwipeEnabled(true);
         noteAdapter = new NoteAdapter(noteList);
         recyclerView.setAdapter(noteAdapter);//设置Note集合
+
+        /*设置RecyclerView内容字体大小*/
+        NoteAdapter.setTitleFontSize(preferences.getFontTitleSize());
+        NoteAdapter.setTimeFontSize(preferences.getFontTimeSize());
+        NoteAdapter.setContentFontSize(preferences.getFontContextSize());
+
         Log.d(TAG, "initRecyclerView: length : " + noteAdapter.getItemCount());
 //        recyclerView.addItemDecoration(new NoteDecoration(this, NoteDecoration.VERTICAL_LIST));//todo 分割线与动画联动不美观
 //        recyclerView.addItemDecoration(new DefaultItemDecoration(Color.BLUE, 5, 5));
@@ -257,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                 /*添加新便签*/
                 Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
 //                intent.putExtra("pos", position);
-                intent.putExtra("title", "新建便签");
+                intent.putExtra("title", "");
                 intent.putExtra("content", "");
                 long timeStamp = TimeAid.getNowTime();
                 intent.putExtra("time", TimeAid.stampToDate(timeStamp));

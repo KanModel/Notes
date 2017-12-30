@@ -42,4 +42,6 @@
     <string name="add_to_desktop">添加到桌面</string>
     <string name="add_time">添加提醒时间</string>
     <string name="recycle_bin">回收站</string>
+    <string name="edit_title_hint">请输入便笺标题</string>
+    <string name="edit_content_hint">请输入便笺内容</string>
 </resources>

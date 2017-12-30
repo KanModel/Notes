@@ -39,7 +39,7 @@ public class RecycleBinActivity extends AppCompatActivity {
     private List<Note> binNoteList = new ArrayList<>();
     private DatabaseHelper dbHelper;
     private PreferenceManager preferences;
-    private static NoteAdapter noteAdapter;
+    private static BinNoteAdapter binNoteAdapter;
     public static SwipeMenuRecyclerView recyclerView;
     private static final String TAG = "RecycleBinActivity";
 
@@ -85,9 +85,9 @@ public class RecycleBinActivity extends AppCompatActivity {
 
     private void initBinRecyclerView() {
         /*设置RecyclerView内容字体大小*/
-        NoteAdapter.setTitleFontSize(preferences.getFontTitleSize());
-        NoteAdapter.setTimeFontSize(preferences.getFontTimeSize());
-        NoteAdapter.setContentFontSize(preferences.getFontContextSize());
+        BinNoteAdapter.setTitleFontSize(preferences.getFontTitleSize());
+        BinNoteAdapter.setTimeFontSize(preferences.getFontTimeSize());
+        BinNoteAdapter.setContentFontSize(preferences.getFontContextSize());
 
         /*sql数据库初始化*/
         dbHelper = dbAid.getDbHelper(this);
@@ -104,9 +104,9 @@ public class RecycleBinActivity extends AppCompatActivity {
         /*使用侧滑删除*/
 //        recyclerView.setOnItemMoveListener(mItemMoveListener);
 //        recyclerView.setItemViewSwipeEnabled(true);
-        noteAdapter = new NoteAdapter(binNoteList);
-        recyclerView.setAdapter(noteAdapter);//设置Note集合
-        Log.d(TAG, "initRecyclerView: length : " + noteAdapter.getItemCount());
+        binNoteAdapter = new BinNoteAdapter(binNoteList);
+        recyclerView.setAdapter(binNoteAdapter);//设置Note集合
+        Log.d(TAG, "initRecyclerView: length : " + binNoteAdapter.getItemCount());
 
     }
 
@@ -120,9 +120,9 @@ public class RecycleBinActivity extends AppCompatActivity {
         public void onItemDismiss(RecyclerView.ViewHolder srcHolder) {
             int adapterPosition = srcHolder.getAdapterPosition();
             // Item被侧滑删除时，删除数据，并更新adapter。
-            long time = NoteAdapter.getNotes().get(adapterPosition).getTime();
+            long time = BinNoteAdapter.getNotes().get(adapterPosition).getTime();
             dbAid.setSQLNote(time, 0);
-            noteAdapter.removeData(adapterPosition);
+            binNoteAdapter.removeData(adapterPosition);
         }
     };
 
@@ -182,8 +182,8 @@ public class RecycleBinActivity extends AppCompatActivity {
                     break;
             }
 //            dbAid.deleteSQLNote(time);
-//            noteAdapter.removeData(adapterPosition);
-            noteAdapter.removeData(adapterPosition);
+//            binNoteAdapter.removeData(adapterPosition);
+            binNoteAdapter.removeData(adapterPosition);
         }
     };
 

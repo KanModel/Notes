@@ -50,11 +50,15 @@ public class NoteAppWidget extends AppWidgetProvider {
             }
         }
         if (note == null) {//数据库中没有相关信息进行添加
-            notes = dbAid.initNotes(dbHelper);
-            long time = notes.get(dbAid.pos).getTime();
-            dbAid.addSQLWidget(dbHelper, time, appWidgetId);
-            note = dbAid.querySQLNote(dbHelper, time);
-            updateWidgetInfoList(dbHelper.getWritableDatabase());//添加后刷新表
+            try {
+                notes = dbAid.initNotes(dbHelper);
+                long time = notes.get(dbAid.pos).getTime();
+                dbAid.addSQLWidget(dbHelper, time, appWidgetId);
+                note = dbAid.querySQLNote(dbHelper, time);
+                updateWidgetInfoList(dbHelper.getWritableDatabase());//添加后刷新表
+            }catch (IndexOutOfBoundsException e){
+                e.printStackTrace();
+            }
             if (note == null) {
                 note = new Note("此便签可能以删除,请您手动删除", "", TimeAid.getNowTime());
             }

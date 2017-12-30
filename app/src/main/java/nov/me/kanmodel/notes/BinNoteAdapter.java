@@ -19,7 +19,7 @@ import nov.me.kanmodel.notes.utils.dbAid;
  * Created by KanModel on 2017/11/26.
  */
 
-public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
+public class BinNoteAdapter extends RecyclerView.Adapter<BinNoteAdapter.ViewHolder> {
 
     private static int titleFontSize;
     private static int timeFontSize;
@@ -62,7 +62,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     }
 
-    NoteAdapter(List<Note> notes) {
+    BinNoteAdapter(List<Note> notes) {
         this.notes = notes;
     }
 
@@ -195,17 +195,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     }
 
     public static void setTitleFontSize(int titleFontSize) {
-        NoteAdapter.titleFontSize = titleFontSize;
+        BinNoteAdapter.titleFontSize = titleFontSize;
 //        MainActivity.getNoteAdapter().refreshAllData();
     }
 
     public static void setTimeFontSize(int timeFontSize) {
-        NoteAdapter.timeFontSize = timeFontSize;
+        BinNoteAdapter.timeFontSize = timeFontSize;
 //        MainActivity.getNoteAdapter().refreshAllData();
     }
 
     public static void setContentFontSize(int contentFontSize) {
-        NoteAdapter.contentFontSize = contentFontSize;
+        BinNoteAdapter.contentFontSize = contentFontSize;
 //        MainActivity.getNoteAdapter().refreshAllData();
     }
 }
