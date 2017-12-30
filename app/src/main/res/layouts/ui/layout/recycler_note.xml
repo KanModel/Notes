@@ -39,5 +39,7 @@
         android:id="@+id/r_dis"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAlignment="center"
         android:visibility="gone" />
+
 </LinearLayout>

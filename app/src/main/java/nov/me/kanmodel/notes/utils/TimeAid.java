@@ -74,13 +74,28 @@ public abstract class TimeAid {
         return getDiff(dstTime, nowTime) / (1000 * 60 * 60 * 24);
     }
 
+    public static long getDiffDay(long dstTime) {
+        return getDiff(dstTime, getNowTime()) / (1000 * 60 * 60 * 24);
+    }
+
     public static long getDiffHour(long dstTime, long nowTime) {
 //        (diff - days * (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
         return (getDiff(dstTime, nowTime) - getDiffDay(dstTime, nowTime) * (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
     }
 
+    public static long getDiffHour(long dstTime) {
+        long nowTime = getNowTime();
+        return (getDiff(dstTime, nowTime) - getDiffDay(dstTime, nowTime) * (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+    }
+
     public static long getDiffMinutes(long dstTime, long nowTime) {
 //        (diff - days * (1000 * 60 * 60 * 24) - hours * (1000 * 60 * 60)) / (1000 * 60)
+        return (getDiff(dstTime, nowTime) - getDiffDay(dstTime, nowTime) * (1000 * 60 * 60 * 24)
+                - getDiffHour(dstTime, nowTime) * (1000 * 60 * 60)) / (1000 * 60);
+    }
+
+    public static long getDiffMinutes(long dstTime) {
+        long nowTime = getNowTime();
         return (getDiff(dstTime, nowTime) - getDiffDay(dstTime, nowTime) * (1000 * 60 * 60 * 24)
                 - getDiffHour(dstTime, nowTime) * (1000 * 60 * 60)) / (1000 * 60);
     }

@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import nov.me.kanmodel.notes.R;
+
 /**
+ *
  * Created by KanModel on 2017/12/27.
  */
 
@@ -37,12 +40,15 @@ public class PreferenceManager {
     }
 
     public int getFontContextSize(){
-        return Integer.parseInt(android.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("font_content_size", "24"));
+        return Integer.parseInt(android.preference.PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("font_content_size", String.valueOf(context.getResources().getInteger(R.integer.font_content_size_default))));
     }
     public int getFontTimeSize(){
-        return Integer.parseInt(android.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("font_time_size", "16"));
+        return Integer.parseInt(android.preference.PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("font_time_size", String.valueOf(context.getResources().getInteger(R.integer.font_time_size_default))));
     }
     public int getFontTitleSize(){
-        return Integer.parseInt(android.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("font_title_size", "30"));
+        return Integer.parseInt(android.preference.PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("font_title_size", String.valueOf(context.getResources().getInteger(R.integer.font_title_size_default))));
     }
 }

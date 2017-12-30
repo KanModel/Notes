@@ -50,68 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     public static SwipeMenuRecyclerView recyclerView;
 
-    /**
-     * 菜单创建器。在Item要创建菜单的时候调用。
-     */
-    private SwipeMenuCreator swipeMenuCreator = new SwipeMenuCreator() {
-        @Override
-        public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
-            int width = 400;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-
-            SwipeMenuItem addItem = new SwipeMenuItem(MainActivity.this)
-//                    .setBackgroundDrawable(R.drawable.selector_green)// 点击的背景。
-                    .setImage(R.drawable.ic_launcher_foreground) // 图标。
-                    .setWidth(width) // 宽度。
-                    .setHeight(height); // 高度。
-            swipeLeftMenu.addMenuItem(addItem); // 添加一个按钮到左侧菜单。
-
-            SwipeMenuItem deleteItem = new SwipeMenuItem(MainActivity.this)
-                    .setText("删除") // 文字。
-                    .setBackgroundColor(Color.RED)
-                    .setTextColor(Color.WHITE) // 文字颜色。
-                    .setTextSize(16) // 文字大小。
-                    .setWidth(width)
-                    .setHeight(height);
-            swipeRightMenu.addMenuItem(deleteItem);// 添加一个按钮到右侧侧菜单。.
-
-            // 上面的菜单哪边不要菜单就不要添加。
-        }
-    };
-
-    OnItemMoveListener mItemMoveListener = new OnItemMoveListener() {
-        @Override
-        public boolean onItemMove(RecyclerView.ViewHolder srcHolder, RecyclerView.ViewHolder targetHolder) {
-            return false;
-        }
-
-        @Override
-        public void onItemDismiss(RecyclerView.ViewHolder srcHolder) {
-            int adapterPosition = srcHolder.getAdapterPosition();
-            // Item被侧滑删除时，删除数据，并更新adapter。
-            long time = NoteAdapter.getNotes().get(adapterPosition).getTime();
-            dbAid.deleteSQLNote(time);
-            noteAdapter.removeData(adapterPosition);
-            checkEmpty();
-        }
-    };
-
-    SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
-        @Override
-        public void onItemClick(SwipeMenuBridge menuBridge) {
-            // 任何操作必须先关闭菜单，否则可能出现Item菜单打开状态错乱。
-            menuBridge.closeMenu();
-
-            int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
-            int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
-            int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
-            Toast.makeText(MainActivity.this, "删除POS" + adapterPosition, Toast.LENGTH_SHORT).show();
-            long time = NoteAdapter.getNotes().get(adapterPosition).getTime();
-            dbAid.deleteSQLNote(time);
-            noteAdapter.removeData(adapterPosition);
-        }
-    };
-
     private static DatabaseHelper dbHelper;
     private List<Note> noteList = new ArrayList<>();
     private static NoteAdapter noteAdapter;
@@ -155,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
                             + content + "\nlogtime:" + logtime + "\ntime:" + time + "\nisDeleted:" + isDeleted);
                 }
                 if (isDeleted == 0) {
-                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime, dbAid.querySQLNotice(this, time)));//数据库按ID顺序倒序排列
+//                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime, dbAid.querySQLNotice(this, time)));//数据库按ID顺序倒序排列
+                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
                 }
             } while (cursor.moveToNext());
         }
@@ -453,4 +392,67 @@ public class MainActivity extends AppCompatActivity {
     public static void setIsDebug(boolean isDebug) {
         MainActivity.isDebug = isDebug;
     }
+
+    /**
+     * 菜单创建器。在Item要创建菜单的时候调用。
+     */
+    private SwipeMenuCreator swipeMenuCreator = new SwipeMenuCreator() {
+        @Override
+        public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
+            int width = 400;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+
+            SwipeMenuItem addItem = new SwipeMenuItem(MainActivity.this)
+//                    .setBackgroundDrawable(R.drawable.selector_green)// 点击的背景。
+                    .setImage(R.drawable.ic_launcher_foreground) // 图标。
+                    .setWidth(width) // 宽度。
+                    .setHeight(height); // 高度。
+            swipeLeftMenu.addMenuItem(addItem); // 添加一个按钮到左侧菜单。
+
+            SwipeMenuItem deleteItem = new SwipeMenuItem(MainActivity.this)
+                    .setText("删除") // 文字。
+                    .setBackgroundColor(Color.RED)
+                    .setTextColor(Color.WHITE) // 文字颜色。
+                    .setTextSize(16) // 文字大小。
+                    .setWidth(width)
+                    .setHeight(height);
+            swipeRightMenu.addMenuItem(deleteItem);// 添加一个按钮到右侧侧菜单。.
+
+            // 上面的菜单哪边不要菜单就不要添加。
+        }
+    };
+
+    OnItemMoveListener mItemMoveListener = new OnItemMoveListener() {
+        @Override
+        public boolean onItemMove(RecyclerView.ViewHolder srcHolder, RecyclerView.ViewHolder targetHolder) {
+            return false;
+        }
+
+        @Override
+        public void onItemDismiss(RecyclerView.ViewHolder srcHolder) {
+            int adapterPosition = srcHolder.getAdapterPosition();
+            // Item被侧滑删除时，删除数据，并更新adapter。
+            long time = NoteAdapter.getNotes().get(adapterPosition).getTime();
+            dbAid.deleteSQLNote(time);
+            Toast.makeText(MainActivity.this, "你删除了一条便笺，你可以在回收站中彻底删除或恢复", Toast.LENGTH_SHORT).show();
+            noteAdapter.removeData(adapterPosition);
+            checkEmpty();
+        }
+    };
+
+    SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
+        @Override
+        public void onItemClick(SwipeMenuBridge menuBridge) {
+            // 任何操作必须先关闭菜单，否则可能出现Item菜单打开状态错乱。
+            menuBridge.closeMenu();
+
+            int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
+            int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
+            int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
+            Toast.makeText(MainActivity.this, "删除POS" + adapterPosition, Toast.LENGTH_SHORT).show();
+            long time = NoteAdapter.getNotes().get(adapterPosition).getTime();
+            dbAid.deleteSQLNote(time);
+            noteAdapter.removeData(adapterPosition);
+        }
+    };
 }

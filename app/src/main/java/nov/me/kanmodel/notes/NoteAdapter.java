@@ -1,6 +1,7 @@
 package nov.me.kanmodel.notes;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nov.me.kanmodel.notes.utils.TimeAid;
+import nov.me.kanmodel.notes.utils.dbAid;
 
 /**
  * 重写RecyclerView类
@@ -47,17 +49,19 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         EditText titleET;
         EditText contentET;
         TextView timeTV;
-        TextView disTV;
+        TextView dstTV;
+
         ViewHolder(View itemView) {
             super(itemView);
             noteView = itemView;
             titleET = itemView.findViewById(R.id.r_title);
             contentET = itemView.findViewById(R.id.r_content);
             timeTV = itemView.findViewById(R.id.r_time);
-            disTV = itemView.findViewById(R.id.r_dis);
+            dstTV = itemView.findViewById(R.id.r_dis);
         }
 
     }
+
     NoteAdapter(List<Note> notes) {
         this.notes = notes;
     }
@@ -84,7 +88,23 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         } else {
             timeTV.setText(TimeAid.stampToDate(time) + " - 最后更改于" + TimeAid.stampToDate(lastChangedTime));
         }
-
+        TextView dstTV = holder.dstTV;
+        long dstTime = dbAid.querySQLNotice(MainActivity.getDbHelper(), time);
+        Log.d(TAG, "onBindViewHolder: dstTime:" + dstTime + " ,diff :" + (dstTime - TimeAid.getNowTime()));
+        if (dstTime > 0 && (dstTime - TimeAid.getNowTime()) > 0) {
+            dstTV.setVisibility(View.VISIBLE);
+//            dstTV.setText();
+            long day = TimeAid.getDiffDay(dstTime);
+            long hour = TimeAid.getDiffHour(dstTime);
+            long minute = TimeAid.getDiffMinutes(dstTime);
+            if (day > 0) {
+                dstTV.setText("剩余 " + day + "天");
+            } else if (hour > 0) {
+                dstTV.setText("剩余 " + hour + "小时");
+            } else if (minute > 0) {
+                dstTV.setText("剩余 " + minute + "分钟");
+            }
+        }
 //        holder.noteView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -110,7 +130,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     }
 
     /**
-     * @param note 新Note
+     * @param note     新Note
      * @param position 添加位置
      */
     void addData(Note note, int position) {
@@ -120,6 +140,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     /**
      * 添加新便签到第一个位置
+     *
      * @param note 新Note
      */
     void addData(Note note) {
@@ -145,6 +166,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     /**
      * 刷新RecyclerView
+     *
      * @param size Note集合长度
      */
     void refreshAllData(int size) {

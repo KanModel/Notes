@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="font_content_size_default">18</integer>
+    <integer name="font_time_size_default">16</integer>
+    <integer name="font_title_size_default">18</integer>
+</resources>

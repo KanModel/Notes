@@ -129,6 +129,7 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
                         if (MainActivity.getIsDebug()) {
                             Toast.makeText(this, "未改变便签不保存", Toast.LENGTH_SHORT).show();
                         }
+                        MainActivity.getNoteAdapter().refreshData(pos);
                     } else {
                         saveOriginalNote(title, content);
                     }
@@ -157,10 +158,10 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
         lastChangedTime = TimeAid.getNowTime();
         MainActivity.getNoteAdapter().addData(dbAid.addSQLNote(MainActivity.getDbHelper(), content, title, lastChangedTime, lastChangedTime));
         MainActivity.getRecyclerView().scrollToPosition(0);
-        ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);
-        progressDialog.setTitle("保存您的更改");
-        progressDialog.setMessage("正在保存...");
-        progressDialog.setCancelable(false);
+//        ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);
+//        progressDialog.setTitle("保存您的更改");
+//        progressDialog.setMessage("正在保存...");
+//        progressDialog.setCancelable(false);
 //        progressDialog.show();
     }
 
@@ -168,10 +169,10 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
         lastChangedTime = TimeAid.getNowTime();
         int pos = parentIntent.getIntExtra("pos", 0);
         dbAid.updateSQLNote(title, content, time, pos, lastChangedTime);
-        ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);
-        progressDialog.setTitle("保存您的更改");
-        progressDialog.setMessage("正在保存...");
-        progressDialog.setCancelable(false);
+//        ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);
+//        progressDialog.setTitle("保存您的更改");
+//        progressDialog.setMessage("正在保存...");
+//        progressDialog.setCancelable(false);
 //        progressDialog.show();
     }
 
@@ -193,11 +194,24 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
         Log.d(TAG, "positiveListener: time   :" + time);
         Log.d(TAG, "positiveListener: STAMP :" + dstTime);
         Log.d(TAG, "positiveListener: diff  :" + TimeAid.getDiff(dstTime, nowTime));
-        Log.d(TAG, "positiveListener: diff DAY    : " + TimeAid.getDiffDay(dstTime, nowTime));
-        Log.d(TAG, "positiveListener: diff Hour   : " + TimeAid.getDiffHour(dstTime, nowTime));
-        Log.d(TAG, "positiveListener: diff Minutes: " + TimeAid.getDiffMinutes(dstTime, nowTime));
+        long dDay = TimeAid.getDiffDay(dstTime, nowTime);
+        long dHour = TimeAid.getDiffHour(dstTime, nowTime);
+        long dMinute = TimeAid.getDiffMinutes(dstTime, nowTime);
+        Log.d(TAG, "positiveListener: diff DAY    : " + dDay);
+        Log.d(TAG, "positiveListener: diff Hour   : " + dHour);
+        Log.d(TAG, "positiveListener: diff Minutes: " + dMinute);
 //        dbAid.addSQLNotice(this, time, dstTime);
 //        dbAid.updateSQLNotice(this, time, dstTime);
+        if (dDay > 0) {
+            Toast.makeText(this, "你设定了提醒时间 :" + dstStr
+                    + "\n将于" + dDay + "天后提醒你", Toast.LENGTH_SHORT).show();
+        } else if (dHour > 0) {
+            Toast.makeText(this, "你设定了提醒时间 :" + dstStr
+                    + "\n将于" + dHour + "小时后提醒你", Toast.LENGTH_SHORT).show();
+        } else if (dMinute > 0) {
+            Toast.makeText(this, "你设定了提醒时间 :" + dstStr
+                    + "\n将于" + dMinute + "分钟后提醒你", Toast.LENGTH_SHORT).show();
+        }
         dbAid.newSQLNotice(this, time, dstTime);
     }
 

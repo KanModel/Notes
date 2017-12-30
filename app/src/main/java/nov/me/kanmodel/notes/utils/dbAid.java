@@ -256,9 +256,9 @@ public abstract class dbAid {
         int isDone;
         Cursor cursor = db.query("notice", null, "time like ?", new String[]{String.valueOf(time)}, null, null, null);
         if (cursor.moveToLast()) {
-            time = cursor.getInt(cursor.getColumnIndex("time"));
+//            time = cursor.getInt(cursor.getColumnIndex("time"));
             isDone = cursor.getInt(cursor.getColumnIndex("isDone"));
-            dstTime = cursor.getInt(cursor.getColumnIndex("dstTime"));
+            dstTime = cursor.getLong(cursor.getColumnIndex("dstTime"));
         } else {
             isDone = 1;
             dstTime = 0;

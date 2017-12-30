@@ -1,6 +1,5 @@
 package nov.me.kanmodel.notes;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -10,7 +9,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -44,6 +43,8 @@ public class RecycleBinActivity extends AppCompatActivity {
     public static SwipeMenuRecyclerView recyclerView;
     private static final String TAG = "RecycleBinActivity";
 
+    private boolean isDebug = MainActivity.getIsDebug();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +76,7 @@ public class RecycleBinActivity extends AppCompatActivity {
                 long time = cursor.getLong(cursor.getColumnIndex("time"));
                 long lastChangedTime = cursor.getLong(cursor.getColumnIndex("lastChangedTime"));
                 if (isDeleted == 1) {
-                    binNoteList.add(0, new Note(title, content, logtime, time, lastChangedTime, dbAid.querySQLNotice(this, time)));//数据库按ID顺序倒序排列
+                    binNoteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
                 }
             } while (cursor.moveToNext());
         }
@@ -126,7 +127,7 @@ public class RecycleBinActivity extends AppCompatActivity {
     };
 
     /**
-     * 菜单创建器。在Item要创建菜单的时候调用。
+     * 菜单创建器。左滑菜单依次为恢复、删除。
      */
     private SwipeMenuCreator swipeMenuCreator = new SwipeMenuCreator() {
         @Override
@@ -155,6 +156,9 @@ public class RecycleBinActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * 菜单监听器
+     */
     SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
         @Override
         public void onItemClick(SwipeMenuBridge menuBridge) {
@@ -163,15 +167,18 @@ public class RecycleBinActivity extends AppCompatActivity {
             int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
             int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
             int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
-            Toast.makeText(RecycleBinActivity.this, "删除POS" + adapterPosition, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(RecycleBinActivity.this, "删除POS" + adapterPosition, Toast.LENGTH_SHORT).show();
             long time = binNoteList.get(adapterPosition).getTime();
             Log.d(TAG, "onItemClick: menuPosition :" + menuPosition);
             switch (menuPosition) {
                 case 0:
+                    if (isDebug) Toast.makeText(RecycleBinActivity.this, "恢复 Pos" + adapterPosition, Toast.LENGTH_SHORT).show();
                     dbAid.setSQLNote(time, 0);
                     break;
                 case 1:
+                    if (isDebug) Toast.makeText(RecycleBinActivity.this, "从数据库上删除 Pos" + adapterPosition, Toast.LENGTH_SHORT).show();
                     dbAid.deleteSQLNoteForced(time);
+                    dbAid.setSQLNoticeDone(getApplicationContext(), time, 1);
                     break;
             }
 //            dbAid.deleteSQLNote(time);
@@ -180,4 +187,13 @@ public class RecycleBinActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
