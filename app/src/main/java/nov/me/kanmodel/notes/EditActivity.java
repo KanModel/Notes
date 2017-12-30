@@ -1,8 +1,11 @@
 package nov.me.kanmodel.notes;
 
 import android.app.ProgressDialog;
+import android.appwidget.AppWidgetManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -18,6 +21,7 @@ import nov.me.kanmodel.notes.ui.TimeAndDatePickerDialog;
 import nov.me.kanmodel.notes.utils.TimeAid;
 import nov.me.kanmodel.notes.utils.Utils;
 import nov.me.kanmodel.notes.utils.dbAid;
+import nov.me.kanmodel.notes.widget.NoteAppWidget;
 
 /**
  * 编辑便签的Activity
@@ -66,6 +70,7 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
         isNew = parentIntent.getBooleanExtra("isNew", false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onBackPressed() {
         String title = titleET.getText().toString();
@@ -84,6 +89,8 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
             } else {
                 saveOriginalNote(title, content);
             }
+            AppWidgetManager.getInstance(this).updateAppWidget(dbAid.querySQLWidget(this, time).getAppWidgetID()
+                    , NoteAppWidget.getRemoteView(this, time, title, content));
         }
         finish();
         super.onBackPressed();
@@ -110,6 +117,7 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
         return super.onPrepareOptionsMenu(menu);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -133,6 +141,8 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
                     } else {
                         saveOriginalNote(title, content);
                     }
+                    AppWidgetManager.getInstance(this).updateAppWidget(dbAid.querySQLWidget(this, time).getAppWidgetID()
+                            , NoteAppWidget.getRemoteView(this, time, title, content));
                 }
                 finish();
                 return true;

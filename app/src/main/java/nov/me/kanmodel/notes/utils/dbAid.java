@@ -200,6 +200,10 @@ public abstract class dbAid {
         return new WidgetInfo(time, widgetID, querySQLNote(dbHelper, time));
     }
 
+    public static WidgetInfo querySQLWidget(Context context, long time) {
+        return querySQLWidget(getDbHelper(context), time);
+    }
+
     public static void addSQLWidget(DatabaseHelper dbHelper, long time, int appWidgetId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();

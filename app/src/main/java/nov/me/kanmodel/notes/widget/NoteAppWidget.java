@@ -7,12 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.opengl.Visibility;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -36,10 +38,10 @@ public class NoteAppWidget extends AppWidgetProvider {
     private List<WidgetInfo> widgetInfoList = new ArrayList<>();
     private static List<Note> notes = new ArrayList<>();
 
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager, final int appWidgetId) {
         // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.note_app_widget);
         Note note = null;
         for (WidgetInfo widgetInfo : widgetInfoList) {//遍历表寻找对应id的挂件
             if (widgetInfo.getAppWidgetID() == appWidgetId) {
@@ -56,34 +58,90 @@ public class NoteAppWidget extends AppWidgetProvider {
                 note = new Note("此便签可能以删除,请您手动删除", "", TimeAid.getNowTime());
             }
         }
-        String widgetTitle = note.getTitle();
-        String time = TimeAid.stampToDate(note.getTime());
-        String content = note.getContent();
-//        if (NoteAdapter.getNotes() != null) {
-//            note = NoteAdapter.getNotes().get(dbAid.pos);
-//            widgetTitle = note.getTitle();
-//            time = note.getLogTime();
-//            content = note.getContent();
-//        } else {
-//            if (MainActivity.getIsDebug()) {
-//                Toast.makeText(context, "开机Debug", Toast.LENGTH_SHORT).show();
-//            }
-//            List<Note> noteList = dbAid.initNotes(dbHelper);
-//            note = noteList.get(0);
-//            if (note != null) {
-//                widgetTitle = note.getTitle();
-//                time = note.getLogTime();
-//                content = note.getContent();
-//            } else {
-//                widgetTitle = "加载失败，请删除本挂件";
-//                time = "";
-//                content = "";
+
+//        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.note_app_widget);
+//        long dstTime = dbAid.querySQLNotice(dbAid.getDbHelper(context), note.getTime());
+//        if (dstTime > 0 && (dstTime - TimeAid.getNowTime()) > 0) {
+////            dstTV.setVisibility(View.VISIBLE);
+//            views.setViewVisibility(R.id.widget_dis, View.VISIBLE);
+//            long day = TimeAid.getDiffDay(dstTime);
+//            long hour = TimeAid.getDiffHour(dstTime);
+//            long minute = TimeAid.getDiffMinutes(dstTime);
+//            if (day > 0) {
+//                views.setTextViewText(R.id.widget_dis, "剩余 " + day + "天");
+//            } else if (hour > 0) {
+//                views.setTextViewText(R.id.widget_dis, "剩余 " + hour + "小时");
+//            } else if (minute > 0) {
+//                views.setTextViewText(R.id.widget_dis, "剩余 " + minute + "分钟");
 //            }
 //        }
-        //设置挂件内容
-        //设置对应挂件内容
+//
+//        String widgetTitle = note.getTitle();
+//        String strTime = TimeAid.stampToDate(note.getTime());
+//        String content = note.getContent();
+////        if (NoteAdapter.getNotes() != null) {
+////            note = NoteAdapter.getNotes().get(dbAid.pos);
+////            widgetTitle = note.getTitle();
+////            time = note.getLogTime();
+////            content = note.getContent();
+////        } else {
+////            if (MainActivity.getIsDebug()) {
+////                Toast.makeText(context, "开机Debug", Toast.LENGTH_SHORT).show();
+////            }
+////            List<Note> noteList = dbAid.initNotes(dbHelper);
+////            note = noteList.get(0);
+////            if (note != null) {
+////                widgetTitle = note.getTitle();
+////                time = note.getLogTime();
+////                content = note.getContent();
+////            } else {
+////                widgetTitle = "加载失败，请删除本挂件";
+////                time = "";
+////                content = "";
+////            }
+////        }
+//        //设置挂件内容
+//        //设置对应挂件内容
+//        views.setTextViewText(R.id.widget_title, widgetTitle);
+//        views.setTextViewText(R.id.widget_time, strTime);
+//        views.setTextViewText(R.id.widget_content, content);
+//        //设置挂件字体大小
+//        views.setTextViewTextSize(R.id.widget_title, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getTitleFontSize());
+//        views.setTextViewTextSize(R.id.widget_time, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getTimeFontSize());
+//        views.setTextViewTextSize(R.id.widget_content, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getContentFontSize());
+//        Intent openAppIntent = new Intent(context, MainActivity.class);
+//        PendingIntent openAppPendingIntent = PendingIntent.getActivity(context, 0, openAppIntent, 0);
+//        views.setOnClickPendingIntent(R.id.widget_title, openAppPendingIntent);
+
+        // Instruct the widget manager to update the widget
+//        appWidgetManager.updateAppWidget(appWidgetId, views);
+        appWidgetManager.updateAppWidget(appWidgetId, getRemoteView(context, note.getTime(), note.getTitle(), note.getContent()));
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public static RemoteViews getRemoteView(Context context, long time, String widgetTitle, String strTime, String content) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.note_app_widget);
+        long dstTime = dbAid.querySQLNotice(dbAid.getDbHelper(context), time);
+        if (dstTime > 0 && (dstTime - TimeAid.getNowTime()) > 0) {
+//            dstTV.setVisibility(View.VISIBLE);
+            views.setViewVisibility(R.id.widget_dis, View.VISIBLE);
+            long day = TimeAid.getDiffDay(dstTime);
+            long hour = TimeAid.getDiffHour(dstTime);
+            long minute = TimeAid.getDiffMinutes(dstTime);
+            if (day > 0) {
+                views.setTextViewText(R.id.widget_dis, "剩余 " + day + "天");
+            } else if (hour > 0) {
+                views.setTextViewText(R.id.widget_dis, "剩余 " + hour + "小时");
+            } else if (minute > 0) {
+                views.setTextViewText(R.id.widget_dis, "剩余 " + minute + "分钟");
+            }
+        }
+
+//        String widgetTitle = note.getTitle();
+//        String strTime = TimeAid.stampToDate(note.getTime());
+//        String content = note.getContent();
         views.setTextViewText(R.id.widget_title, widgetTitle);
-        views.setTextViewText(R.id.widget_time, time);
+        views.setTextViewText(R.id.widget_time, strTime);
         views.setTextViewText(R.id.widget_content, content);
         //设置挂件字体大小
         views.setTextViewTextSize(R.id.widget_title, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getTitleFontSize());
@@ -93,8 +151,12 @@ public class NoteAppWidget extends AppWidgetProvider {
         PendingIntent openAppPendingIntent = PendingIntent.getActivity(context, 0, openAppIntent, 0);
         views.setOnClickPendingIntent(R.id.widget_title, openAppPendingIntent);
 
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+        return views;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public static RemoteViews getRemoteView(Context context, long time, String title, String content) {
+        return getRemoteView(context, time, title, TimeAid.stampToDate(time), content);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
