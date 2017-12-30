@@ -47,12 +47,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         EditText titleET;
         EditText contentET;
         TextView timeTV;
+        TextView disTV;
         ViewHolder(View itemView) {
             super(itemView);
             noteView = itemView;
             titleET = itemView.findViewById(R.id.r_title);
             contentET = itemView.findViewById(R.id.r_content);
             timeTV = itemView.findViewById(R.id.r_time);
+            disTV = itemView.findViewById(R.id.r_dis);
         }
 
     }
@@ -82,6 +84,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         } else {
             timeTV.setText(TimeAid.stampToDate(time) + " - 最后更改于" + TimeAid.stampToDate(lastChangedTime));
         }
+
 //        holder.noteView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {

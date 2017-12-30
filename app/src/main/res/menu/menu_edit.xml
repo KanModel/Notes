@@ -4,8 +4,10 @@
         android:id="@+id/add_to_desktop"
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/add_to_desktop"/>
-    <item
-        android:id="@+id/add_time"
-        android:icon="@android:drawable/ic_menu_add"
-        android:title="@string/add_time"/>
+    <group android:id="@+id/edit_new_group">
+        <item
+            android:id="@+id/add_time"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="@string/add_time" />
+    </group>
 </menu>

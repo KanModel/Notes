@@ -43,6 +43,11 @@
             android:name=".AppAboutActivity"
             android:parentActivityName=".MainActivity"
             tools:targetApi="jelly_bean" />
+        <activity
+            android:name=".RecycleBinActivity"
+            android:label="@string/recycle_bin"
+            android:parentActivityName=".MainActivity"
+            tools:targetApi="jelly_bean" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

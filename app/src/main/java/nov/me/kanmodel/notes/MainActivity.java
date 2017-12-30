@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                             + content + "\nlogtime:" + logtime + "\ntime:" + time + "\nisDeleted:" + isDeleted);
                 }
                 if (isDeleted == 0) {
-                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
+                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime, dbAid.querySQLNotice(this, time)));//数据库按ID顺序倒序排列
                 }
             } while (cursor.moveToNext());
         }
@@ -196,8 +196,8 @@ public class MainActivity extends AppCompatActivity {
         NoteAdapter.setTimeFontSize(preferences.getFontTimeSize());
         NoteAdapter.setContentFontSize(preferences.getFontContextSize());
 
-        /*sql数据库*/
-        dbHelper = new DatabaseHelper(this, "Note.db", null, 11);
+        /*sql数据库初始化*/
+        dbHelper = dbAid.getDbHelper(this);
         initNodes();
 
         /*RecyclerView初始化*/
@@ -311,6 +311,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         switch (item.getItemId()) {
+            case R.id.recycle_bin:
+                startActivity(new Intent(MainActivity.this, RecycleBinActivity.class));
+                return true;
             case R.id.add_note:
                 /*添加新便签*/
                 Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");

@@ -1,7 +1,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/pref_header_font_summary">
         <EditTextPreference
-            android:defaultValue="30"
+            android:defaultValue="18"
             android:inputType="number"
             android:key="font_title_size"
             android:selectAllOnFocus="true"
@@ -21,7 +21,7 @@
         <EditTextPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="24"
+            android:defaultValue="18"
             android:inputType="number"
             android:key="font_content_size"
             android:selectAllOnFocus="true"

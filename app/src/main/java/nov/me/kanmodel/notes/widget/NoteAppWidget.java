@@ -105,7 +105,7 @@ public class NoteAppWidget extends AppWidgetProvider {
         NoteAdapter.setTitleFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_title_size", "30")));
         NoteAdapter.setTimeFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_time_size", "16")));
         NoteAdapter.setContentFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_content_size", "24")));
-        dbHelper = new DatabaseHelper(context, "Note.db", null, 11);//版本需要一致
+        dbHelper = dbAid.getDbHelper(context);//版本需要一致
         boolean isDebug = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("switch_preference_is_debug", false);
         MainActivity.setIsDebug(isDebug);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -162,7 +162,7 @@ public class NoteAppWidget extends AppWidgetProvider {
         if (MainActivity.getIsDebug()) {
             Toast.makeText(context, "删除的是ID" + appWidgetIds[0], Toast.LENGTH_SHORT).show();
         }
-        dbHelper = new DatabaseHelper(context, "Note.db", null, 11);//版本需要一致
+        dbHelper = dbAid.getDbHelper(context);//版本需要一致
         dbAid.deleteSQLWidget(dbHelper, appWidgetIds[0]);
         updateWidgetInfoList(dbHelper.getWritableDatabase());
         int pos = 0;

@@ -10,6 +10,7 @@ public class Note {
     private String content;
     private String logTime;
     private long time;
+    private long dstTime;
 
     private long lastChangedTime;
 
@@ -25,6 +26,11 @@ public class Note {
         this.logTime = logTime;
         this.time = time;
         this.lastChangedTime = lastChangedTime;
+    }
+
+    public Note(String title, String content, String logTime, long time, long lastChangedTime, long dstTime) {
+        this(title, content, logTime, time, lastChangedTime);
+        this.dstTime = dstTime;
     }
 
     public Note(String title, String content, long time) {
@@ -61,5 +67,9 @@ public class Note {
 
     public void setLastChangedTime(long lastChangedTime) {
         this.lastChangedTime = lastChangedTime;
+    }
+
+    public long getDstTime() {
+        return dstTime;
     }
 }

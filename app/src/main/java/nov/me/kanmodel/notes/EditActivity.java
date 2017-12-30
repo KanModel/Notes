@@ -2,8 +2,8 @@ package nov.me.kanmodel.notes;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,9 +15,9 @@ import android.widget.Toast;
 import java.util.Locale;
 
 import nov.me.kanmodel.notes.ui.TimeAndDatePickerDialog;
+import nov.me.kanmodel.notes.utils.TimeAid;
 import nov.me.kanmodel.notes.utils.Utils;
 import nov.me.kanmodel.notes.utils.dbAid;
-import nov.me.kanmodel.notes.utils.TimeAid;
 
 /**
  * 编辑便签的Activity
@@ -103,6 +103,14 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (isNew) {
+            menu.setGroupVisible(R.id.edit_new_group, false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             /*返回按钮*/
@@ -182,11 +190,15 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
         long nowTime = TimeAid.getNowTime();
         Log.d(TAG, "positiveListener: dstTime:" + dstTime);
         Log.d(TAG, "positiveListener: nowTime:" + nowTime);
+        Log.d(TAG, "positiveListener: time   :" + time);
         Log.d(TAG, "positiveListener: STAMP :" + dstTime);
         Log.d(TAG, "positiveListener: diff  :" + TimeAid.getDiff(dstTime, nowTime));
         Log.d(TAG, "positiveListener: diff DAY    : " + TimeAid.getDiffDay(dstTime, nowTime));
         Log.d(TAG, "positiveListener: diff Hour   : " + TimeAid.getDiffHour(dstTime, nowTime));
         Log.d(TAG, "positiveListener: diff Minutes: " + TimeAid.getDiffMinutes(dstTime, nowTime));
+//        dbAid.addSQLNotice(this, time, dstTime);
+//        dbAid.updateSQLNotice(this, time, dstTime);
+        dbAid.newSQLNotice(this, time, dstTime);
     }
 
     @Override

@@ -32,7 +32,7 @@ public abstract class dbAid {
 
     public static int pos = 0;
 
-
+    /*Note相关*/
 
     /**
      * @param dbHelper 数据库操作类
@@ -116,12 +116,27 @@ public abstract class dbAid {
         db.update("Note", values, "time = ?", new String[]{String.valueOf(time)});
     }
 
+    public static void setSQLNote(long time, int isDeleted) {
+        SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("isDeleted", isDeleted);
+        db.update("Note", values, "time = ?", new String[]{String.valueOf(time)});
+    }
+
     /**
      * 清空数据库
      */
     public static void deleteSQLNoteForced() {
         SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
         db.delete("Note", "time > ?", new String[]{"0"});
+    }
+
+    /**
+     * 根据时间删除
+     */
+    public static void deleteSQLNoteForced(long time) {
+        SQLiteDatabase db = MainActivity.getDbHelper().getWritableDatabase();
+        db.delete("Note", "time = ?", new String[]{String.valueOf(time)});
     }
 
     public static List<Note> initNotes(DatabaseHelper dbHelper) {
@@ -166,6 +181,8 @@ public abstract class dbAid {
         return new Note(title, content, time);
     }
 
+
+    /*Widget相关*/
     public static WidgetInfo querySQLWidget(DatabaseHelper dbHelper, long time) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int widgetID, isDeleted;
@@ -189,7 +206,6 @@ public abstract class dbAid {
         values.put("time", time);
         values.put("widgetID", appWidgetId);
         db.insert("widget", null, values);
-//        db.update("Note", values, "time = ?", new String[]{String.valueOf(time)});
     }
 
     public static void deleteSQLWidget(DatabaseHelper dbHelper, int widgetID) {
@@ -197,6 +213,86 @@ public abstract class dbAid {
         ContentValues values = new ContentValues();
         values.put("isDeleted", 1);
         db.update("widget", values, "widgetID = ?", new String[]{String.valueOf(widgetID)});
+    }
+
+    /*notice相关*/
+
+
+    public static void addSQLNotice(DatabaseHelper dbHelper, long time, long dstTime) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("time", time);
+        values.put("dstTime", dstTime);
+        db.insert("notice", null, values);
+    }
+
+    public static void addSQLNotice(Context context, long time, long dstTime) {
+        addSQLNotice(getDbHelper(context), time, dstTime);
+    }
+
+    public static void updateSQLNotice(DatabaseHelper dbHelper, long time, long dstTime) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("time", time);
+        values.put("dstTime", dstTime);
+        db.update("notice", values, "time = ?", new String[]{String.valueOf(time)});
+    }
+
+    public static void updateSQLNotice(DatabaseHelper dbHelper, long time, int done) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("time", time);
+        values.put("isDone", done);
+        db.update("notice", values, "time = ?", new String[]{String.valueOf(time)});
+    }
+
+    public static void updateSQLNotice(Context context, long time, long dstTime) {
+        updateSQLNotice(getDbHelper(context), time, dstTime);
+    }
+
+    public static long querySQLNotice(DatabaseHelper dbHelper, long time) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        long dstTime;
+        int isDone;
+        Cursor cursor = db.query("notice", null, "time like ?", new String[]{String.valueOf(time)}, null, null, null);
+        if (cursor.moveToLast()) {
+            time = cursor.getInt(cursor.getColumnIndex("time"));
+            isDone = cursor.getInt(cursor.getColumnIndex("isDone"));
+            dstTime = cursor.getInt(cursor.getColumnIndex("dstTime"));
+        } else {
+            isDone = 1;
+            dstTime = 0;
+        }
+        cursor.close();
+        if (isDone == 1) {
+            return 0;
+        }
+        return dstTime;
+    }
+
+    public static long querySQLNotice(Context context, long time) {
+        return querySQLNotice(getDbHelper(context), time);
+    }
+
+    public static void newSQLNotice(Context context, long time, long dstTime) {
+        DatabaseHelper dbHelper = getDbHelper(context);
+        long oldDstTime = querySQLNotice(dbHelper, time);
+        if (oldDstTime == 0) {
+            //不存就添加
+            addSQLNotice(dbHelper, time, dstTime);
+        } else {
+            updateSQLNotice(dbHelper, time, dstTime);
+        }
+    }
+
+    public static void setSQLNoticeDone(Context context, long time, int done) {
+//        updateSQLNotice(context, time);
+        updateSQLNotice(getDbHelper(context), time, done);
+    }
+
+
+    public static DatabaseHelper getDbHelper(Context context) {
+        return new DatabaseHelper(context, "Note.db", null, 12);
     }
 
 }

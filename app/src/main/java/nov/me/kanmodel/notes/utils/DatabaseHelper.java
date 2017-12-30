@@ -47,6 +47,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "'isDeleted' int default 0, " +
                 "'widgetID' integer," +
                 "'time' integer)");
+        sqLiteDatabase.execSQL("create table notice(" +
+                "'id' integer primary key autoincrement, " +
+                "'isDone' int default 0, " +
+                "'dstTime' integer," +
+                "'time' integer)");
         if (MainActivity.getIsDebug()) {
             Toast.makeText(mContext, "创建数据库成功", Toast.LENGTH_SHORT).show();
         }
@@ -61,6 +66,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("drop table if exists Note");
+        sqLiteDatabase.execSQL("drop table if exists widget");
+        sqLiteDatabase.execSQL("drop table if exists notice");
         onCreate(sqLiteDatabase);
     }
 }
