@@ -147,7 +147,7 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
                 return true;
             case R.id.add_to_desktop:
                 dbAid.pos = pos;
-                Toast.makeText(this, "添加本便签到桌面", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "添加本便签到桌面\n长按桌面选择本应用挂件拖出即可", Toast.LENGTH_SHORT).show();
                 Intent home = new Intent(Intent.ACTION_MAIN);
                 home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 home.addCategory(Intent.CATEGORY_HOME);
