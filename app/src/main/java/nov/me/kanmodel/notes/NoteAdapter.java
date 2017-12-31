@@ -114,18 +114,23 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             long hour = TimeAid.getDiffHour(dstTime);
             long minute = TimeAid.getDiffMinutes(dstTime);
             if (day > 0) {
-                SpannableString spannableString = new SpannableString("剩余 " + day + " 天");
+                SpannableString spannableString = new SpannableString("剩余 " + day + " 天 " + hour + " 小时 " + minute + " 分钟");
                 ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#FFE5ADFF"));
                 RelativeSizeSpan sizeSpan = new RelativeSizeSpan(1.4f);
-                spannableString.setSpan(sizeSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                spannableString.setSpan(colorSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                int lengthOfDay = String.valueOf(day).length();
+//                int lengthOfHour = String.valueOf(hour).length();
+                spannableString.setSpan(sizeSpan, 3, 3 + lengthOfDay, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(colorSpan, 3, 3 + lengthOfDay, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+//                spannableString.setSpan(sizeSpan, 6 + lengthOfDay, 6 + lengthOfDay + lengthOfHour, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+//                spannableString.setSpan(colorSpan, 6 + lengthOfDay, 6 + lengthOfDay + lengthOfHour, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 dstTV.setText(spannableString);
             } else if (hour > 0) {
-                SpannableString spannableString = new SpannableString("剩余 " + hour + " 小时");
+                SpannableString spannableString = new SpannableString("剩余 " + hour + " 小时 " + minute + " 分钟");
                 ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#FFE5ADFF"));
                 RelativeSizeSpan sizeSpan = new RelativeSizeSpan(1.4f);
-                spannableString.setSpan(sizeSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                spannableString.setSpan(colorSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                int lengthOfHour = String.valueOf(hour).length();
+                spannableString.setSpan(sizeSpan, 3, 3 + lengthOfHour, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(colorSpan, 3, 3 + lengthOfHour, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 dstTV.setText(spannableString);
             } else if (minute > 0) {
                 SpannableString spannableString = new SpannableString("剩余 " + minute + " 分钟");
@@ -202,7 +207,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     /**
      * 刷新RecyclerView
      */
-    void refreshAllDataForce() {
+    public void refreshAllDataForce() {
         notes = dbAid.initNotes(dbAid.getDbHelper(MainActivity.getContext()));
         refreshAllData();
     }
@@ -212,7 +217,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
      *
      * @param size Note集合长度
      */
-    void refreshAllData(int size) {
+     void refreshAllData(int size) {
         notifyItemRangeChanged(0, size);
     }
 

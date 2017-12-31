@@ -27,12 +27,13 @@
     <string name="pref_header_backup">备份</string>
     <string name="save_backup">保存备份至…</string>
     <string name="main_menu_about">关于应用</string>
-    <string name="intro_done">完成</string>
+    <string name="intro_done">立即进入</string>
     <string name="intro_skip">跳过…</string>
     <string name="intro1_title">欢迎来到时间便笺</string>
     <string name="intro1_desc">在这里你可以记录你的心情</string>
-    <string name="intro2_title">介绍2</string>
-    <string name="intro3_desc">？？？</string>
+    <string name="intro2_title">在这里你可以随性记录，并且可以设置提醒的时间，本应用将会直观的显示出剩余的时间，当然您也可以将选中的便签放置于桌面上提醒您</string>
+    <string name="intro3_title">开启你的时间之旅吧</string>
+    <string name="intro3_desc">享受生活，享受时间便笺带来的便捷</string>
     <string name="intro">欢迎使用</string>
     <string name="fa_star_half_o" translatable="false">&#xf123;</string>
     <string name="fa_recycle" translatable="false">&#xf014;</string>

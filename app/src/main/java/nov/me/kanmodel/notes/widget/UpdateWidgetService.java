@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import nov.me.kanmodel.notes.MainActivity;
+import nov.me.kanmodel.notes.NoteAdapter;
 import nov.me.kanmodel.notes.utils.TimeAid;
 
 public class UpdateWidgetService extends Service {
@@ -37,6 +39,7 @@ public class UpdateWidgetService extends Service {
         appWidgetManager = AppWidgetManager.getInstance(context);// 定义计时器
         Timer timer = new Timer();
         // 启动周期性调度
+        Log.d(TAG, "onCreate: ");
         timer.schedule(new TimerTask() {
             public void run() {
                 // 发送空消息，通知界面更新
@@ -48,6 +51,7 @@ public class UpdateWidgetService extends Service {
     @SuppressLint("WrongConstant")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand: ");
         flags = START_STICKY;
         return super.onStartCommand(intent, flags, startId);
     }
@@ -58,6 +62,15 @@ public class UpdateWidgetService extends Service {
             if (msg.what == 0x123) {
                 Log.d(TAG, "handleMessage: Time :" + TimeAid.getNowTime());
                 NoteAppWidget.updateAllWidget();
+                try {
+                    if (MainActivity.getNoteAdapter() != null) {
+                        NoteAdapter noteAdapter = MainActivity.getNoteAdapter();
+                        noteAdapter.refreshAllDataForce();
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+                startService(new Intent(getApplicationContext(), UpdateWidgetService.class));
             }
             super.handleMessage(msg);
         }

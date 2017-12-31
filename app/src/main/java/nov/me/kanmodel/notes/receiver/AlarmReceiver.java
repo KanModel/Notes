@@ -37,8 +37,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("NOTIFICATION")) {
             Log.d(TAG, "onReceive: title :" + intent.getStringExtra("title"));
-            NotificationManager manager = (NotificationManager) context
-                    .getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             Intent intent2 = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent2, 0);
             Notification notify = new NotificationCompat.Builder(context)
@@ -71,7 +70,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 //        long intervalMillis = 1000 * 60;
 //        manager.setInexactRepeating(type, triggerAtMillis, intervalMillis, pi);
         if (manager != null) {
-            manager.setExact(type, triggerAtMillis, pi);
+//            manager.setExact(type, triggerAtMillis, pi);
+            manager.set(type, triggerAtMillis, pi);
         }
     }
 }

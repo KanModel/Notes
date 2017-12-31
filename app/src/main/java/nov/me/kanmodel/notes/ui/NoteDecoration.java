@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
