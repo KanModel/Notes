@@ -63,8 +63,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     }
 
-    NoteAdapter(List<Note> notes) {
-        this.notes = notes;
+    NoteAdapter(List<Note> noteList) {
+        notes = noteList;
     }
 
     @Override

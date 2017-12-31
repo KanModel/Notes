@@ -39,7 +39,7 @@ public class RecycleBinActivity extends AppCompatActivity {
     private List<Note> binNoteList = new ArrayList<>();
     private DatabaseHelper dbHelper;
     private PreferenceManager preferences;
-    private static BinNoteAdapter binNoteAdapter;
+    private BinNoteAdapter binNoteAdapter;
     public static SwipeMenuRecyclerView recyclerView;
     private static final String TAG = "RecycleBinActivity";
 
@@ -81,6 +81,7 @@ public class RecycleBinActivity extends AppCompatActivity {
             } while (cursor.moveToNext());
         }
         cursor.close();
+        dbHelper.close();
     }
 
     private void initBinRecyclerView() {
@@ -174,6 +175,7 @@ public class RecycleBinActivity extends AppCompatActivity {
                 case 0:
                     if (isDebug) Toast.makeText(RecycleBinActivity.this, "恢复 Pos" + adapterPosition, Toast.LENGTH_SHORT).show();
                     dbAid.setSQLNote(time, 0);
+                    MainActivity.getNoteAdapter().refreshAllDataForce();
                     break;
                 case 1:
                     if (isDebug) Toast.makeText(RecycleBinActivity.this, "从数据库上删除 Pos" + adapterPosition, Toast.LENGTH_SHORT).show();
@@ -195,5 +197,11 @@ public class RecycleBinActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        super.onBackPressed();
     }
 }

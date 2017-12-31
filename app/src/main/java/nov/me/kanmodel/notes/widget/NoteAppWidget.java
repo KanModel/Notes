@@ -57,7 +57,9 @@ public class NoteAppWidget extends AppWidgetProvider {
                 long time = notes.get(dbAid.pos).getTime();
                 dbAid.addSQLWidget(dbHelper, time, appWidgetId);
                 note = dbAid.querySQLNote(dbHelper, time);
-                updateWidgetInfoList(dbHelper.getWritableDatabase());//添加后刷新表
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                updateWidgetInfoList(db);//添加后刷新表
+                db.close();
             } catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
             }
@@ -215,6 +217,7 @@ public class NoteAppWidget extends AppWidgetProvider {
                 Toast.makeText(context, "appWidgetId:" + appWidgetId, Toast.LENGTH_SHORT).show();
             }
         }
+        db.close();
     }
 
     void updateWidgetInfoList(SQLiteDatabase db) {

@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
      * 从数据库获取数据添加到noteList集合中
      */
     private void initNodes() {
+        noteList.clear();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.query("Note", null, null, null, null, null, null);
         if (cursor.moveToFirst()) {
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
             } while (cursor.moveToNext());
         }
         cursor.close();
+        db.close();
     }
 
     private void initComponent() {
@@ -165,25 +167,30 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addOnItemTouchListener(new RecyclerViewClickListener(this, new RecyclerViewClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Note note = noteList.get(position);
-                Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
-                        note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
-                Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
-                intent.putExtra("pos", position);
-                intent.putExtra("title", note.getTitle());
-                intent.putExtra("content", note.getContent());
-                intent.putExtra("time", TimeAid.stampToDate(note.getTime()));
-                intent.putExtra("timeLong", note.getTime());
-                intent.putExtra("lastChangedTime", note.getLastChangedTime());
-                view.getContext().startActivity(intent);
-                if (isDebug) {
-                    Toast.makeText(MainActivity.this, "Click " + noteList.get(position).getContent(), Toast.LENGTH_SHORT).show();
+                try {
+                    Note note = NoteAdapter.getNotes().get(position);
+                    Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
+                            note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
+                    Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
+                    intent.putExtra("pos", position);
+                    intent.putExtra("title", note.getTitle());
+                    intent.putExtra("content", note.getContent());
+                    intent.putExtra("time", TimeAid.stampToDate(note.getTime()));
+                    intent.putExtra("timeLong", note.getTime());
+                    intent.putExtra("lastChangedTime", note.getLastChangedTime());
+                    view.getContext().startActivity(intent);
+                    if (isDebug) {
+                        Toast.makeText(MainActivity.this, "Click " + NoteAdapter.getNotes().get(position).getContent(), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "这个便笺好像并不存在哦~", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onItemLongClick(View view, int position) {
-                Toast.makeText(MainActivity.this, "Long Click " + noteList.get(position), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Long Click " + NoteAdapter.getNotes().get(position), Toast.LENGTH_SHORT).show();
             }
         }));
         checkEmpty();
@@ -217,7 +224,10 @@ public class MainActivity extends AppCompatActivity {
         }
 //        noteAdapter.notifyDataSetChanged();
         checkEmpty();
-        noteAdapter.refreshAllDataForce();
+//        noteAdapter.refreshAllDataForce();
+        for (Note note : NoteAdapter.getNotes()) {
+            Log.d(TAG, "onResume: note " + note.getTitle());
+        }
         super.onResume();
     }
 
@@ -258,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
         switch (item.getItemId()) {
             case R.id.recycle_bin:
                 startActivity(new Intent(MainActivity.this, RecycleBinActivity.class));
@@ -322,8 +332,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         int size = NoteAdapter.getNotes().size();
                         dbAid.deleteSQLNoteForced();
-                        noteList.clear();
-                        initNodes();
+//                        initNodes();
+                        dbAid.initNotes(dbHelper, NoteAdapter.getNotes());
                         noteAdapter.refreshAllData(size);
                         checkEmpty();
                     }
@@ -351,17 +361,21 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.note_clear:
                 /*删除所有便签，清空列表*/
-                Cursor cursor1 = db.query("Note", null, null, null, null, null, null);
                 int size = NoteAdapter.getNotes().size();
-                if (cursor1.moveToFirst()) {
-                    do {
-                        long time = cursor1.getLong(cursor1.getColumnIndex("time"));
-                        dbAid.deleteSQLNote(time);
-                    } while (cursor1.moveToNext());
+//                Cursor cursor1 = db.query("Note", null, null, null, null, null, null);
+//                if (cursor1.moveToFirst()) {
+//                    do {
+//                        long time = cursor1.getLong(cursor1.getColumnIndex("time"));
+//                        dbAid.deleteSQLNote(time);
+//                    } while (cursor1.moveToNext());
+//                }
+//                cursor1.close();
+                for (Note note: NoteAdapter.getNotes()){
+                    dbAid.deleteSQLNote(note.getTime());
                 }
-                cursor1.close();
-                noteList.clear();
-                initNodes();
+//                noteList.clear();
+//                initNodes();
+                NoteAdapter.getNotes().clear();
                 noteAdapter.refreshAllData(size);
                 checkEmpty();
                 return true;
@@ -374,6 +388,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
         }
+        db.close();
         return super.onOptionsItemSelected(item);
     }
 
@@ -446,6 +461,7 @@ public class MainActivity extends AppCompatActivity {
             dbAid.deleteSQLNote(time);
             Toast.makeText(MainActivity.this, "你删除了一条便笺，你可以在回收站中彻底删除或恢复", Toast.LENGTH_SHORT).show();
             noteAdapter.removeData(adapterPosition);
+            Log.d(TAG, "onItemDismiss: pos : " + adapterPosition);
             checkEmpty();
         }
     };
