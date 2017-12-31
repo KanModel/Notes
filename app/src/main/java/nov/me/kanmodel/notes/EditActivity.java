@@ -89,6 +89,7 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
                 saveOriginalNote(title, content);
             }
             NoteAppWidget.updateWidget(this, time, title, content);
+            MainActivity.getNoteAdapter().refreshAllDataForce();
         }
         finish();
         super.onBackPressed();
@@ -135,12 +136,13 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
                         if (MainActivity.getIsDebug()) {
                             Toast.makeText(this, "未改变便签不保存", Toast.LENGTH_SHORT).show();
                         }
-                        MainActivity.getNoteAdapter().refreshData(pos);
+//                        MainActivity.getNoteAdapter().refreshData(pos);
                     } else {
                         saveOriginalNote(title, content);
                     }
 //                    AppWidgetManager.getInstance(this).updateAppWidget(dbAid.querySQLWidget(this, time).getAppWidgetID()
 //                            , NoteAppWidget.getRemoteView(this, time, title, content));
+                    MainActivity.getNoteAdapter().refreshAllDataForce();
                     NoteAppWidget.updateWidget(this, time, title, content);
                 }
                 finish();
@@ -223,7 +225,8 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
             Toast.makeText(this, "你设定了提醒时间 :" + dstStr
                     + "\n将于" + dMinute + "分钟后提醒你", Toast.LENGTH_SHORT).show();
         }
-        AlarmReceiver.setAlarm(this, dDay * 1000 * 60 * 60 * 24 + dHour * 1000 * 60 *60 + dMinute * 1000 * 60, title);
+//        AlarmReceiver.setAlarm(this, dDay * 1000 * 60 * 60 * 24 + dHour * 1000 * 60 * 60 + dMinute * 1000 * 60, title);
+        AlarmReceiver.setAlarm(this, dDay * 60 * 24 + dHour * 60 + dMinute, title);
         Log.d(TAG, "positiveListener: title" + title);
         dbAid.newSQLNotice(this, time, dstTime);
     }

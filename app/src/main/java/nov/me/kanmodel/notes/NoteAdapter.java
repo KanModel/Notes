@@ -194,6 +194,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     }
 
     public void refreshData(int position) {
+//        notes.get(position).
         notifyItemRangeChanged(position, notes.size());
     }
 
