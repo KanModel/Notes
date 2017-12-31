@@ -10,7 +10,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -26,6 +29,7 @@ import java.util.List;
 
 import nov.me.kanmodel.notes.utils.DatabaseHelper;
 import nov.me.kanmodel.notes.utils.PreferenceManager;
+import nov.me.kanmodel.notes.utils.Utils;
 import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
 import nov.me.kanmodel.notes.utils.dbAid;
 
@@ -40,6 +44,9 @@ public class RecycleBinActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private PreferenceManager preferences;
     private BinNoteAdapter binNoteAdapter;
+    private static LinearLayout emptyView;
+    private static TextView emptyTV;
+    private static TextView emptyDetailsTV;
     public static SwipeMenuRecyclerView recyclerView;
     private static final String TAG = "RecycleBinActivity";
 
@@ -58,6 +65,13 @@ public class RecycleBinActivity extends AppCompatActivity {
     private void initComponent() {
         /*组件初始化*/
         actionBar = getActionBar();
+        emptyView = findViewById(R.id.empty_view);
+        emptyTV = findViewById(R.id.empty_view_text);
+        emptyTV.setText(getResources().getString(R.string.fa_recycle));
+        emptyTV.setTypeface(Utils.getFontAwesome(getApplicationContext()));
+//        emptyTV.setText(getResources().getString(R.string.fa_recycle));
+        emptyDetailsTV = findViewById(R.id.empty_view_text_details);
+        emptyDetailsTV.setText(getResources().getString(R.string.empty_bin_note_text));
         dbHelper = dbAid.getDbHelper(this);
         preferences = new PreferenceManager(this.getApplicationContext());
     }
@@ -108,7 +122,7 @@ public class RecycleBinActivity extends AppCompatActivity {
         binNoteAdapter = new BinNoteAdapter(binNoteList);
         recyclerView.setAdapter(binNoteAdapter);//设置Note集合
         Log.d(TAG, "initRecyclerView: length : " + binNoteAdapter.getItemCount());
-
+        checkEmpty();
     }
 
     OnItemMoveListener mItemMoveListener = new OnItemMoveListener() {
@@ -133,7 +147,7 @@ public class RecycleBinActivity extends AppCompatActivity {
     private SwipeMenuCreator swipeMenuCreator = new SwipeMenuCreator() {
         @Override
         public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
-            int width = 400;
+            int width = 300;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
 
             SwipeMenuItem addItem = new SwipeMenuItem(RecycleBinActivity.this)
@@ -186,6 +200,7 @@ public class RecycleBinActivity extends AppCompatActivity {
 //            dbAid.deleteSQLNote(time);
 //            binNoteAdapter.removeData(adapterPosition);
             binNoteAdapter.removeData(adapterPosition);
+            checkEmpty();
         }
     };
 
@@ -203,5 +218,15 @@ public class RecycleBinActivity extends AppCompatActivity {
     public void onBackPressed() {
         finish();
         super.onBackPressed();
+    }
+
+    public void checkEmpty(){
+        if (binNoteAdapter.getItemCount() == 0) {
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
     }
 }

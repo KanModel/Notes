@@ -31,6 +31,7 @@
             android:textSize="@android:dimen/thumbnail_height" />
 
         <TextView
+            android:id="@+id/empty_view_text_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

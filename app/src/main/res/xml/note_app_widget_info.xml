@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:initialKeyguardLayout="@layout/note_app_widget"
     android:initialLayout="@layout/note_app_widget"
-    android:minHeight="110dp"
+    android:minHeight="40dp"
     android:minWidth="110dp"
     android:previewImage="@drawable/logo_appwidget_preview"
     android:resizeMode="horizontal|vertical"

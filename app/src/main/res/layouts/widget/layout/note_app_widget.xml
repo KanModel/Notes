@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
+        android:textAlignment="center"
         android:textColor="#4214f7"
         android:textSize="24sp"
         android:textStyle="bold|italic" />
@@ -20,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/widget_title"
+        android:visibility="gone"
         android:layout_margin="6dp"/>
 
     <TextView
@@ -33,6 +35,7 @@
         android:fadingEdge="horizontal"
         android:fadingEdgeLength="10dip"
         android:singleLine="true"
+        android:visibility="gone"
         android:text="@string/app_name"/>
 
     <TextView
