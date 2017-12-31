@@ -20,6 +20,7 @@ import java.util.Date;
 import nov.me.kanmodel.notes.MainActivity;
 import nov.me.kanmodel.notes.R;
 import nov.me.kanmodel.notes.utils.TimeAid;
+import nov.me.kanmodel.notes.widget.NoteAppWidget;
 
 /**
  * 接受通知
@@ -43,7 +44,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             Notification notify = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.drawable.logo_appwidget_preview)
                     .setContentTitle("时间便笺提醒")
-                    .setSound(Uri.fromFile(new File("/system/media/audio/alarms/White_Rabbit.ogg")))
+//                    .setSound(Uri.fromFile(new File("/system/media/audio/alarms/wr.ogg")))
+                    .setSound(Uri.parse("android.resource://" + NoteAppWidget.getmContext().getPackageName() + "/" + R.raw.wr))
                     .setVibrate(new long[]{0, 1000, 1000, 1000})
                     .setLights(Color.GREEN, 1000, 1000)
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(intent.getStringExtra("title")))

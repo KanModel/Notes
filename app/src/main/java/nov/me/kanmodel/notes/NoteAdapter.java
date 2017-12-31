@@ -1,6 +1,11 @@
 package nov.me.kanmodel.notes;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,11 +114,26 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             long hour = TimeAid.getDiffHour(dstTime);
             long minute = TimeAid.getDiffMinutes(dstTime);
             if (day > 0) {
-                dstTV.setText("剩余 " + day + "天");
+                SpannableString spannableString = new SpannableString("剩余 " + day + " 天");
+                ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#FFE5ADFF"));
+                RelativeSizeSpan sizeSpan = new RelativeSizeSpan(1.4f);
+                spannableString.setSpan(sizeSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(colorSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                dstTV.setText(spannableString);
             } else if (hour > 0) {
-                dstTV.setText("剩余 " + hour + "小时");
+                SpannableString spannableString = new SpannableString("剩余 " + hour + " 小时");
+                ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#FFE5ADFF"));
+                RelativeSizeSpan sizeSpan = new RelativeSizeSpan(1.4f);
+                spannableString.setSpan(sizeSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(colorSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                dstTV.setText(spannableString);
             } else if (minute > 0) {
-                dstTV.setText("剩余 " + minute + "分钟");
+                SpannableString spannableString = new SpannableString("剩余 " + minute + " 分钟");
+                ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#FFE5ADFF"));
+                RelativeSizeSpan sizeSpan = new RelativeSizeSpan(1.4f);
+                spannableString.setSpan(sizeSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(colorSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                dstTV.setText(spannableString);
             } else {
                 dstTV.setVisibility(View.GONE);
             }

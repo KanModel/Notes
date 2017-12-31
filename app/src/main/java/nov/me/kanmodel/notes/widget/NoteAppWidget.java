@@ -8,11 +8,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.opengl.Visibility;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -138,11 +144,26 @@ public class NoteAppWidget extends AppWidgetProvider {
             long hour = TimeAid.getDiffHour(dstTime);
             long minute = TimeAid.getDiffMinutes(dstTime);
             if (day > 0) {
-                views.setTextViewText(R.id.widget_dis, "剩余 " + day + "天");
+                SpannableString spannableString = new SpannableString("剩余 " + day + " 天");
+                ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#FFE5ADFF"));
+                RelativeSizeSpan sizeSpan = new RelativeSizeSpan(1.4f);
+                spannableString.setSpan(sizeSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(colorSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                views.setTextViewText(R.id.widget_dis, spannableString);
             } else if (hour > 0) {
-                views.setTextViewText(R.id.widget_dis, "剩余 " + hour + "小时");
+                SpannableString spannableString = new SpannableString("剩余 " + hour + " 小时");
+                ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#FFE5ADFF"));
+                RelativeSizeSpan sizeSpan = new RelativeSizeSpan(1.4f);
+                spannableString.setSpan(sizeSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(colorSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                views.setTextViewText(R.id.widget_dis, spannableString);
             } else if (minute > 0) {
-                views.setTextViewText(R.id.widget_dis, "剩余 " + minute + "分钟");
+                SpannableString spannableString = new SpannableString("剩余 " + minute + " 分钟");
+                ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#FFE5ADFF"));
+                RelativeSizeSpan sizeSpan = new RelativeSizeSpan(1.4f);
+                spannableString.setSpan(sizeSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(colorSpan, 3, spannableString.length() - 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                views.setTextViewText(R.id.widget_dis, spannableString);
             } else {
                 views.setViewVisibility(R.id.widget_dis, View.GONE);
             }
