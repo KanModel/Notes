@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes.ui;
+package nov.me.kanmodel.notes.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +9,7 @@ import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 
 import nov.me.kanmodel.notes.R;
+import nov.me.kanmodel.notes.activity.ui.CustomSlideBigText;
 
 /**
  * Created by KanModel on 2017/12/27.
@@ -21,22 +22,18 @@ public class IntroActivity extends AppIntro {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setFadeAnimation();
         setFlowAnimation();
         setBarColor(getResources().getColor(R.color.colorPrimaryDark));
         setSeparatorColor(getResources().getColor(R.color.colorPrimaryDark));
         Log.d(TAG, "onCreate: 开始");
-//        com.github.paolorotolo.appintro.AppIntro2Fragment.newInstance();
+        //第一页
         addSlide(AppIntroFragment.newInstance(getString(R.string.intro1_title), getString(R.string.intro1_desc),
                 R.drawable.logo_appwidget_preview, getResources().getColor(R.color.colorPrimaryDark)));
+        //第二页
         CustomSlideBigText cs1 = CustomSlideBigText.newInstance(R.layout.custom_slide_big_text);
         cs1.setTitle(getString(R.string.intro2_title));
         addSlide(cs1);
-
-//        CustomSlideBigText cs2 = CustomSlideBigText.newInstance(R.layout.custom_slide_big_text);
-//        cs2.setTitle(getString(R.string.intro3_desc));
-//        addSlide(cs2);
-
+        //第三页
         addSlide(AppIntroFragment.newInstance(getString(R.string.intro3_title), getString(R.string.intro3_desc),
                 R.drawable.logo_appwidget_preview, getResources().getColor(R.color.colorPrimaryDark)));
 

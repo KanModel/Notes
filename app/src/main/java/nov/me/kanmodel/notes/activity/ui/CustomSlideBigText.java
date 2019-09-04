@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes.ui;
+package nov.me.kanmodel.notes.activity.ui;
 
 /**
  * Created by n8fr8 on 10/30/17.

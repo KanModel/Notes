@@ -9,14 +9,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.opengl.Visibility;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
@@ -28,11 +26,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import nov.me.kanmodel.notes.model.WidgetInfo;
 import nov.me.kanmodel.notes.utils.dbAid;
 import nov.me.kanmodel.notes.utils.DatabaseHelper;
-import nov.me.kanmodel.notes.MainActivity;
-import nov.me.kanmodel.notes.Note;
-import nov.me.kanmodel.notes.NoteAdapter;
+import nov.me.kanmodel.notes.activity.MainActivity;
+import nov.me.kanmodel.notes.model.Note;
+import nov.me.kanmodel.notes.activity.adapter.NoteAdapter;
 import nov.me.kanmodel.notes.R;
 import nov.me.kanmodel.notes.utils.TimeAid;
 
@@ -49,8 +48,6 @@ public class NoteAppWidget extends AppWidgetProvider {
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager, final int appWidgetId) {
-        // Construct the RemoteViews object
-//        context.registerReceiver()
         Note note = null;
         for (WidgetInfo widgetInfo : widgetInfoList) {//遍历表寻找对应id的挂件
             if (widgetInfo.getAppWidgetID() == appWidgetId) {
@@ -73,63 +70,6 @@ public class NoteAppWidget extends AppWidgetProvider {
                 note = new Note("此便签可能以删除,请您手动删除", "", TimeAid.getNowTime());
             }
         }
-
-//        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.note_app_widget);
-//        long dstTime = dbAid.querySQLNotice(dbAid.getDbHelper(context), note.getTime());
-//        if (dstTime > 0 && (dstTime - TimeAid.getNowTime()) > 0) {
-////            dstTV.setVisibility(View.VISIBLE);
-//            views.setViewVisibility(R.id.widget_dis, View.VISIBLE);
-//            long day = TimeAid.getDiffDay(dstTime);
-//            long hour = TimeAid.getDiffHour(dstTime);
-//            long minute = TimeAid.getDiffMinutes(dstTime);
-//            if (day > 0) {
-//                views.setTextViewText(R.id.widget_dis, "剩余 " + day + "天");
-//            } else if (hour > 0) {
-//                views.setTextViewText(R.id.widget_dis, "剩余 " + hour + "小时");
-//            } else if (minute > 0) {
-//                views.setTextViewText(R.id.widget_dis, "剩余 " + minute + "分钟");
-//            }
-//        }
-//
-//        String widgetTitle = note.getTitle();
-//        String strTime = TimeAid.stampToDate(note.getTime());
-//        String content = note.getContent();
-////        if (NoteAdapter.getNotes() != null) {
-////            note = NoteAdapter.getNotes().get(dbAid.pos);
-////            widgetTitle = note.getTitle();
-////            time = note.getLogTime();
-////            content = note.getContent();
-////        } else {
-////            if (MainActivity.getIsDebug()) {
-////                Toast.makeText(context, "开机Debug", Toast.LENGTH_SHORT).show();
-////            }
-////            List<Note> noteList = dbAid.initNotes(dbHelper);
-////            note = noteList.get(0);
-////            if (note != null) {
-////                widgetTitle = note.getTitle();
-////                time = note.getLogTime();
-////                content = note.getContent();
-////            } else {
-////                widgetTitle = "加载失败，请删除本挂件";
-////                time = "";
-////                content = "";
-////            }
-////        }
-//        //设置挂件内容
-//        //设置对应挂件内容
-//        views.setTextViewText(R.id.widget_title, widgetTitle);
-//        views.setTextViewText(R.id.widget_time, strTime);
-//        views.setTextViewText(R.id.widget_content, content);
-//        //设置挂件字体大小
-//        views.setTextViewTextSize(R.id.widget_title, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getTitleFontSize());
-//        views.setTextViewTextSize(R.id.widget_time, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getTimeFontSize());
-//        views.setTextViewTextSize(R.id.widget_content, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getContentFontSize());
-//        Intent openAppIntent = new Intent(context, MainActivity.class);
-//        PendingIntent openAppPendingIntent = PendingIntent.getActivity(context, 0, openAppIntent, 0);
-//        views.setOnClickPendingIntent(R.id.widget_title, openAppPendingIntent);
-
-        // Instruct the widget manager to update the widget
-//        appWidgetManager.updateAppWidget(appWidgetId, views);
         appWidgetManager.updateAppWidget(appWidgetId, getRemoteView(context, note.getTime(), note.getTitle(), note.getContent()));
     }
 
@@ -138,7 +78,6 @@ public class NoteAppWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.note_app_widget);
         long dstTime = dbAid.querySQLNotice(dbAid.getDbHelper(context), time);
         if (dstTime > 0 && (dstTime - TimeAid.getNowTime()) > 0) {
-//            dstTV.setVisibility(View.VISIBLE);
             views.setViewVisibility(R.id.widget_dis, View.VISIBLE);
             long day = TimeAid.getDiffDay(dstTime);
             long hour = TimeAid.getDiffHour(dstTime);
@@ -169,9 +108,6 @@ public class NoteAppWidget extends AppWidgetProvider {
             }
         }
 
-//        String widgetTitle = note.getTitle();
-//        String strTime = TimeAid.stampToDate(note.getTime());
-//        String content = note.getContent();
         views.setTextViewText(R.id.widget_title, widgetTitle);
         views.setTextViewText(R.id.widget_time, strTime);
         views.setTextViewText(R.id.widget_content, content);
@@ -264,21 +200,16 @@ public class NoteAppWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         Log.d(TAG, "onEnabled: Start");
-        // Enter relevant functionality for when the first widget is created
     }
 
     @Override
     public void onDisabled(Context context) {
         Log.d(TAG, "onDisabled: Start");
-        // Enter relevant functionality for when the last widget is disabled
     }
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {//这里的appWidgetIds是删除的id数组
         Log.d(TAG, "onDeleted: Start");//todo 删除
-//        for (int appWidgetID : appWidgetIds) {
-//            Toast.makeText(context, "删除的是ID" + appWidgetID, Toast.LENGTH_SHORT).show();
-//        }
         if (MainActivity.getIsDebug()) {
             Toast.makeText(context, "删除的是ID" + appWidgetIds[0], Toast.LENGTH_SHORT).show();
         }

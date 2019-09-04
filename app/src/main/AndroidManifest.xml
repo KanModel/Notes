@@ -5,6 +5,7 @@
 
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -14,40 +15,41 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".EditActivity"
+            android:name=".activity.EditActivity"
             android:label="@string/edit_name"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             tools:targetApi="jelly_bean">
             <intent-filter>
-                <action android:name="nov.me.kanmodel.notes.EditActivity" />
+                <action android:name="nov.me.kanmodel.notes.activity.EditActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             tools:targetApi="jelly_bean" />
         <activity
-            android:name=".ui.IntroActivity"
+            android:name=".activity.IntroActivity"
             android:label="@string/intro"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AppAboutActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".activity.AppAboutActivity"
+            android:parentActivityName=".activity.MainActivity"
             tools:targetApi="jelly_bean" />
         <activity
-            android:name=".RecycleBinActivity"
+            android:name=".activity.RecycleBinActivity"
             android:label="@string/recycle_bin"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             tools:targetApi="jelly_bean" />
 
         <provider

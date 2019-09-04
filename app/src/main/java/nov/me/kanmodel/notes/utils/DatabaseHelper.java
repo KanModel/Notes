@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
-import nov.me.kanmodel.notes.MainActivity;
+import nov.me.kanmodel.notes.activity.MainActivity;
 
 /**
  * 用于数据库创建

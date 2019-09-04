@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.model;
 
 /**
  * 存储每个便签内容的数据类
@@ -45,7 +45,7 @@ public class Note {
         return content;
     }
 
-    String getLogTime() {
+    public String getLogTime() {
         return logTime;
     }
 

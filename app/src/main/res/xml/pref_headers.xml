@@ -3,13 +3,13 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="nov.me.kanmodel.notes.SettingsActivity$GeneralPreferenceFragment"
+        android:fragment="nov.me.kanmodel.notes.activity.SettingsActivity$GeneralPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_general"
         android:summary="@string/pref_header_general_summary"/>
 
     <header
-        android:fragment="nov.me.kanmodel.notes.SettingsActivity$FontFragment"
+        android:fragment="nov.me.kanmodel.notes.activity.SettingsActivity$FontFragment"
         android:icon="@drawable/ic_font_black_24dp"
         android:title="@string/pref_header_font"
         android:summary="@string/pref_header_font_summary"/>

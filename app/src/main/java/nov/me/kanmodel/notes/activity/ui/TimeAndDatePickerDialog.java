@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes.ui;
+package nov.me.kanmodel.notes.activity.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;

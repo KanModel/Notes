@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.activity;
 
 import android.content.Intent;
 import android.os.Build;
@@ -15,8 +15,9 @@ import android.widget.Toast;
 
 import java.util.Locale;
 
+import nov.me.kanmodel.notes.R;
 import nov.me.kanmodel.notes.receiver.AlarmReceiver;
-import nov.me.kanmodel.notes.ui.TimeAndDatePickerDialog;
+import nov.me.kanmodel.notes.activity.ui.TimeAndDatePickerDialog;
 import nov.me.kanmodel.notes.utils.TimeAid;
 import nov.me.kanmodel.notes.utils.Utils;
 import nov.me.kanmodel.notes.utils.dbAid;
@@ -169,22 +170,12 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
         lastChangedTime = TimeAid.getNowTime();
         MainActivity.getNoteAdapter().addData(dbAid.addSQLNote(MainActivity.getDbHelper(), content, title, lastChangedTime, lastChangedTime));
         MainActivity.getRecyclerView().scrollToPosition(0);
-//        ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);
-//        progressDialog.setTitle("保存您的更改");
-//        progressDialog.setMessage("正在保存...");
-//        progressDialog.setCancelable(false);
-//        progressDialog.show();
     }
 
     private void saveOriginalNote(String title, String content) {
         lastChangedTime = TimeAid.getNowTime();
         int pos = parentIntent.getIntExtra("pos", 0);
         dbAid.updateSQLNote(title, content, time, pos, lastChangedTime);
-//        ProgressDialog progressDialog = new ProgressDialog(EditActivity.this);
-//        progressDialog.setTitle("保存您的更改");
-//        progressDialog.setMessage("正在保存...");
-//        progressDialog.setCancelable(false);
-//        progressDialog.show();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -197,8 +188,6 @@ public class EditActivity extends AppCompatActivity implements TimeAndDatePicker
         Log.d(TAG, "positiveListener: hour  :" + dialog.getHour());
         Log.d(TAG, "positiveListener: minute:" + dialog.getMinute());
         String dstStr = String.format(Locale.CHINA, "%d-%d-%d %d:%d:00", dialog.getYear(), dialog.getMonth(), dialog.getDay(), dialog.getHour(), dialog.getMinute());
-//        long dstTime = dbAid.getTimeStamp(dialog.getYear(),
-//                dialog.getMonth(), dialog.getDay(), dialog.getHour(), dialog.getMinute());
         long dstTime = TimeAid.dateToStamp(dstStr);
         long nowTime = TimeAid.getNowTime();
         Log.d(TAG, "positiveListener: dstTime:" + dstTime);

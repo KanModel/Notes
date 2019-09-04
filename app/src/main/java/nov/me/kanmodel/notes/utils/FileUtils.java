@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 
-import nov.me.kanmodel.notes.SettingsActivity;
+import nov.me.kanmodel.notes.activity.SettingsActivity;
 
 import static android.support.v4.content.FileProvider.getUriForFile;
 

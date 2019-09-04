@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.activity;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

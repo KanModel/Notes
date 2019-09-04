@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,13 +34,15 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import nov.me.kanmodel.notes.ui.IntroActivity;
+import nov.me.kanmodel.notes.activity.adapter.NoteAdapter;
+import nov.me.kanmodel.notes.R;
+import nov.me.kanmodel.notes.model.Note;
 import nov.me.kanmodel.notes.utils.dbAid;
 import nov.me.kanmodel.notes.utils.DatabaseHelper;
 import nov.me.kanmodel.notes.utils.RecyclerViewClickListener;
 import nov.me.kanmodel.notes.utils.TimeAid;
 import nov.me.kanmodel.notes.utils.Utils;
-import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
+import nov.me.kanmodel.notes.activity.ui.WrapContentLinearLayoutManager;
 import nov.me.kanmodel.notes.utils.PreferenceManager;
 
 /**
@@ -101,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
                             + content + "\nlogtime:" + logtime + "\ntime:" + time + "\nisDeleted:" + isDeleted);
                 }
                 if (isDeleted == 0) {
-//                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime, dbAid.querySQLNotice(this, time)));//数据库按ID顺序倒序排列
                     noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
                 }
             } while (cursor.moveToNext());
@@ -127,11 +128,9 @@ public class MainActivity extends AppCompatActivity {
             setTitle(getResources().getString(R.string.app_name) + "[Debug模式]");
             Log.d(TAG, "onCreate: DatabaseDir: " + getDatabasePath("Note.db").getAbsolutePath());
         }
-//        if (preferences.isFirstLaunch()) {
         if (isDebug || preferences.isFirstLaunch()) {
             startActivityForResult(new Intent(this, IntroActivity.class), REQUEST_CODE_INTRO);
             Log.d(TAG, "initComponent: IntroActivity");
-//            startActivity(new Intent(MainActivity.this, IntroActivity.class));
         }
     }
 
@@ -147,10 +146,7 @@ public class MainActivity extends AppCompatActivity {
         /*RecyclerView初始化*/
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-//        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));//瀑布流
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-//        recyclerView.setSwipeMenuCreator(swipeMenuCreator);
-//        recyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
         recyclerView.setOnItemMoveListener(mItemMoveListener);
         recyclerView.setItemViewSwipeEnabled(true);
         noteAdapter = new NoteAdapter(noteList);
@@ -163,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "initRecyclerView: length : " + noteAdapter.getItemCount());
 //        recyclerView.addItemDecoration(new NoteDecoration(this, NoteDecoration.VERTICAL_LIST));//todo 分割线与动画联动不美观
-//        recyclerView.addItemDecoration(new DefaultItemDecoration(Color.BLUE, 5, 5));
         recyclerView.addOnItemTouchListener(new RecyclerViewClickListener(this, new RecyclerViewClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -171,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                     Note note = NoteAdapter.getNotes().get(position);
                     Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
                             note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
-                    Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
+                    Intent intent = new Intent("nov.me.kanmodel.notes.activity.EditActivity");
                     intent.putExtra("pos", position);
                     intent.putExtra("title", note.getTitle());
                     intent.putExtra("content", note.getContent());
@@ -275,8 +270,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.add_note:
                 /*添加新便签*/
-                Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
-//                intent.putExtra("pos", position);
+                Intent intent = new Intent("nov.me.kanmodel.notes.activity.EditActivity");
                 intent.putExtra("title", "");
                 intent.putExtra("content", "");
                 long timeStamp = TimeAid.getNowTime();
@@ -285,27 +279,8 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("isNew", true);
                 intent.putExtra("lastChangedTime", timeStamp);
                 startActivity(intent);
-//                noteAdapter.addData(dbAid.addSQLNote(dbHelper, "", "新建便签"));
-//                recyclerView.scrollToPosition(0);//移动到顶端
                 return true;
             case R.id.main_menu_add:
-//                final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
-//                progressDialog.setTitle("保存您的更改");
-//                progressDialog.setMessage("正在保存...");
-//                progressDialog.setCancelable(false);
-//                progressDialog.show();
-//                Thread t = new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            Thread.sleep(1000);//让他显示10秒后，取消ProgressDialog
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                        progressDialog.dismiss();
-//                    }
-//                });
-//                t.start();
                 /*测试用添加三个便签数据*/
                 noteAdapter.addData(dbAid.addSQLNote(dbHelper, "近日，日本汽车巨头尼桑（国内称为日产）宣布将在北美地区的展厅演示增强现实（AR）体验，旨在向客户介绍旗下汽车的安全性以及驾驶辅助系统的相关技术。\n" +
                         "这个AR体验被命名为“见所未见（See the Unseen）”，将在即将上映的电影《星球大战8：最后的绝地武士》之前，也就是12月初发布。该体验将包含来自《星球大战》宇宙中的多个角色，比如风暴突击队和克隆人军团等。", "汽车巨头尼桑推出全新《星球大战》AR体验"));
@@ -384,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.main_menu_about:
                 /*启动关于应用*/
-                startActivity(new Intent(MainActivity.this,AppAboutActivity.class));
+                startActivity(new Intent(MainActivity.this, AppAboutActivity.class));
                 return true;
             default:
         }

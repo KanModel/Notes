@@ -1,10 +1,11 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import nov.me.kanmodel.notes.R;
 import nov.me.kanmodel.notes.utils.Utils;
 import nov.me.kanmodel.notes.utils.dbAid;
 

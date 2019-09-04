@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.activity;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -26,6 +26,8 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.List;
 
+import nov.me.kanmodel.notes.activity.adapter.NoteAdapter;
+import nov.me.kanmodel.notes.R;
 import nov.me.kanmodel.notes.utils.FileUtils;
 
 /**

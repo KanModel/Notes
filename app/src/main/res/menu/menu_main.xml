@@ -10,7 +10,7 @@
         android:id="@+id/recycle_bin"
         android:icon="@android:drawable/ic_menu_delete"
         android:title="@string/recycle_bin"
-        app:showAsAction="withText" />
+        app:showAsAction="ifRoom|withText" />
     <group
         android:id="@+id/main_menu_debug"
         android:visible="false">

@@ -1,24 +1,25 @@
 package nov.me.kanmodel.notes.widget;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.RemoteViews;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import nov.me.kanmodel.notes.MainActivity;
-import nov.me.kanmodel.notes.NoteAdapter;
+import nov.me.kanmodel.notes.activity.MainActivity;
+import nov.me.kanmodel.notes.activity.adapter.NoteAdapter;
 import nov.me.kanmodel.notes.utils.TimeAid;
 
 public class UpdateWidgetService extends Service {
@@ -34,12 +35,29 @@ public class UpdateWidgetService extends Service {
 
     @Override
     public void onCreate() {
-        super.onCreate();
         context = getApplicationContext();
         appWidgetManager = AppWidgetManager.getInstance(context);// 定义计时器
         Timer timer = new Timer();
-        // 启动周期性调度
         Log.d(TAG, "onCreate: ");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Log.d(TAG, "onCreate: Notification");
+            NotificationChannel channel = new NotificationChannel("xxx", "xxx", NotificationManager.IMPORTANCE_LOW);
+
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (manager == null)
+                return;
+            manager.createNotificationChannel(channel);
+
+            Notification notification = new NotificationCompat.Builder(this, "xxx")
+                    .setAutoCancel(true)
+                    .setCategory(Notification.CATEGORY_SERVICE)
+                    .setOngoing(true)
+                    .setPriority(NotificationManager.IMPORTANCE_LOW)
+                    .build();
+
+            startForeground(101, notification);
+        }
+        // 启动周期性调度
         timer.schedule(new TimerTask() {
             public void run() {
                 // 发送空消息，通知界面更新
@@ -70,7 +88,14 @@ public class UpdateWidgetService extends Service {
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
-                startService(new Intent(getApplicationContext(), UpdateWidgetService.class));
+                Intent intent = new Intent(getApplicationContext(), UpdateWidgetService.class);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Log.d(TAG, "handleMessage: startForegroundService");
+                    context.startForegroundService(intent);
+                } else {
+                    Log.d(TAG, "handleMessage: startService");
+                    context.startService(intent);
+                }
             }
             super.handleMessage(msg);
         }

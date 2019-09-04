@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.activity;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,10 +27,13 @@ import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import nov.me.kanmodel.notes.activity.adapter.BinNoteAdapter;
+import nov.me.kanmodel.notes.R;
+import nov.me.kanmodel.notes.model.Note;
 import nov.me.kanmodel.notes.utils.DatabaseHelper;
 import nov.me.kanmodel.notes.utils.PreferenceManager;
 import nov.me.kanmodel.notes.utils.Utils;
-import nov.me.kanmodel.notes.utils.WrapContentLinearLayoutManager;
+import nov.me.kanmodel.notes.activity.ui.WrapContentLinearLayoutManager;
 import nov.me.kanmodel.notes.utils.dbAid;
 
 /**
@@ -69,7 +72,6 @@ public class RecycleBinActivity extends AppCompatActivity {
         emptyTV = findViewById(R.id.empty_view_text);
         emptyTV.setText(getResources().getString(R.string.fa_recycle));
         emptyTV.setTypeface(Utils.getFontAwesome(getApplicationContext()));
-//        emptyTV.setText(getResources().getString(R.string.fa_recycle));
         emptyDetailsTV = findViewById(R.id.empty_view_text_details);
         emptyDetailsTV.setText(getResources().getString(R.string.empty_bin_note_text));
         dbHelper = dbAid.getDbHelper(this);

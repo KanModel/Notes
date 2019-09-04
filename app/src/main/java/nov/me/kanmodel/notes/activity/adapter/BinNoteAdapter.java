@@ -1,4 +1,4 @@
-package nov.me.kanmodel.notes;
+package nov.me.kanmodel.notes.activity.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +11,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import nov.me.kanmodel.notes.activity.MainActivity;
+import nov.me.kanmodel.notes.R;
+import nov.me.kanmodel.notes.model.Note;
 import nov.me.kanmodel.notes.utils.TimeAid;
 import nov.me.kanmodel.notes.utils.dbAid;
 
@@ -62,7 +65,7 @@ public class BinNoteAdapter extends RecyclerView.Adapter<BinNoteAdapter.ViewHold
 
     }
 
-    BinNoteAdapter(List<Note> notes) {
+    public BinNoteAdapter(List<Note> notes) {
         this.notes = notes;
     }
 
@@ -126,7 +129,7 @@ public class BinNoteAdapter extends RecyclerView.Adapter<BinNoteAdapter.ViewHold
 ////                Note note = notes.get(position);
 ////                Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
 ////                        note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
-////                Intent intent = new Intent("nov.me.kanmodel.notes.EditActivity");
+////                Intent intent = new Intent("nov.me.kanmodel.notes.activity.EditActivity");
 ////                intent.putExtra("pos", position);
 ////                intent.putExtra("title", note.getTitle());
 ////                intent.putExtra("content", note.getContent());
@@ -147,7 +150,7 @@ public class BinNoteAdapter extends RecyclerView.Adapter<BinNoteAdapter.ViewHold
      * @param note     新Note
      * @param position 添加位置
      */
-    void addData(Note note, int position) {
+    public void addData(Note note, int position) {
         notes.add(position, note);
         notifyItemInserted(position);
     }
@@ -157,11 +160,11 @@ public class BinNoteAdapter extends RecyclerView.Adapter<BinNoteAdapter.ViewHold
      *
      * @param note 新Note
      */
-    void addData(Note note) {
+    public void addData(Note note) {
         addData(note, 0);
     }
 
-    void removeData(int position) {
+    public void removeData(int position) {
         notes.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, notes.size());
@@ -174,7 +177,7 @@ public class BinNoteAdapter extends RecyclerView.Adapter<BinNoteAdapter.ViewHold
     /**
      * 刷新RecyclerView
      */
-    void refreshAllData() {
+    public void refreshAllData() {
         refreshAllData(notes.size());
     }
 
@@ -183,7 +186,7 @@ public class BinNoteAdapter extends RecyclerView.Adapter<BinNoteAdapter.ViewHold
      *
      * @param size Note集合长度
      */
-    void refreshAllData(int size) {
+    public void refreshAllData(int size) {
         notifyItemRangeChanged(0, size);
     }
 

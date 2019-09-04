@@ -1,6 +1,6 @@
-package nov.me.kanmodel.notes.widget;
+package nov.me.kanmodel.notes.model;
 
-import nov.me.kanmodel.notes.Note;
+import nov.me.kanmodel.notes.model.Note;
 
 /**
  * WidgetInfo记录widget信息
@@ -11,10 +11,6 @@ public class WidgetInfo {
     private long time;
     private int appWidgetID;
     private Note note;
-
-    WidgetInfo(long time, int appWidgetID) {
-        this(time, appWidgetID, null);
-    }
 
     public WidgetInfo(long time, int appWidgetID, Note note) {
         this.time = time;

@@ -14,7 +14,6 @@ import java.util.Date;
 
 public abstract class TimeAid {
     public static long getNowTime() {
-//        return new Date().getTime();
         return System.currentTimeMillis();
     }
 
