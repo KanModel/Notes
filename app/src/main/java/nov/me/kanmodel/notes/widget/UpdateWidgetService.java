@@ -78,7 +78,7 @@ public class UpdateWidgetService extends Service {
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             if (msg.what == 0x123) {
-                Log.d(TAG, "handleMessage: Time :" + TimeAid.getNowTime());
+                Log.d(TAG, "handleMessage: Time :" + TimeAid.INSTANCE.getNowTime());
                 NoteAppWidget.updateAllWidget();
                 try {
                     if (MainActivity.getNoteAdapter() != null) {

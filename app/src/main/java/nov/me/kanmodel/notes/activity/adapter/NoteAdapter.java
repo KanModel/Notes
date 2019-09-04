@@ -19,8 +19,8 @@ import java.util.List;
 import nov.me.kanmodel.notes.R;
 import nov.me.kanmodel.notes.activity.MainActivity;
 import nov.me.kanmodel.notes.model.Note;
+import nov.me.kanmodel.notes.utils.DBAid;
 import nov.me.kanmodel.notes.utils.TimeAid;
-import nov.me.kanmodel.notes.utils.dbAid;
 
 /**
  * 重写RecyclerView类
@@ -102,19 +102,19 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         timeTV.setTextSize(timeFontSize);
         long time = note.getTime(), lastChangedTime = note.getLastChangedTime();
         if (time == lastChangedTime) {
-            timeTV.setText(TimeAid.stampToDate(time));
+            timeTV.setText(TimeAid.INSTANCE.stampToDate(time));
         } else {
-            timeTV.setText(TimeAid.stampToDate(time) + " - 最后更改于" + TimeAid.stampToDate(lastChangedTime));
+            timeTV.setText(TimeAid.INSTANCE.stampToDate(time) + " - 修改于" + TimeAid.INSTANCE.stampToDate(lastChangedTime));
         }
         TextView dstTV = holder.dstTV;
-        long dstTime = dbAid.querySQLNotice(MainActivity.getDbHelper(), time);
-        Log.d(TAG, "onBindViewHolder: dstTime:" + dstTime + " ,diff :" + (dstTime - TimeAid.getNowTime()));
-        if (dstTime > 0 && (dstTime - TimeAid.getNowTime()) > 0) {
+        long dstTime = DBAid.querySQLNotice(MainActivity.getDbHelper(), time);
+        Log.d(TAG, "onBindViewHolder: dstTime:" + dstTime + " ,diff :" + (dstTime - TimeAid.INSTANCE.getNowTime()));
+        if (dstTime > 0 && (dstTime - TimeAid.INSTANCE.getNowTime()) > 0) {
             dstTV.setVisibility(View.VISIBLE);
 //            dstTV.setText();
-            long day = TimeAid.getDiffDay(dstTime);
-            long hour = TimeAid.getDiffHour(dstTime);
-            long minute = TimeAid.getDiffMinutes(dstTime);
+            long day = TimeAid.INSTANCE.getDiffDay(dstTime);
+            long hour = TimeAid.INSTANCE.getDiffHour(dstTime);
+            long minute = TimeAid.INSTANCE.getDiffMinutes(dstTime);
             if (day > 0) {
                 SpannableString spannableString = new SpannableString("剩余 " + day + " 天 " + hour + " 小时 " + minute + " 分钟");
                 ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#FFE5ADFF"));
@@ -195,7 +195,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
      * 刷新RecyclerView
      */
     public void refreshAllDataForce() {
-        notes = dbAid.initNotes(dbAid.getDbHelper(MainActivity.getContext()));
+        notes = DBAid.initNotes(DBAid.getDbHelper(MainActivity.getContext()));
         refreshAllData();
     }
 

@@ -28,6 +28,7 @@ import java.util.List;
 
 import nov.me.kanmodel.notes.activity.adapter.NoteAdapter;
 import nov.me.kanmodel.notes.R;
+import nov.me.kanmodel.notes.activity.ui.AppCompatPreferenceActivity;
 import nov.me.kanmodel.notes.utils.FileUtils;
 
 /**

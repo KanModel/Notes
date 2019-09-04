@@ -11,19 +11,19 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.Objects;
 
-import nov.me.kanmodel.notes.activity.MainActivity;
 import nov.me.kanmodel.notes.R;
+import nov.me.kanmodel.notes.activity.MainActivity;
 import nov.me.kanmodel.notes.utils.TimeAid;
-import nov.me.kanmodel.notes.widget.NoteAppWidget;
 
 /**
  * 接受通知
  * Created by KanModel on 2017/12/30.
+ * todo
  */
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -36,11 +36,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Objects.equals(intent.getAction(), "NOTE.NOTIFICATION")) {
-//            long minute = intent.getLongExtra("min", 0);
-//            if (minute > 0) {
-//                Log.d(TAG, "onReceive: 剩余分钟 :" + --minute + " " + intent.getStringExtra("title"));
-//                setAlarm(context, minute, intent.getStringExtra("title"));
-//            } else {
             Log.d(TAG, "onReceive: title :" + intent.getStringExtra("title"));
             NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             Intent intent2 = new Intent(context, MainActivity.class);
@@ -74,7 +69,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         int type = AlarmManager.RTC_WAKEUP;
         //new Date()：表示当前日期，可以根据项目需求替换成所求日期
         //getTime()：日期的该方法同样可以表示从1970年1月1日0点至今所经历的毫秒数
-        long triggerAtMillis = TimeAid.getNowTime() + 1000 * 60 * minute;
+        long triggerAtMillis = TimeAid.INSTANCE.getNowTime() + 1000 * 60 * minute;
         if (manager != null) {
             if (Build.VERSION.SDK_INT >= 19) {
                 manager.setExact(type, triggerAtMillis, pi);

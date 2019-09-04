@@ -15,13 +15,13 @@ import nov.me.kanmodel.notes.activity.adapter.NoteAdapter;
 import nov.me.kanmodel.notes.model.WidgetInfo;
 
 /**
- * 存放各种操作方法的助手类
+ * 数据库操作类
  * Created by KanModel on 2017/11/26.
  */
 
-public abstract class dbAid {
+public class DBAid {
 
-    private static final String TAG = "AidClass";
+    private static final String TAG = "DBAid";
 
     public static int pos = 0;
 
@@ -50,7 +50,7 @@ public abstract class dbAid {
      * @return 返回新添加的Note类
      */
     public static Note addSQLNote(DatabaseHelper dbHelper, String content, String title) {
-        return addSQLNote(dbHelper, content, title, TimeAid.getNowTime(), TimeAid.getNowTime());
+        return addSQLNote(dbHelper, content, title, TimeAid.INSTANCE.getNowTime(), TimeAid.INSTANCE.getNowTime());
     }
 
     public static Note addSQLNote(DatabaseHelper dbHelper, String content, String title, long timeStamp, long lastChangedTimeStamp) {
@@ -141,20 +141,16 @@ public abstract class dbAid {
     public static List<Note> initNotes(DatabaseHelper dbHelper) {
         List<Note> noteList = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.query("Note", null, null, null, null, null, null);
+        Cursor cursor = db.rawQuery("select * from Note where isDeleted = 0 order by id asc", null);
         if (cursor.moveToFirst()) {
             do {
-                /*获取数据库数据*/
-                int id = cursor.getInt(cursor.getColumnIndex("id"));
+                /*遍历获取所有未删除Note*/
                 String content = cursor.getString(cursor.getColumnIndex("content"));
                 String title = cursor.getString(cursor.getColumnIndex("title"));
-                int isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
                 String logtime = cursor.getString(cursor.getColumnIndex("logtime"));
                 long time = cursor.getLong(cursor.getColumnIndex("time"));
                 long lastChangedTime = cursor.getLong(cursor.getColumnIndex("lastChangedTime"));
-                if (isDeleted == 0) {
-                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
-                }
+                noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -165,20 +161,16 @@ public abstract class dbAid {
     public static void initNotes(DatabaseHelper dbHelper, List<Note> noteList) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         noteList.clear();
-        Cursor cursor = db.query("Note", null, null, null, null, null, null);
+        Cursor cursor = db.rawQuery("select * from Note where isDeleted = 0 order by id asc", null);
         if (cursor.moveToFirst()) {
             do {
-                /*获取数据库数据*/
-                int id = cursor.getInt(cursor.getColumnIndex("id"));
+                /*遍历获取所有未删除Note*/
                 String content = cursor.getString(cursor.getColumnIndex("content"));
                 String title = cursor.getString(cursor.getColumnIndex("title"));
-                int isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
                 String logtime = cursor.getString(cursor.getColumnIndex("logtime"));
                 long time = cursor.getLong(cursor.getColumnIndex("time"));
                 long lastChangedTime = cursor.getLong(cursor.getColumnIndex("lastChangedTime"));
-                if (isDeleted == 0) {
-                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
-                }
+                noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -200,7 +192,7 @@ public abstract class dbAid {
         cursor.close();
         db.close();
         if (isDeleted == 1) {
-            return new Note("此便签可能以删除,请您手动删除", "", TimeAid.getNowTime());
+            return new Note("此便签可能以删除,请您手动删除", "", TimeAid.INSTANCE.getNowTime());
         }
         return new Note(title, content, time);
     }

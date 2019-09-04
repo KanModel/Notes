@@ -34,7 +34,7 @@ import nov.me.kanmodel.notes.utils.DatabaseHelper;
 import nov.me.kanmodel.notes.utils.PreferenceManager;
 import nov.me.kanmodel.notes.utils.Utils;
 import nov.me.kanmodel.notes.activity.ui.WrapContentLinearLayoutManager;
-import nov.me.kanmodel.notes.utils.dbAid;
+import nov.me.kanmodel.notes.utils.DBAid;
 
 /**
  * 便签回收站
@@ -71,10 +71,10 @@ public class RecycleBinActivity extends AppCompatActivity {
         emptyView = findViewById(R.id.empty_view);
         emptyTV = findViewById(R.id.empty_view_text);
         emptyTV.setText(getResources().getString(R.string.fa_recycle));
-        emptyTV.setTypeface(Utils.getFontAwesome(getApplicationContext()));
+        emptyTV.setTypeface(Utils.INSTANCE.getFontAwesome(getApplicationContext()));
         emptyDetailsTV = findViewById(R.id.empty_view_text_details);
         emptyDetailsTV.setText(getResources().getString(R.string.empty_bin_note_text));
-        dbHelper = dbAid.getDbHelper(this);
+        dbHelper = DBAid.getDbHelper(this);
         preferences = new PreferenceManager(this.getApplicationContext());
     }
 
@@ -107,7 +107,7 @@ public class RecycleBinActivity extends AppCompatActivity {
         BinNoteAdapter.setContentFontSize(preferences.getFontContextSize());
 
         /*sql数据库初始化*/
-        dbHelper = dbAid.getDbHelper(this);
+        dbHelper = DBAid.getDbHelper(this);
         initNodes();
 
         /*RecyclerView初始化*/
@@ -138,7 +138,7 @@ public class RecycleBinActivity extends AppCompatActivity {
             int adapterPosition = srcHolder.getAdapterPosition();
             // Item被侧滑删除时，删除数据，并更新adapter。
             long time = BinNoteAdapter.getNotes().get(adapterPosition).getTime();
-            dbAid.setSQLNote(time, 0);
+            DBAid.setSQLNote(time, 0);
             binNoteAdapter.removeData(adapterPosition);
         }
     };
@@ -190,16 +190,16 @@ public class RecycleBinActivity extends AppCompatActivity {
             switch (menuPosition) {
                 case 0:
                     if (isDebug) Toast.makeText(RecycleBinActivity.this, "恢复 Pos" + adapterPosition, Toast.LENGTH_SHORT).show();
-                    dbAid.setSQLNote(time, 0);
+                    DBAid.setSQLNote(time, 0);
                     MainActivity.getNoteAdapter().refreshAllDataForce();
                     break;
                 case 1:
                     if (isDebug) Toast.makeText(RecycleBinActivity.this, "从数据库上删除 Pos" + adapterPosition, Toast.LENGTH_SHORT).show();
-                    dbAid.deleteSQLNoteForced(time);
-                    dbAid.setSQLNoticeDone(getApplicationContext(), time, 1);
+                    DBAid.deleteSQLNoteForced(time);
+                    DBAid.setSQLNoticeDone(getApplicationContext(), time, 1);
                     break;
             }
-//            dbAid.deleteSQLNote(time);
+//            DBAid.deleteSQLNote(time);
 //            binNoteAdapter.removeData(adapterPosition);
             binNoteAdapter.removeData(adapterPosition);
             checkEmpty();

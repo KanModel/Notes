@@ -22,7 +22,7 @@ import static android.support.v4.content.FileProvider.getUriForFile;
  * 文件操作相关函数集
  */
 
-public abstract class FileUtils {
+public class FileUtils {
     public static void copy(File src, File dst) throws IOException {
         FileInputStream inStream = new FileInputStream(src);
         FileOutputStream outStream = new FileOutputStream(dst);
@@ -46,7 +46,7 @@ public abstract class FileUtils {
     public static String saveDatabaseCopy(Context context, File dir)
             throws IOException {
         SimpleDateFormat dateFormat = DateFormats.getBackupDateFormat();
-        String date = dateFormat.format(TimeAid.getNowTime());
+        String date = dateFormat.format(TimeAid.INSTANCE.getNowTime());
         String format = "%s/Note Backup %s.db";
         String filename = String.format(format, dir.getAbsolutePath(), date);
 

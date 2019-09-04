@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +31,8 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +40,7 @@ import java.util.List;
 import nov.me.kanmodel.notes.activity.adapter.NoteAdapter;
 import nov.me.kanmodel.notes.R;
 import nov.me.kanmodel.notes.model.Note;
-import nov.me.kanmodel.notes.utils.dbAid;
+import nov.me.kanmodel.notes.utils.DBAid;
 import nov.me.kanmodel.notes.utils.DatabaseHelper;
 import nov.me.kanmodel.notes.utils.RecyclerViewClickListener;
 import nov.me.kanmodel.notes.utils.TimeAid;
@@ -76,9 +79,42 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this;
 
+        logcatInit();
         initComponent();
-
         initRecyclerView();
+    }
+
+    /**
+     * logcat记录初始化
+     */
+    private void logcatInit() {
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+
+            File appDirectory = new File(getFilesDir().getAbsolutePath());
+            File logDirectory = new File(appDirectory + "/log");
+            File logFile = new File(logDirectory, "logcat" + System.currentTimeMillis() + ".txt");
+
+            // create app folder
+            if (!appDirectory.exists()) {
+                boolean res = appDirectory.mkdir();
+                Log.d(TAG, "logcatInit: mkdir " + appDirectory.getAbsolutePath() + " " + res);
+            }
+
+            // create log folder
+            if (!logDirectory.exists()) {
+                boolean res = logDirectory.mkdir();
+                Log.d(TAG, "logcatInit: mkdir" + logDirectory.getAbsolutePath() + " " + res);
+            }
+
+            // clear the previous logcat and then write the new one to the file
+            try {
+                Log.d(TAG, "logcatInit: 记录logcat");
+                Process process = Runtime.getRuntime().exec("logcat -c");
+                process = Runtime.getRuntime().exec("logcat -f " + logFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -117,14 +153,14 @@ public class MainActivity extends AppCompatActivity {
         preferences = new PreferenceManager(this.getApplicationContext());
         emptyView = findViewById(R.id.empty_view);
         emptyTV = findViewById(R.id.empty_view_text);
-        emptyTV.setTypeface(Utils.getFontAwesome(getApplicationContext()));
+        emptyTV.setTypeface(Utils.INSTANCE.getFontAwesome(getApplicationContext()));
 
         /*判断是否是debug模式*/
         isDebug = preferences.getDebug();
         Log.d(TAG, "onCreate: isDebug " + isDebug);
         if (isDebug) {
-            Toast.makeText(this, "isDebug:" + isDebug + "\n当前版本名称:" + Utils.getVersionName(this) +
-                    "\n当前版本号" + Utils.getVersionCode(this), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "isDebug:" + isDebug + "\n当前版本名称:" + Utils.INSTANCE.getVersionName(this) +
+                    "\n当前版本号" + Utils.INSTANCE.getVersionCode(this), Toast.LENGTH_SHORT).show();
             setTitle(getResources().getString(R.string.app_name) + "[Debug模式]");
             Log.d(TAG, "onCreate: DatabaseDir: " + getDatabasePath("Note.db").getAbsolutePath());
         }
@@ -140,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
     private void initRecyclerView() {
 
         /*sql数据库初始化*/
-        dbHelper = dbAid.getDbHelper(this);
+        dbHelper = DBAid.getDbHelper(this);
         initNodes();
 
         /*RecyclerView初始化*/
@@ -170,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("pos", position);
                     intent.putExtra("title", note.getTitle());
                     intent.putExtra("content", note.getContent());
-                    intent.putExtra("time", TimeAid.stampToDate(note.getTime()));
+                    intent.putExtra("time", TimeAid.INSTANCE.stampToDate(note.getTime()));
                     intent.putExtra("timeLong", note.getTime());
                     intent.putExtra("lastChangedTime", note.getLastChangedTime());
                     view.getContext().startActivity(intent);
@@ -273,8 +309,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent("nov.me.kanmodel.notes.activity.EditActivity");
                 intent.putExtra("title", "");
                 intent.putExtra("content", "");
-                long timeStamp = TimeAid.getNowTime();
-                intent.putExtra("time", TimeAid.stampToDate(timeStamp));
+                long timeStamp = TimeAid.INSTANCE.getNowTime();
+                intent.putExtra("time", TimeAid.INSTANCE.stampToDate(timeStamp));
                 intent.putExtra("timeLong", timeStamp);
                 intent.putExtra("isNew", true);
                 intent.putExtra("lastChangedTime", timeStamp);
@@ -282,10 +318,10 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.main_menu_add:
                 /*测试用添加三个便签数据*/
-                noteAdapter.addData(dbAid.addSQLNote(dbHelper, "近日，日本汽车巨头尼桑（国内称为日产）宣布将在北美地区的展厅演示增强现实（AR）体验，旨在向客户介绍旗下汽车的安全性以及驾驶辅助系统的相关技术。\n" +
+                noteAdapter.addData(DBAid.addSQLNote(dbHelper, "近日，日本汽车巨头尼桑（国内称为日产）宣布将在北美地区的展厅演示增强现实（AR）体验，旨在向客户介绍旗下汽车的安全性以及驾驶辅助系统的相关技术。\n" +
                         "这个AR体验被命名为“见所未见（See the Unseen）”，将在即将上映的电影《星球大战8：最后的绝地武士》之前，也就是12月初发布。该体验将包含来自《星球大战》宇宙中的多个角色，比如风暴突击队和克隆人军团等。", "汽车巨头尼桑推出全新《星球大战》AR体验"));
-                noteAdapter.addData(dbAid.addSQLNote(dbHelper, "做父母的，辛辛苦苦一辈子，最大的心愿是子女幸福健康有出息。所以，只要是给子女未来铺路的事，尤其是教育方面的投入，绝大多数父母都愿意砸钱。", "\"女儿\"要到哈佛大学当交换生 父亲看完短信汇23万"));
-                noteAdapter.addData(dbAid.addSQLNote(dbHelper, "这个网络流行的meme也有了成真的一天。据福克斯新闻报道，美国俄亥俄州辛辛那提，一名13岁的熊孩子看到家里有只虫子，于是掏出打火机想要放火灭虫。不想不慎将整栋公寓都引燃，造成8人流离失所，造成至少30万美元的经济损失。\n" +
+                noteAdapter.addData(DBAid.addSQLNote(dbHelper, "做父母的，辛辛苦苦一辈子，最大的心愿是子女幸福健康有出息。所以，只要是给子女未来铺路的事，尤其是教育方面的投入，绝大多数父母都愿意砸钱。", "\"女儿\"要到哈佛大学当交换生 父亲看完短信汇23万"));
+                noteAdapter.addData(DBAid.addSQLNote(dbHelper, "这个网络流行的meme也有了成真的一天。据福克斯新闻报道，美国俄亥俄州辛辛那提，一名13岁的熊孩子看到家里有只虫子，于是掏出打火机想要放火灭虫。不想不慎将整栋公寓都引燃，造成8人流离失所，造成至少30万美元的经济损失。\n" +
                         "周二晚上11点，辛辛那提市一公寓突然发生火花爆炸，在消防员赶到之前，火焰已经蔓延了6间屋子。\n" +
                         "消防员紧急撤离了楼内住户，并开始灭火。火势很快扑灭，万幸没有人员伤亡，但房屋已被烧毁，三名成年人和五名儿童流离失所。", "13岁熊孩子为了灭虫把整栋楼都烧了 网友：值了"));
                 recyclerView.scrollToPosition(0);//移动到顶端
@@ -306,9 +342,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int size = NoteAdapter.getNotes().size();
-                        dbAid.deleteSQLNoteForced();
+                        DBAid.deleteSQLNoteForced();
 //                        initNodes();
-                        dbAid.initNotes(dbHelper, NoteAdapter.getNotes());
+                        DBAid.initNotes(dbHelper, NoteAdapter.getNotes());
                         noteAdapter.refreshAllData(size);
                         checkEmpty();
                     }
@@ -341,12 +377,12 @@ public class MainActivity extends AppCompatActivity {
 //                if (cursor1.moveToFirst()) {
 //                    do {
 //                        long time = cursor1.getLong(cursor1.getColumnIndex("time"));
-//                        dbAid.deleteSQLNote(time);
+//                        DBAid.deleteSQLNote(time);
 //                    } while (cursor1.moveToNext());
 //                }
 //                cursor1.close();
                 for (Note note: NoteAdapter.getNotes()){
-                    dbAid.deleteSQLNote(note.getTime());
+                    DBAid.deleteSQLNote(note.getTime());
                 }
 //                noteList.clear();
 //                initNodes();
@@ -433,7 +469,7 @@ public class MainActivity extends AppCompatActivity {
             int adapterPosition = srcHolder.getAdapterPosition();
             // Item被侧滑删除时，删除数据，并更新adapter。
             long time = NoteAdapter.getNotes().get(adapterPosition).getTime();
-            dbAid.deleteSQLNote(time);
+            DBAid.deleteSQLNote(time);
             Toast.makeText(MainActivity.this, "你删除了一条便笺，你可以在回收站中彻底删除或恢复", Toast.LENGTH_SHORT).show();
             noteAdapter.removeData(adapterPosition);
             Log.d(TAG, "onItemDismiss: pos : " + adapterPosition);
@@ -452,7 +488,7 @@ public class MainActivity extends AppCompatActivity {
             int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
             Toast.makeText(MainActivity.this, "删除POS" + adapterPosition, Toast.LENGTH_SHORT).show();
             long time = NoteAdapter.getNotes().get(adapterPosition).getTime();
-            dbAid.deleteSQLNote(time);
+            DBAid.deleteSQLNote(time);
             noteAdapter.removeData(adapterPosition);
         }
     };
