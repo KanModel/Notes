@@ -7,21 +7,18 @@ import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-
-import java.util.Locale
-
 import nov.me.kanmodel.notes.R
-import nov.me.kanmodel.notes.receiver.AlarmReceiver
 import nov.me.kanmodel.notes.activity.ui.TimeAndDatePickerDialog
+import nov.me.kanmodel.notes.receiver.AlarmReceiver
 import nov.me.kanmodel.notes.utils.DBAid
 import nov.me.kanmodel.notes.utils.TimeAid
 import nov.me.kanmodel.notes.utils.Utils
 import nov.me.kanmodel.notes.widget.NoteAppWidget
+import java.util.*
 
 /**
  * 编辑便签的Activity
@@ -36,7 +33,7 @@ class EditActivity : AppCompatActivity(), TimeAndDatePickerDialog.TimePickerDial
     private var contentET: EditText? = null
     private var time: Long = 0
     private var lastChangedTime: Long = 0
-    internal var isNew: Boolean = false
+    private var isNew: Boolean = false
     private var parentIntent: Intent? = null
     private var title: String? = null
     private var content: String? = null
@@ -91,10 +88,6 @@ class EditActivity : AppCompatActivity(), TimeAndDatePickerDialog.TimePickerDial
         }
         finish()
         super.onBackPressed()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -199,16 +192,15 @@ class EditActivity : AppCompatActivity(), TimeAndDatePickerDialog.TimePickerDial
         //        DBAid.addSQLNotice(this, time, dstTime);
         //        DBAid.updateSQLNotice(this, time, dstTime);
         title = titleET!!.text.toString()
-        if (dDay > 0) {
-            Toast.makeText(this, "你设定了提醒时间 :" + dstStr
+        when {
+            dDay > 0 -> Toast.makeText(this, "你设定了提醒时间 :" + dstStr
                     + "\n将于" + dDay + "天后提醒你", Toast.LENGTH_SHORT).show()
-        } else if (dHour > 0) {
-            Toast.makeText(this, "你设定了提醒时间 :" + dstStr
+            dHour > 0 -> Toast.makeText(this, "你设定了提醒时间 :" + dstStr
                     + "\n将于" + dHour + "小时后提醒你", Toast.LENGTH_SHORT).show()
-        } else if (dMinute > 0) {
-            Toast.makeText(this, "你设定了提醒时间 :" + dstStr
+            dMinute > 0 -> Toast.makeText(this, "你设定了提醒时间 :" + dstStr
                     + "\n将于" + dMinute + "分钟后提醒你", Toast.LENGTH_SHORT).show()
         }
+            //        AlarmReceiver.setAlarm(this, dDay * 1000 * 60 * 60 * 24 + dHour * 1000 * 60 * 60 + dMinute * 1000 * 60, title);
         //        AlarmReceiver.setAlarm(this, dDay * 1000 * 60 * 60 * 24 + dHour * 1000 * 60 * 60 + dMinute * 1000 * 60, title);
         AlarmReceiver.setAlarm(this, dDay * 60 * 24 + dHour * 60 + dMinute, title)
         Log.d(TAG, "positiveListener: title" + title!!)
@@ -220,6 +212,6 @@ class EditActivity : AppCompatActivity(), TimeAndDatePickerDialog.TimePickerDial
     }
 
     companion object {
-        private val TAG = "EditActivity"
+        private const val TAG = "EditActivity"
     }
 }

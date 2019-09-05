@@ -18,17 +18,17 @@ import nov.me.kanmodel.notes.model.WidgetInfo;
  * 数据库操作类
  * Created by KanModel on 2017/11/26.
  */
-
 public class DBAid {
 
     private static final String TAG = "DBAid";
 
+    //标记选择的便签 todo 选择队列
     public static int pos = 0;
 
     /*Note相关*/
 
     /**
-     * @param dbHelper 数据库操作类
+     * @param dbHelper 数据库操作对象
      * @return Note类
      */
     public static Note addSQLNote(DatabaseHelper dbHelper) {
@@ -36,7 +36,7 @@ public class DBAid {
     }
 
     /**
-     * @param dbHelper 数据库操作类
+     * @param dbHelper 数据库操作对象
      * @param note     Note类
      */
     public static void addSQLNote(DatabaseHelper dbHelper, Note note) {
@@ -44,7 +44,7 @@ public class DBAid {
     }
 
     /**
-     * @param dbHelper 数据库操作类
+     * @param dbHelper 数据库操作对象
      * @param content  内容
      * @param title    标题
      * @return 返回新添加的Note类
@@ -64,16 +64,16 @@ public class DBAid {
         db.insert("Note", null, values);
         Log.d(TAG, "addSQLNote: timestamp:" + timeStamp);
         //获取数据库最后一条信息
-        Cursor cursor1 = db.rawQuery("select * from Note", null);
-        if (cursor1.moveToLast()) {
-            String logtime = cursor1.getString(cursor1.getColumnIndex("logtime"));
-            long time = cursor1.getLong(cursor1.getColumnIndex("time"));
-            long lastChangedTime = cursor1.getLong(cursor1.getColumnIndex("lastChangedTime"));
+        Cursor cursor = db.rawQuery("select * from Note", null);
+        if (cursor.moveToLast()) {
+            String logtime = cursor.getString(cursor.getColumnIndex("logtime"));
+            long time = cursor.getLong(cursor.getColumnIndex("time"));
+            long lastChangedTime = cursor.getLong(cursor.getColumnIndex("lastChangedTime"));
             note = new Note(title, content, logtime, time, lastChangedTime);
         } else {
             note = null;
         }
-        cursor1.close();
+        cursor.close();
         db.close();
         return note;
     }
@@ -138,7 +138,13 @@ public class DBAid {
         db.close();
     }
 
-    public static List<Note> initNotes(DatabaseHelper dbHelper) {
+    /**
+     * 获取所有非删除Note
+     *
+     * @param dbHelper 数据库操作对象
+     * @return 非删除Note List
+     */
+    public static List<Note> findAllNote(DatabaseHelper dbHelper) {
         List<Note> noteList = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from Note where isDeleted = 0 order by id asc", null);
@@ -158,7 +164,7 @@ public class DBAid {
         return noteList;
     }
 
-    public static void initNotes(DatabaseHelper dbHelper, List<Note> noteList) {
+    public static void findAllNote(DatabaseHelper dbHelper, List<Note> noteList) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         noteList.clear();
         Cursor cursor = db.rawQuery("select * from Note where isDeleted = 0 order by id asc", null);
@@ -197,8 +203,8 @@ public class DBAid {
         return new Note(title, content, time);
     }
 
-
     /*Widget相关*/
+
     public static WidgetInfo querySQLWidget(DatabaseHelper dbHelper, long time) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int widgetID, isDeleted;
@@ -239,7 +245,6 @@ public class DBAid {
     }
 
     /*notice相关*/
-
 
     public static void addSQLNotice(DatabaseHelper dbHelper, long time, long dstTime) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -313,7 +318,6 @@ public class DBAid {
     }
 
     public static void setSQLNoticeDone(Context context, long time, int done) {
-//        updateSQLNotice(context, time);
         updateSQLNotice(getDbHelper(context), time, done);
     }
 

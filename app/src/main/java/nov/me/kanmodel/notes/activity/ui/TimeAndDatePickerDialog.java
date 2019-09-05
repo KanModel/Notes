@@ -21,7 +21,6 @@ import nov.me.kanmodel.notes.R;
  * 日期时间选择器
  * Created by KanModel on 2017/12/29.
  */
-
 public class TimeAndDatePickerDialog {
     private Context mContext;
     private AlertDialog.Builder mAlertDialog;
@@ -44,7 +43,7 @@ public class TimeAndDatePickerDialog {
         View inflate = LayoutInflater.from(mContext).inflate(R.layout.time_picker_dialog, null);
         mDatePicker = inflate.findViewById(R.id.date_picker);
         inflate.findViewById(R.id.time_picker).setVisibility(View.GONE);
-        resizePikcer(mDatePicker);
+        resizePicker(mDatePicker);
         return inflate;
     }
 
@@ -56,7 +55,7 @@ public class TimeAndDatePickerDialog {
         mTimePicker = inflate.findViewById(R.id.time_picker);
         inflate.findViewById(R.id.date_picker).setVisibility(View.GONE);
         mTimePicker.setIs24HourView(true);
-        resizePikcer(mTimePicker);
+        resizePicker(mTimePicker);
         return inflate;
     }
 
@@ -65,15 +64,13 @@ public class TimeAndDatePickerDialog {
         mTimePicker = inflate.findViewById(R.id.time_picker);
         mDatePicker = inflate.findViewById(R.id.date_picker);
         mTimePicker.setIs24HourView(true);
-        resizePikcer(mTimePicker);
-        resizePikcer(mDatePicker);
+        resizePicker(mTimePicker);
+        resizePicker(mDatePicker);
         return inflate;
     }
 
     /**
      * 创建dialog
-     *
-     * @param view
      */
     private void initDialog(View view) {
         mAlertDialog.setPositiveButton("确定",
@@ -155,9 +152,8 @@ public class TimeAndDatePickerDialog {
 
     /**
      * 调整FrameLayout大小
-     * @param tp
      */
-    private void resizePikcer(FrameLayout tp) {
+    private void resizePicker(FrameLayout tp) {
         List<NumberPicker> npList = findNumberPicker(tp);
         for (NumberPicker np : npList) {
             resizeNumberPicker(np);
@@ -165,14 +161,11 @@ public class TimeAndDatePickerDialog {
     }
 
     /**
-     * 得到viewGroup里面的numberpicker组件
-     *
-     * @param viewGroup
-     * @return
+     * 得到viewGroup里面的NumberPicker组件
      */
     private List<NumberPicker> findNumberPicker(ViewGroup viewGroup) {
-        List<NumberPicker> npList = new ArrayList<NumberPicker>();
-        View child = null;
+        List<NumberPicker> npList = new ArrayList<>();
+        View child;
         if (null != viewGroup) {
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 child = viewGroup.getChildAt(i);
@@ -231,7 +224,8 @@ public class TimeAndDatePickerDialog {
 
 
     public interface TimePickerDialogInterface {
-        public void positiveListener();
-        public void negativeListener();
+        void positiveListener();
+
+        void negativeListener();
     }
 }

@@ -7,10 +7,9 @@ import android.view.View;
 import android.view.ViewConfiguration;
 
 /**
- * 点击事件
+ * RecyclerView点击事件监听器
  * Created by KanModel on 2017/11/29.
  */
-
 public class RecyclerViewClickListener implements RecyclerView.OnItemTouchListener {
     private int mLastDownX, mLastDownY;
     //该值记录了最小滑动距离
@@ -40,24 +39,19 @@ public class RecyclerViewClickListener implements RecyclerView.OnItemTouchListen
         int x = (int) e.getX();
         int y = (int) e.getY();
         switch (e.getAction()) {
-
             case MotionEvent.ACTION_DOWN:
                 mLastDownX = x;
                 mLastDownY = y;
                 mDownTime = System.currentTimeMillis();
                 isMove = false;
                 break;
-
             case MotionEvent.ACTION_MOVE:
                 if (Math.abs(x - mLastDownX) > touchSlop || Math.abs(y - mLastDownY) > touchSlop) {
                     isMove = true;
                 }
                 break;
-
             case MotionEvent.ACTION_UP:
-                if (isMove) {
-                    break;
-                }
+                if (isMove) break;
                 if (System.currentTimeMillis() - mDownTime > 1000) {
                     isLongPressUp = true;
                 } else {

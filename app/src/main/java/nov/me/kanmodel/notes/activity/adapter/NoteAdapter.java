@@ -77,8 +77,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_note, parent, false);
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -104,14 +103,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         if (time == lastChangedTime) {
             timeTV.setText(TimeAid.INSTANCE.stampToDate(time));
         } else {
-            timeTV.setText(TimeAid.INSTANCE.stampToDate(time) + " - 修改于" + TimeAid.INSTANCE.stampToDate(lastChangedTime));
+            timeTV.setText(String.format("%s - 修改于%s", TimeAid.INSTANCE.stampToDate(time), TimeAid.INSTANCE.stampToDate(lastChangedTime)));
         }
         TextView dstTV = holder.dstTV;
         long dstTime = DBAid.querySQLNotice(MainActivity.getDbHelper(), time);
         Log.d(TAG, "onBindViewHolder: dstTime:" + dstTime + " ,diff :" + (dstTime - TimeAid.INSTANCE.getNowTime()));
         if (dstTime > 0 && (dstTime - TimeAid.INSTANCE.getNowTime()) > 0) {
             dstTV.setVisibility(View.VISIBLE);
-//            dstTV.setText();
             long day = TimeAid.INSTANCE.getDiffDay(dstTime);
             long hour = TimeAid.INSTANCE.getDiffHour(dstTime);
             long minute = TimeAid.INSTANCE.getDiffMinutes(dstTime);
@@ -120,11 +118,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                 ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#FFE5ADFF"));
                 RelativeSizeSpan sizeSpan = new RelativeSizeSpan(1.4f);
                 int lengthOfDay = String.valueOf(day).length();
-//                int lengthOfHour = String.valueOf(hour).length();
                 spannableString.setSpan(sizeSpan, 3, 3 + lengthOfDay, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 spannableString.setSpan(colorSpan, 3, 3 + lengthOfDay, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-//                spannableString.setSpan(sizeSpan, 6 + lengthOfDay, 6 + lengthOfDay + lengthOfHour, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-//                spannableString.setSpan(colorSpan, 6 + lengthOfDay, 6 + lengthOfDay + lengthOfHour, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 dstTV.setText(spannableString);
             } else if (hour > 0) {
                 SpannableString spannableString = new SpannableString("剩余 " + hour + " 小时 " + minute + " 分钟");
@@ -180,7 +175,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     }
 
     public void refreshData(int position) {
-//        notes.get(position).
         notifyItemRangeChanged(position, notes.size());
     }
 
@@ -195,7 +189,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
      * 刷新RecyclerView
      */
     public void refreshAllDataForce() {
-        notes = DBAid.initNotes(DBAid.getDbHelper(MainActivity.getContext()));
+        notes = DBAid.findAllNote(DBAid.getDbHelper(MainActivity.getContext()));
         refreshAllData();
     }
 

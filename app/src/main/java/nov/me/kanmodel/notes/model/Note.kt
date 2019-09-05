@@ -13,11 +13,11 @@ class Note
  * @param time    时间戳
  */
 (var title: String?, var content: String?, var logTime: String?, var time: Long, var lastChangedTime: Long) {
-    var dstTime: Long = 0
+    private var dstTime: Long = 0
 
     constructor(title: String, content: String, logTime: String, time: Long, lastChangedTime: Long, dstTime: Long) : this(title, content, logTime, time, lastChangedTime) {
         this.dstTime = dstTime
     }
 
-    constructor(title: String, content: String, time: Long) : this(title, content, "", time, 0) {}
+    constructor(title: String, content: String, time: Long) : this(title, content, "", time, 0)
 }

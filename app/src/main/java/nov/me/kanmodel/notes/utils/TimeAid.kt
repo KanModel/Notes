@@ -4,8 +4,7 @@ import android.annotation.SuppressLint
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
+import java.util.*
 
 /**
  * Created by KanModel on 2017/12/29.
@@ -16,11 +15,23 @@ object TimeAid {
     val nowTime: Long
         get() = System.currentTimeMillis()
 
+    val backupDateFormat: SimpleDateFormat
+        get() = fromSkeleton("yyyy-MM-dd_HHmmss", Locale.US)
+
+    val csvDateFormat: SimpleDateFormat
+        get() = fromSkeleton("yyyy-MM-dd", Locale.US)
+
+    private fun fromSkeleton(skeleton: String, locale: Locale): SimpleDateFormat {
+        val df = SimpleDateFormat(skeleton, locale)
+        df.timeZone = TimeZone.getTimeZone("UTC")
+        return df
+    }
+
     /**
      * @param time 字符串类型的时间戳
      * @return 时间字符串
      */
-    fun stampToDate(time: String): String {
+    private fun stampToDate(time: String): String {
         val res: String
         @SuppressLint("SimpleDateFormat") val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val lt = java.lang.Long.valueOf(time)

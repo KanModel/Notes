@@ -5,7 +5,6 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -22,22 +21,24 @@ import nov.me.kanmodel.notes.activity.MainActivity;
 import nov.me.kanmodel.notes.activity.adapter.NoteAdapter;
 import nov.me.kanmodel.notes.utils.TimeAid;
 
+/**
+ * 用于挂件刷新
+ * 每 60 * 1000 ms 后发送消息
+ */
 public class UpdateWidgetService extends Service {
     private Context context;
-    private static AppWidgetManager appWidgetManager;
     private static final String TAG = "UpdateWidgetService";
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
+        //Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public void onCreate() {
         context = getApplicationContext();
-        appWidgetManager = AppWidgetManager.getInstance(context);// 定义计时器
-        Timer timer = new Timer();
+        Timer timer = new Timer();// 定义计时器
         Log.d(TAG, "onCreate: ");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.d(TAG, "onCreate: Notification");
@@ -70,8 +71,7 @@ public class UpdateWidgetService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: ");
-        flags = START_STICKY;
-        return super.onStartCommand(intent, flags, startId);
+        return super.onStartCommand(intent, START_STICKY, startId);
     }
 
     @SuppressLint("HandlerLeak")

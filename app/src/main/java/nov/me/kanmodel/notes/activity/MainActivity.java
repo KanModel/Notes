@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,15 +17,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
@@ -46,12 +41,11 @@ import nov.me.kanmodel.notes.utils.RecyclerViewClickListener;
 import nov.me.kanmodel.notes.utils.TimeAid;
 import nov.me.kanmodel.notes.utils.Utils;
 import nov.me.kanmodel.notes.activity.ui.WrapContentLinearLayoutManager;
-import nov.me.kanmodel.notes.utils.PreferenceManager;
+import nov.me.kanmodel.notes.utils.ConfigManager;
 
 /**
- * 主要Activity
+ * 启动Activity
  */
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     public static SwipeMenuRecyclerView recyclerView;
@@ -59,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private static DatabaseHelper dbHelper;
     private List<Note> noteList = new ArrayList<>();
     private static NoteAdapter noteAdapter;
-    private PreferenceManager preferences;
-    private static LinearLayout emptyView;
-    private static TextView emptyTV;
+    private ConfigManager preferences;
+    private LinearLayout emptyView;
+    private TextView emptyTV;
     private static Context context;
 
     static boolean isDebug = false;
@@ -109,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
             // clear the previous logcat and then write the new one to the file
             try {
                 Log.d(TAG, "logcatInit: 记录logcat");
-                Process process = Runtime.getRuntime().exec("logcat -c");
-                process = Runtime.getRuntime().exec("logcat -f " + logFile);
+                Runtime.getRuntime().exec("logcat -c");
+                Runtime.getRuntime().exec("logcat -f " + logFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -150,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     private void initComponent() {
         /*组件初始化*/
         actionBar = getActionBar();
-        preferences = new PreferenceManager(this.getApplicationContext());
+        preferences = new ConfigManager(this.getApplicationContext());
         emptyView = findViewById(R.id.empty_view);
         emptyTV = findViewById(R.id.empty_view_text);
         emptyTV.setTypeface(Utils.INSTANCE.getFontAwesome(getApplicationContext()));
@@ -203,15 +197,17 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onClick: Content:" + note.getContent() + "\nTitle:" +
                             note.getTitle() + "\nTime:" + note.getLogTime() + "\nPos:" + position);
                     Intent intent = new Intent("nov.me.kanmodel.notes.activity.EditActivity");
-                    intent.putExtra("pos", position);
-                    intent.putExtra("title", note.getTitle());
-                    intent.putExtra("content", note.getContent());
-                    intent.putExtra("time", TimeAid.INSTANCE.stampToDate(note.getTime()));
-                    intent.putExtra("timeLong", note.getTime());
-                    intent.putExtra("lastChangedTime", note.getLastChangedTime());
+                    intent
+                            .putExtra("pos", position)
+                            .putExtra("title", note.getTitle())
+                            .putExtra("content", note.getContent())
+                            .putExtra("time", TimeAid.INSTANCE.stampToDate(note.getTime()))
+                            .putExtra("timeLong", note.getTime())
+                            .putExtra("lastChangedTime", note.getLastChangedTime());
                     view.getContext().startActivity(intent);
                     if (isDebug) {
-                        Toast.makeText(MainActivity.this, "Click " + NoteAdapter.getNotes().get(position).getContent(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Click "
+                                + NoteAdapter.getNotes().get(position).getContent(), Toast.LENGTH_SHORT).show();
                     }
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
@@ -227,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
         checkEmpty();
     }
 
-    public static void checkEmpty(){
+    public void checkEmpty() {
         if (noteAdapter.getItemCount() == 0) {
             recyclerView.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
@@ -253,9 +249,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             setTitle(getResources().getString(R.string.app_name));
         }
-//        noteAdapter.notifyDataSetChanged();
         checkEmpty();
-//        noteAdapter.refreshAllDataForce();
         for (Note note : NoteAdapter.getNotes()) {
             Log.d(TAG, "onResume: note " + note.getTitle());
         }
@@ -306,14 +300,15 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.add_note:
                 /*添加新便签*/
-                Intent intent = new Intent("nov.me.kanmodel.notes.activity.EditActivity");
-                intent.putExtra("title", "");
-                intent.putExtra("content", "");
                 long timeStamp = TimeAid.INSTANCE.getNowTime();
-                intent.putExtra("time", TimeAid.INSTANCE.stampToDate(timeStamp));
-                intent.putExtra("timeLong", timeStamp);
-                intent.putExtra("isNew", true);
-                intent.putExtra("lastChangedTime", timeStamp);
+                Intent intent = new Intent("nov.me.kanmodel.notes.activity.EditActivity");
+                intent
+                        .putExtra("title", "")
+                        .putExtra("content", "")
+                        .putExtra("time", TimeAid.INSTANCE.stampToDate(timeStamp))
+                        .putExtra("timeLong", timeStamp)
+                        .putExtra("isNew", true)
+                        .putExtra("lastChangedTime", timeStamp);
                 startActivity(intent);
                 return true;
             case R.id.main_menu_add:
@@ -344,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
                         int size = NoteAdapter.getNotes().size();
                         DBAid.deleteSQLNoteForced();
 //                        initNodes();
-                        DBAid.initNotes(dbHelper, NoteAdapter.getNotes());
+                        DBAid.findAllNote(dbHelper, NoteAdapter.getNotes());
                         noteAdapter.refreshAllData(size);
                         checkEmpty();
                     }
@@ -373,19 +368,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.note_clear:
                 /*删除所有便签，清空列表*/
                 int size = NoteAdapter.getNotes().size();
-//                Cursor cursor1 = db.query("Note", null, null, null, null, null, null);
-//                if (cursor1.moveToFirst()) {
-//                    do {
-//                        long time = cursor1.getLong(cursor1.getColumnIndex("time"));
-//                        DBAid.deleteSQLNote(time);
-//                    } while (cursor1.moveToNext());
-//                }
-//                cursor1.close();
-                for (Note note: NoteAdapter.getNotes()){
+                for (Note note : NoteAdapter.getNotes()) {
                     DBAid.deleteSQLNote(note.getTime());
                 }
-//                noteList.clear();
-//                initNodes();
                 NoteAdapter.getNotes().clear();
                 noteAdapter.refreshAllData(size);
                 checkEmpty();
@@ -428,35 +413,6 @@ public class MainActivity extends AppCompatActivity {
     public static void setIsDebug(boolean isDebug) {
         MainActivity.isDebug = isDebug;
     }
-
-    /**
-     * 菜单创建器。在Item要创建菜单的时候调用。
-     */
-    private SwipeMenuCreator swipeMenuCreator = new SwipeMenuCreator() {
-        @Override
-        public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
-            int width = 400;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-
-            SwipeMenuItem addItem = new SwipeMenuItem(MainActivity.this)
-//                    .setBackgroundDrawable(R.drawable.selector_green)// 点击的背景。
-                    .setImage(R.drawable.ic_launcher_foreground) // 图标。
-                    .setWidth(width) // 宽度。
-                    .setHeight(height); // 高度。
-            swipeLeftMenu.addMenuItem(addItem); // 添加一个按钮到左侧菜单。
-
-            SwipeMenuItem deleteItem = new SwipeMenuItem(MainActivity.this)
-                    .setText("删除") // 文字。
-                    .setBackgroundColor(Color.RED)
-                    .setTextColor(Color.WHITE) // 文字颜色。
-                    .setTextSize(16) // 文字大小。
-                    .setWidth(width)
-                    .setHeight(height);
-            swipeRightMenu.addMenuItem(deleteItem);// 添加一个按钮到右侧侧菜单。.
-
-            // 上面的菜单哪边不要菜单就不要添加。
-        }
-    };
 
     OnItemMoveListener mItemMoveListener = new OnItemMoveListener() {
         @Override

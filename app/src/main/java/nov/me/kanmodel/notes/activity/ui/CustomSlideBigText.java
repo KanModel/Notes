@@ -1,10 +1,5 @@
 package nov.me.kanmodel.notes.activity.ui;
 
-/**
- * Created by n8fr8 on 10/30/17.
- */
-
-
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -64,7 +59,7 @@ public class CustomSlideBigText extends Fragment {
 
         if (mButtonText != null)
         {
-            Button button = (Button)view.findViewById(R.id.custom_slide_button);
+            Button button = view.findViewById(R.id.custom_slide_button);
             button.setVisibility(View.VISIBLE);
             button.setText(mButtonText);
             button.setOnClickListener(mButtonListener);

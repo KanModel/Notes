@@ -11,10 +11,9 @@ import nov.me.kanmodel.notes.activity.MainActivity;
  * 用于数据库创建
  * Created by kgdwhsk on 2017/11/26.
  */
-
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private Context mContext;
+    private final Context mContext;
 
     /**
      * 构造方法
@@ -23,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param factory 不知道
      * @param version 数据库，增加自动调用onUpgrade更新数据库
      */
-    public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         mContext = context;
     }

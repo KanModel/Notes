@@ -44,7 +44,6 @@ public class AlarmReceiver extends BroadcastReceiver {
             Notification notify = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.drawable.logo_appwidget_preview)
                     .setContentTitle("时间便笺提醒")
-//                    .setSound(Uri.fromFile(new File("/system/media/audio/alarms/wr.ogg")))
                     .setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.wr))
                     .setVibrate(new long[]{0, 1000, 1000, 1000})
                     .setLights(Color.GREEN, 1000, 1000)
@@ -54,7 +53,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                     .setNumber(1).build();
             manager.notify(NOTIFICATION_ID, notify);
         }
-//        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -62,8 +60,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         Log.d(TAG, "setAlarm: minute: " + minute);
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.setAction("NOTE.NOTIFICATION");
-        intent.putExtra("title", title);
-        intent.putExtra("min", minute);
+        intent
+                .putExtra("title", title)
+                .putExtra("min", minute);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         int type = AlarmManager.RTC_WAKEUP;

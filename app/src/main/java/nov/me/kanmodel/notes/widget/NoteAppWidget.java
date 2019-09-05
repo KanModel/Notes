@@ -11,7 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -24,9 +23,11 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import nov.me.kanmodel.notes.model.WidgetInfo;
+import nov.me.kanmodel.notes.utils.ConfigManager;
 import nov.me.kanmodel.notes.utils.DBAid;
 import nov.me.kanmodel.notes.utils.DatabaseHelper;
 import nov.me.kanmodel.notes.activity.MainActivity;
@@ -56,7 +57,7 @@ public class NoteAppWidget extends AppWidgetProvider {
         }
         if (note == null) {//数据库中没有相关信息进行添加
             try {
-                notes = DBAid.initNotes(dbHelper);
+                notes = DBAid.findAllNote(dbHelper);
                 long time = notes.get(DBAid.pos).getTime();
                 DBAid.addSQLWidget(dbHelper, time, appWidgetId);
                 note = DBAid.querySQLNote(dbHelper, time);
@@ -117,7 +118,7 @@ public class NoteAppWidget extends AppWidgetProvider {
         views.setTextViewTextSize(R.id.widget_content, TypedValue.COMPLEX_UNIT_SP, NoteAdapter.getContentFontSize());
         Intent openAppIntent = new Intent(context, MainActivity.class);
         PendingIntent openAppPendingIntent = PendingIntent.getActivity(context, 0, openAppIntent, 0);
-        views.setOnClickPendingIntent(R.id.widget_title, openAppPendingIntent);
+        views.setOnClickPendingIntent(R.id.widget_view, openAppPendingIntent);
 
         return views;
     }
@@ -163,12 +164,13 @@ public class NoteAppWidget extends AppWidgetProvider {
             Log.d(TAG, "onUpdate: startService");
             context.startService(intent);
         }
+        ConfigManager configManager = new ConfigManager(context);
         //设置挂件字体大小
-        NoteAdapter.setTitleFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_title_size", "20")));
-        NoteAdapter.setTimeFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_time_size", "16")));
-        NoteAdapter.setContentFontSize(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("font_content_size", "18")));
+        NoteAdapter.setTitleFontSize(configManager.getFontTitleSize());
+        NoteAdapter.setTimeFontSize(configManager.getFontTimeSize());
+        NoteAdapter.setContentFontSize(configManager.getFontContextSize());
         dbHelper = DBAid.getDbHelper(context);//版本需要一致
-        boolean isDebug = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("switch_preference_is_debug", false);
+        boolean isDebug = configManager.getDebug();
         MainActivity.setIsDebug(isDebug);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         updateWidgetInfoList(db);
@@ -184,6 +186,10 @@ public class NoteAppWidget extends AppWidgetProvider {
         db.close();
     }
 
+    /**
+     * 刷新widgetInfoList内容
+     * 遍历数据库获取未删除挂机数据
+     */
     void updateWidgetInfoList(SQLiteDatabase db) {
         widgetInfoList.clear();//清空表
         Cursor cursor = db.query("widget", null, null, null, null, null, null);
@@ -216,21 +222,22 @@ public class NoteAppWidget extends AppWidgetProvider {
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {//这里的appWidgetIds是删除的id数组
-        Log.d(TAG, "onDeleted: Start");//todo 删除
-        if (MainActivity.getIsDebug()) {
-            Toast.makeText(context, "删除的是ID" + appWidgetIds[0], Toast.LENGTH_SHORT).show();
-        }
-        dbHelper = DBAid.getDbHelper(context);//版本需要一致
-        DBAid.deleteSQLWidget(dbHelper, appWidgetIds[0]);
-        updateWidgetInfoList(dbHelper.getWritableDatabase());
-        int pos = 0;
-        for (int i = 0; i < widgetInfoList.size(); i++) {
-            if (widgetInfoList.get(i).getAppWidgetID() == appWidgetIds[0]) {
-                pos = i;
+        Log.d(TAG, "onDeleted: ids " + Arrays.toString(appWidgetIds));
+        //遍历删除id 正常情况下只有一个
+        for (int id : appWidgetIds){
+            if (MainActivity.getIsDebug()) {
+                Toast.makeText(context, "删除的是ID" + id, Toast.LENGTH_SHORT).show();
+            }
+            dbHelper = DBAid.getDbHelper(context);//版本需要一致
+            DBAid.deleteSQLWidget(dbHelper, id);
+            updateWidgetInfoList(dbHelper.getWritableDatabase());
+            //从widgetInfoList中寻找并删除
+            for (WidgetInfo widgetInfo: widgetInfoList){
+                if (widgetInfo.getAppWidgetID() == id) {
+                    widgetInfoList.remove(widgetInfo);
+                }
             }
         }
-        widgetInfoList.remove(pos);
-        super.onDeleted(context, appWidgetIds);
     }
 
     @Override
@@ -241,10 +248,4 @@ public class NoteAppWidget extends AppWidgetProvider {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
     }
 
-    public static Context getmContext() {
-        return mContext;
-    }
-
-
 }
-
