@@ -109,7 +109,7 @@ public class NoteAppWidget extends AppWidgetProvider {
             }
         }
 
-        views.setTextViewText(R.id.widget_title, widgetTitle);
+        views.setTextViewText(R.id.widget_title, new SpannableString(widgetTitle));
         views.setTextViewText(R.id.widget_time, strTime);
         views.setTextViewText(R.id.widget_content, content);
         //设置挂件字体大小

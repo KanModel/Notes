@@ -123,12 +123,9 @@ class EditActivity : AppCompatActivity(), TimeAndDatePickerDialog.TimePickerDial
                         if (MainActivity.getIsDebug()) {
                             Toast.makeText(this, "未改变便签不保存", Toast.LENGTH_SHORT).show()
                         }
-                        //                        MainActivity.getNoteAdapter().refreshData(pos);
                     } else {
                         saveOriginalNote(title, content)
                     }
-                    //                    AppWidgetManager.getInstance(this).updateAppWidget(DBAid.querySQLWidget(this, time).getAppWidgetID()
-                    //                            , NoteAppWidget.getRemoteView(this, time, title, content));
                     MainActivity.getNoteAdapter().refreshAllDataForce()
                     NoteAppWidget.updateWidget(this, time, title, content)
                 }
@@ -169,29 +166,15 @@ class EditActivity : AppCompatActivity(), TimeAndDatePickerDialog.TimePickerDial
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     override fun positiveListener() {
-        //        mTv_getOffWork.setText(hour+":"+minute);
-        Log.d(TAG, "positiveListener: year  :" + dialog!!.year)
-        Log.d(TAG, "positiveListener: month :" + dialog!!.month)
-        Log.d(TAG, "positiveListener: day   :" + dialog!!.day)
-        Log.d(TAG, "positiveListener: hour  :" + dialog!!.hour)
-        Log.d(TAG, "positiveListener: minute:" + dialog!!.minute)
         val dstStr = String.format(Locale.CHINA, "%d-%d-%d %d:%d:00", dialog!!.year, dialog!!.month, dialog!!.day, dialog!!.hour, dialog!!.minute)
         val dstTime = TimeAid.dateToStamp(dstStr)
         val nowTime = TimeAid.nowTime
-        Log.d(TAG, "positiveListener: dstTime:$dstTime")
-        Log.d(TAG, "positiveListener: nowTime:$nowTime")
-        Log.d(TAG, "positiveListener: time   :$time")
-        Log.d(TAG, "positiveListener: STAMP :$dstTime")
-        Log.d(TAG, "positiveListener: diff  :" + TimeAid.getDiff(dstTime, nowTime))
         val dDay = TimeAid.getDiffDay(dstTime, nowTime)
         val dHour = TimeAid.getDiffHour(dstTime, nowTime)
         val dMinute = TimeAid.getDiffMinutes(dstTime, nowTime)
-        Log.d(TAG, "positiveListener: diff DAY    : $dDay")
-        Log.d(TAG, "positiveListener: diff Hour   : $dHour")
-        Log.d(TAG, "positiveListener: diff Minutes: $dMinute")
-        //        DBAid.addSQLNotice(this, time, dstTime);
-        //        DBAid.updateSQLNotice(this, time, dstTime);
         title = titleET!!.text.toString()
+        Log.d(TAG, "positiveListener: Target $dstStr:dstTime,$dstTime,nowTime:$nowTime,time:$time" +
+                ",diff:${TimeAid.getDiff(dstTime, nowTime)} $dDay-$dHour:$dMinute title:$title")
         when {
             dDay > 0 -> Toast.makeText(this, "你设定了提醒时间 :" + dstStr
                     + "\n将于" + dDay + "天后提醒你", Toast.LENGTH_SHORT).show()
@@ -200,10 +183,7 @@ class EditActivity : AppCompatActivity(), TimeAndDatePickerDialog.TimePickerDial
             dMinute > 0 -> Toast.makeText(this, "你设定了提醒时间 :" + dstStr
                     + "\n将于" + dMinute + "分钟后提醒你", Toast.LENGTH_SHORT).show()
         }
-            //        AlarmReceiver.setAlarm(this, dDay * 1000 * 60 * 60 * 24 + dHour * 1000 * 60 * 60 + dMinute * 1000 * 60, title);
-        //        AlarmReceiver.setAlarm(this, dDay * 1000 * 60 * 60 * 24 + dHour * 1000 * 60 * 60 + dMinute * 1000 * 60, title);
         AlarmReceiver.setAlarm(this, dDay * 60 * 24 + dHour * 60 + dMinute, title)
-        Log.d(TAG, "positiveListener: title" + title!!)
         DBAid.newSQLNotice(this, time, dstTime)
     }
 

@@ -57,6 +57,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         EditText titleET;
         EditText contentET;
         TextView timeTV;
+        TextView targetTV;
         TextView dstTV;
 
         ViewHolder(View itemView) {
@@ -65,6 +66,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             titleET = itemView.findViewById(R.id.r_title);
             contentET = itemView.findViewById(R.id.r_content);
             timeTV = itemView.findViewById(R.id.r_time);
+            targetTV = itemView.findViewById(R.id.r_target_time);
             dstTV = itemView.findViewById(R.id.r_dis);
         }
 
@@ -83,12 +85,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Note note = notes.get(position);
+        //标题初始化
         if (note.getTitle().equals("")) {
             holder.titleET.setVisibility(View.GONE);
         } else {
             holder.titleET.setText(note.getTitle());
             holder.titleET.setVisibility(View.VISIBLE);
         }
+        //内容初始化
         holder.titleET.setTextSize(titleFontSize);
         if (note.getContent().equals("")) {
             holder.contentET.setVisibility(View.GONE);
@@ -97,6 +101,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             holder.contentET.setVisibility(View.VISIBLE);
         }
         holder.contentET.setTextSize(contentFontSize);
+        //时间初始化
         TextView timeTV = holder.timeTV;
         timeTV.setTextSize(timeFontSize);
         long time = note.getTime(), lastChangedTime = note.getLastChangedTime();
@@ -105,7 +110,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         } else {
             timeTV.setText(String.format("%s - 修改于%s", TimeAid.INSTANCE.stampToDate(time), TimeAid.INSTANCE.stampToDate(lastChangedTime)));
         }
-        TextView dstTV = holder.dstTV;
+        //目标时间及倒计时初始化
+        TextView dstTV = holder.dstTV, tartTV = holder.targetTV;
         long dstTime = DBAid.querySQLNotice(MainActivity.getDbHelper(), time);
         Log.d(TAG, "onBindViewHolder: dstTime:" + dstTime + " ,diff :" + (dstTime - TimeAid.INSTANCE.getNowTime()));
         if (dstTime > 0 && (dstTime - TimeAid.INSTANCE.getNowTime()) > 0) {
@@ -139,6 +145,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             } else {
                 dstTV.setVisibility(View.GONE);
             }
+            tartTV.setVisibility(View.VISIBLE);
+            tartTV.setText(String.format("距离 %s 还", TimeAid.INSTANCE.stampToDate(dstTime)));
         } else {
             dstTV.setVisibility(View.GONE);
         }

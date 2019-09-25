@@ -21,8 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 
@@ -73,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this;
 
-        logcatInit();
+        initLogcat();
         initComponent();
         initRecyclerView();
     }
@@ -81,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * logcat记录初始化
      */
-    private void logcatInit() {
+    private void initLogcat() {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 
             File appDirectory = new File(getFilesDir().getAbsolutePath());
@@ -91,54 +89,24 @@ public class MainActivity extends AppCompatActivity {
             // create app folder
             if (!appDirectory.exists()) {
                 boolean res = appDirectory.mkdir();
-                Log.d(TAG, "logcatInit: mkdir " + appDirectory.getAbsolutePath() + " " + res);
+                Log.d(TAG, "initLogcat: mkdir " + appDirectory.getAbsolutePath() + " " + res);
             }
 
             // create log folder
             if (!logDirectory.exists()) {
                 boolean res = logDirectory.mkdir();
-                Log.d(TAG, "logcatInit: mkdir" + logDirectory.getAbsolutePath() + " " + res);
+                Log.d(TAG, "initLogcat: mkdir" + logDirectory.getAbsolutePath() + " " + res);
             }
 
             // clear the previous logcat and then write the new one to the file
             try {
-                Log.d(TAG, "logcatInit: 记录logcat");
+                Log.d(TAG, "initLogcat: 记录logcat");
                 Runtime.getRuntime().exec("logcat -c");
                 Runtime.getRuntime().exec("logcat -f " + logFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * 从数据库获取数据添加到noteList集合中
-     */
-    private void initNodes() {
-        noteList.clear();
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.query("Note", null, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                /*获取数据库数据*/
-                int id = cursor.getInt(cursor.getColumnIndex("id"));
-                String content = cursor.getString(cursor.getColumnIndex("content"));
-                String title = cursor.getString(cursor.getColumnIndex("title"));
-                int isDeleted = cursor.getInt(cursor.getColumnIndex("isDeleted"));
-                String logtime = cursor.getString(cursor.getColumnIndex("logtime"));
-                long time = cursor.getLong(cursor.getColumnIndex("time"));
-                long lastChangedTime = cursor.getLong(cursor.getColumnIndex("lastChangedTime"));
-                if (isDebug) {
-                    Log.d(TAG, "onOptionsItemSelected: id:" + id + "\ntitle:" + title + "\ncontent:"
-                            + content + "\nlogtime:" + logtime + "\ntime:" + time + "\nisDeleted:" + isDeleted);
-                }
-                if (isDeleted == 0) {
-                    noteList.add(0, new Note(title, content, logtime, time, lastChangedTime));//数据库按ID顺序倒序排列
-                }
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        db.close();
     }
 
     private void initComponent() {
@@ -171,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
         /*sql数据库初始化*/
         dbHelper = DBAid.getDbHelper(this);
-        initNodes();
+        noteList = DBAid.findAllNote(dbHelper);
 
         /*RecyclerView初始化*/
         recyclerView = findViewById(R.id.recycler_view);
@@ -188,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
         NoteAdapter.setContentFontSize(preferences.getFontContextSize());
 
         Log.d(TAG, "initRecyclerView: length : " + noteAdapter.getItemCount());
-//        recyclerView.addItemDecoration(new NoteDecoration(this, NoteDecoration.VERTICAL_LIST));//todo 分割线与动画联动不美观
         recyclerView.addOnItemTouchListener(new RecyclerViewClickListener(this, new RecyclerViewClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -266,9 +233,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (isDebug) {
-            menu.setGroupVisible(R.id.main_menu_debug, true);
-        }
+        if (isDebug) menu.setGroupVisible(R.id.main_menu_debug, true);//debug模式显示debug菜单组
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -338,7 +303,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         int size = NoteAdapter.getNotes().size();
                         DBAid.deleteSQLNoteForced();
-//                        initNodes();
                         DBAid.findAllNote(dbHelper, NoteAdapter.getNotes());
                         noteAdapter.refreshAllData(size);
                         checkEmpty();
@@ -430,22 +394,6 @@ public class MainActivity extends AppCompatActivity {
             noteAdapter.removeData(adapterPosition);
             Log.d(TAG, "onItemDismiss: pos : " + adapterPosition);
             checkEmpty();
-        }
-    };
-
-    SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
-        @Override
-        public void onItemClick(SwipeMenuBridge menuBridge) {
-            // 任何操作必须先关闭菜单，否则可能出现Item菜单打开状态错乱。
-            menuBridge.closeMenu();
-
-            int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
-            int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
-            int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
-            Toast.makeText(MainActivity.this, "删除POS" + adapterPosition, Toast.LENGTH_SHORT).show();
-            long time = NoteAdapter.getNotes().get(adapterPosition).getTime();
-            DBAid.deleteSQLNote(time);
-            noteAdapter.removeData(adapterPosition);
         }
     };
 }

@@ -39,7 +39,7 @@ public class UpdateWidgetService extends Service {
     public void onCreate() {
         context = getApplicationContext();
         Timer timer = new Timer();// 定义计时器
-        Log.d(TAG, "onCreate: ");
+        Log.d(TAG, "onCreate: Build.VERSION.SDK_INT=" + Build.VERSION.SDK_INT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.d(TAG, "onCreate: Notification");
             NotificationChannel channel = new NotificationChannel("xxx", "xxx", NotificationManager.IMPORTANCE_LOW);
@@ -70,15 +70,16 @@ public class UpdateWidgetService extends Service {
     @SuppressLint("WrongConstant")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand: ");
         return super.onStartCommand(intent, START_STICKY, startId);
     }
 
+    /**
+     * 接受消息处理
+     */
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             if (msg.what == 0x123) {
-                Log.d(TAG, "handleMessage: Time :" + TimeAid.INSTANCE.getNowTime());
                 NoteAppWidget.updateAllWidget();
                 try {
                     if (MainActivity.getNoteAdapter() != null) {
@@ -90,10 +91,10 @@ public class UpdateWidgetService extends Service {
                 }
                 Intent intent = new Intent(getApplicationContext(), UpdateWidgetService.class);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Log.d(TAG, "handleMessage: startForegroundService");
+                    Log.d(TAG, "handleMessage: startForegroundService " + TimeAid.INSTANCE.getNowTime());
                     context.startForegroundService(intent);
                 } else {
-                    Log.d(TAG, "handleMessage: startService");
+                    Log.d(TAG, "handleMessage: startService " + TimeAid.INSTANCE.getNowTime());
                     context.startService(intent);
                 }
             }
